@@ -7,7 +7,7 @@
 #
 # Florian Roth
 # December 2013
-# v0.2
+# v0.3
 
 import os
 import sys
@@ -169,18 +169,20 @@ if __name__ == '__main__':
 		string_set = file_strings[filePath]
 		string_count = len(file_strings[filePath])
 		
-		# As long as too many strings are in the result set
 		# filter = [ "words", "length" ] # first filter
 		filter = "words"
-		while string_count > args.rc:
+		# This is the only set we have - even if it's a weak one
+		last_useful_set = string_set
 		
-			# This is the only set we have - even if it's a weak one
-			last_useful_set = string_set
+		# As long as too many strings are in the result set		
+		while string_count > int(args.rc):
+				
+			if args.debug:
+				print "Filtering: " + filePath
 				
 			# Length filter
 			if filter == "length":
 				# Get the shortest string length
-				print filePath
 				shortest_string_length = len(min(string_set, key=len))
 				if args.debug:
 					print "BEFORE LENGTH FILTER: Size %s" % len(string_set)
@@ -205,7 +207,8 @@ if __name__ == '__main__':
 			# Save the last useful set
 			if string_count > 3:
 				last_useful_set = string_set
-				print "Setting last useful set with a length of %s" % str(string_count)
+				if args.debug:
+					print "Setting last useful set with a length of %s" % str(string_count)
 				
 		# Replace the original string set with the new one
 		file_strings[filePath] = []
@@ -214,17 +217,24 @@ if __name__ == '__main__':
 	# Generate Yara Rule per File
 	rules = ""
 	printed_rules = {}
+	rule_count = 0
 	for filePath in file_strings:
 		try:
 			rule = ""
 			(path, file) = os.path.split(filePath)
 			# Prepare name
 			fileBase = os.path.splitext(file)[0]
-			cleanedName = re.sub('[^\w]', r'_', fileBase)
+			# Create a clean new name
+			cleanedName = fileBase
+			# Adapt length of rule name
+			if len(fileBase) < 8: # if name is too short add part from path
+				cleanedName = path.split('\\')[-1:][0] + "_" + cleanedName
+			# clean name from all characters that would cause errors
+			cleanedName = re.sub('[^\w]', r'_', cleanedName)
 			# Check if already printed
 			if cleanedName in printed_rules:
 				printed_rules[cleanedName] += 1
-				cleanedName = cleanedName + "_" + printed_rules[cleanedName]
+				cleanedName = cleanedName + "_" + str(printed_rules[cleanedName])
 			else:
 				printed_rules[cleanedName] = 1
 			# Print rule title
@@ -242,6 +252,7 @@ if __name__ == '__main__':
 			# print rule
 			# Add to rules 
 			rules += rule
+			rule_count += 1
 		except Exception, e:
 			traceback.print_exc()		
 	
@@ -255,3 +266,5 @@ if __name__ == '__main__':
 			traceback.print_exc()
 	if args.debug:
 		print rules
+		
+	print "Generated %s Yara rules." % str(rule_count)
