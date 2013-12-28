@@ -264,6 +264,8 @@ if __name__ == '__main__':
 			rule += "\tstrings:\n"
 			for i, string in enumerate(file_strings[filePath]):
 				rule += "\t\t$s%s = \"%s\"\n" % ( str(i), string )
+				if i > int(args.rc):
+					break
 			rule += "\tcondition:\n"
 			rule += "\t\tall of them\n"		
 			rule += "}\n"

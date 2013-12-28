@@ -1,1 +1,8 @@
 yara_brg_rules.yar
+scanners.yar
+
+yara-brg-portscanner.yar
+
+yara-brg-webshells.yar
+
+webshells.yar
