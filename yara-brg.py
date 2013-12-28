@@ -7,7 +7,7 @@
 #
 # Florian Roth
 # December 2013
-# v0.1
+# v0.2
 
 import os
 import sys
@@ -98,16 +98,18 @@ def extractStrings(filePath, generateInfo):
 					# Escape string and than add it to the list
 					string = string.replace('\\','\\\\')
 					string = string.replace('"','\\"')
-					strings.append(string)
-					if args.debug:
-						#print string
-						pass
+					if not string in strings:
+						strings.append(string)
+						if args.debug:
+							#print string
+							pass
 				string = ""
 		# Check if last bytes have been string and not yet saved to list
 		if len(string) > 0:
 			string = string.replace('\\','\\\\')
 			string = string.replace('"','\\"')
-			strings.append(string)
+			if not string in strings:
+				strings.append(string)
 	except Exception,e:
 		if args.debug:
 			traceback.print_exc()
@@ -123,11 +125,11 @@ def isAscii(b):
 if __name__ == '__main__':
 	
 	# Parse Arguments
-	parser = argparse.ArgumentParser(description='SLEIPNIR')
-	parser.add_argument('-m', help='Path to scan for malware', metavar='mdir', default='')
-	parser.add_argument('-g', help='Path to scan for goodware', metavar='gdir', default='')
-	parser.add_argument('-o', help='Output rule file', metavar='output', default='yara_brg_rules.yar')
-	parser.add_argument('-l', help='Minimal string length to consider', metavar='dir', default=6)
+	parser = argparse.ArgumentParser(description='Yara BRG')
+	parser.add_argument('-m', required=True, help='Path to scan for malware')
+	parser.add_argument('-g', required=True, help='Path to scan for goodware')
+	parser.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yara_brg_rules.yar')
+	parser.add_argument('-l', help='Minimal string length to consider', metavar='size', default=6)
 	parser.add_argument('-rm', action='store_true', default=False, help='Recursive scan of malware directories')
 	parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
 	parser.add_argument('-fs', help='Max file size to analyze', metavar='dir', default=2000000)
@@ -148,7 +150,9 @@ if __name__ == '__main__':
 		if mal_string_stats[string]["count"] < 4:
 			# If string has not been found in good samples
 			if not string in good_string_stats:
-				print string +": "+ ", ".join(mal_string_stats[string]["files"])
+				if args.debug:
+					# print "String: " +string +" Found in: "+ ", ".join(mal_string_stats[string]["files"])
+					pass
 				# If string list in file dictionary not yet exists
 				for file in mal_string_stats[string]["files"]:
 					if file in file_strings:
@@ -166,17 +170,34 @@ if __name__ == '__main__':
 		string_count = len(file_strings[filePath])
 		
 		# As long as too many strings are in the result set
-		filter = "length" # first filter
+		# filter = [ "words", "length" ] # first filter
+		filter = "words"
 		while string_count > args.rc:
 		
+			# This is the only set we have - even if it's a weak one
+			last_useful_set = string_set
+				
 			# Length filter
 			if filter == "length":
 				# Get the shortest string length
 				print filePath
 				shortest_string_length = len(min(string_set, key=len))
-				print "BEFORE LENGTH FILTER: Size %s" % len(string_set)
+				if args.debug:
+					print "BEFORE LENGTH FILTER: Size %s" % len(string_set)
 				string_set = [ s for s in string_set if len(s) != shortest_string_length ]
-				print "AFTER LENGTH FILTER: Size %s" % len(string_set)
+				if args.debug:
+					print "AFTER LENGTH FILTER: Size %s" % len(string_set)
+					
+			# Words filter
+			if filter == "words":
+				new_string_set = []
+				for string in string_set:
+					if re.search(r'[qwrtzpsdfghjklxcvbnm][euioa][qwrtzpsdfghjklxcvbnm]', string, re.IGNORECASE):
+						new_string_set.append(string)
+				# Replace string set
+				string_set = new_string_set
+				# Now set filter to length
+				filter = "length"					
 
 			# Count the new size
 			string_count = len(string_set)
@@ -192,6 +213,7 @@ if __name__ == '__main__':
 				
 	# Generate Yara Rule per File
 	rules = ""
+	printed_rules = {}
 	for filePath in file_strings:
 		try:
 			rule = ""
@@ -199,6 +221,12 @@ if __name__ == '__main__':
 			# Prepare name
 			fileBase = os.path.splitext(file)[0]
 			cleanedName = re.sub('[^\w]', r'_', fileBase)
+			# Check if already printed
+			if cleanedName in printed_rules:
+				printed_rules[cleanedName] += 1
+				cleanedName = cleanedName + "_" + printed_rules[cleanedName]
+			else:
+				printed_rules[cleanedName] = 1
 			# Print rule title
 			rule += "rule %s {\n" % cleanedName
 			rule += "\tmeta:\n"
@@ -225,3 +253,5 @@ if __name__ == '__main__':
 			fh.close()
 		except Exception, e:
 			traceback.print_exc()
+	if args.debug:
+		print rules
