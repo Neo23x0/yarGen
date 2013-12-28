@@ -7,7 +7,7 @@
 #
 # Florian Roth
 # December 2013
-# v0.3
+# v0.4
 
 import os
 import sys
@@ -39,7 +39,7 @@ def parseDir(dir, recursive=False, generateInfo=False):
 	for filePath in getFiles(dir, recursive):				
 		# Get Extension
 		extension = os.path.splitext(filePath)[1];
-		if not extension in [ ".exe", ".dll" ]:
+		if not extension in [ ".exe", ".dll", ".cmd", ".asp", ".php", ".jsp" ]:
 			continue
 		
 		# Size Check
@@ -95,6 +95,8 @@ def extractStrings(filePath, generateInfo):
 				string += byte 
 			else:
 				if len(string) >= args.l:
+					# overlong string
+					string = string[:80]
 					# Escape string and than add it to the list
 					string = string.replace('\\','\\\\')
 					string = string.replace('"','\\"')
@@ -106,6 +108,8 @@ def extractStrings(filePath, generateInfo):
 				string = ""
 		# Check if last bytes have been string and not yet saved to list
 		if len(string) > 0:
+			# overlong string
+			string = string[:80]
 			string = string.replace('\\','\\\\')
 			string = string.replace('"','\\"')
 			if not string in strings:
@@ -129,11 +133,12 @@ if __name__ == '__main__':
 	parser.add_argument('-m', required=True, help='Path to scan for malware')
 	parser.add_argument('-g', required=True, help='Path to scan for goodware')
 	parser.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yara_brg_rules.yar')
+	parser.add_argument('-p', help='Prefix for the rule description', metavar='prefix', default='Auto-generated rule')
 	parser.add_argument('-l', help='Minimal string length to consider', metavar='size', default=6)
 	parser.add_argument('-rm', action='store_true', default=False, help='Recursive scan of malware directories')
 	parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
 	parser.add_argument('-fs', help='Max file size to analyze', metavar='dir', default=2000000)
-	parser.add_argument('-rc', help='Maximum number of strings per rule (intelligent filtering will be applied)', metavar='maxstrings', default=20)
+	parser.add_argument('-rc', help='Maximum number of strings per rule (intelligent filtering will be applied)', metavar='maxstrings', default=10)
 	parser.add_argument('--debug', action='store_true', default=False, help='Debug output')
 	args = parser.parse_args()
 
@@ -196,8 +201,11 @@ if __name__ == '__main__':
 				for string in string_set:
 					if re.search(r'[qwrtzpsdfghjklxcvbnm][euioa][qwrtzpsdfghjklxcvbnm]', string, re.IGNORECASE):
 						new_string_set.append(string)
-				# Replace string set
-				string_set = new_string_set
+
+				# If new string count is too low - try the other filter
+				if not len(new_string_set) < int(args.rc):
+					# Replace string set
+					string_set = new_string_set					
 				# Now set filter to length
 				filter = "length"					
 
@@ -213,7 +221,14 @@ if __name__ == '__main__':
 		# Replace the original string set with the new one
 		file_strings[filePath] = []
 		file_strings[filePath] = last_useful_set
-				
+	
+	# Write to file
+	if args.o:
+		try:
+			fh = open(args.o, 'w')
+		except Exception, e: 
+			traceback.print_exc()
+	
 	# Generate Yara Rule per File
 	rules = ""
 	printed_rules = {}
@@ -229,6 +244,9 @@ if __name__ == '__main__':
 			# Adapt length of rule name
 			if len(fileBase) < 8: # if name is too short add part from path
 				cleanedName = path.split('\\')[-1:][0] + "_" + cleanedName
+			# File name starts with a number
+			if re.search(r'^[0-9]', cleanedName):
+				cleanedName = "sig_" + cleanedName
 			# clean name from all characters that would cause errors
 			cleanedName = re.sub('[^\w]', r'_', cleanedName)
 			# Check if already printed
@@ -240,7 +258,7 @@ if __name__ == '__main__':
 			# Print rule title
 			rule += "rule %s {\n" % cleanedName
 			rule += "\tmeta:\n"
-			rule += "\t\tdescription = \"Auto-generated rule on file %s\"\n" % file
+			rule += "\t\tdescription = \"%s - file %s\"\n" % ( args.p, file )
 			rule += "\t\tauthor = \"Yara Bulk Rule Generator by Florian Roth\"\n"
 			rule += "\t\thash = \"%s\"\n" % file_info_mal[filePath]["md5"]
 			rule += "\tstrings:\n"
@@ -252,6 +270,8 @@ if __name__ == '__main__':
 			# print rule
 			# Add to rules 
 			rules += rule
+			if args.o:
+				fh.write(rule)	
 			rule_count += 1
 		except Exception, e:
 			traceback.print_exc()		
@@ -259,11 +279,11 @@ if __name__ == '__main__':
 	# Write the rules file
 	if args.o:
 		try:
-			fh = open(args.o, 'w')
-			fh.write(rules)
 			fh.close()
 		except Exception, e:
 			traceback.print_exc()
+			
+	# Print rules to command line
 	if args.debug:
 		print rules
 		
