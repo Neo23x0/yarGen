@@ -11,10 +11,17 @@ hackware samples for which I had to write Yara rules.
 
 === What does Yara BRG do? 
 It takes two directories (optionally recursive) and extracts usable strings from 
-both of them. One directory contains the hackware/malware samples. The other one
+both of them. 
+One directory contains the hackware/malware samples. The other one
 is a directory of trusted files that gets analyzed as well to minimize the 
 chance to trigger false positives with the newly generated rules. 
 It is called "goodware directory" in the help text.
+
+With 0.5 I introduced a "Super Rule" generation in which he tries to map string
+appearances over various files in order to combine signatures to more powerful
+ones that match on different malware types of the same family. 
+The output still may be a bit redudant and it is your task to review the rules
+anyway. The super rules can be identified by "super_rule" meta variable. 
 
 === Command Line Parameters
 
@@ -36,6 +43,8 @@ optional arguments:
   -fs dir         Max file size to analyze (default: 2000000)
   -rc maxstrings  Maximum number of strings per rule (intelligent filtering
                   will be applied) (default: 20)
+  --nosuper       Don't try to create super rules that match against
+                  various files  
   --debug         Debug output
  
 === Examples
