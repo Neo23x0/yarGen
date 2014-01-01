@@ -26,7 +26,7 @@ anyway. The super rules can be identified by "super_rule" meta variable.
 === Command Line Parameters
 
 usage: yara-brg.py [-h] -m M -g G [-o output] [-l dir] [-rm] [-rg] [-fs dir]
-                   [-rc maxstrings] [--debug]
+                   [-rc maxstrings] [--nosuper] [--debug]
 
 Yara BRG
 
