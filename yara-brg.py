@@ -433,6 +433,7 @@ if __name__ == '__main__':
 				rule += "\tmeta:\n"
 				rule += "\t\tdescription = \"%s - from files %s\"\n" % ( args.p, file_listing )
 				rule += "\t\tauthor = \"%s\"\n" %args.a
+				rule += "\t\tsuper_rule = 1\n"
 				for i, filePath in enumerate(super_rule["files"]):
 					rule += "\t\thash%s = \"%s\"\n" % (str(i), file_info_mal[filePath]["md5"])
 				rule += "\tstrings:\n"
