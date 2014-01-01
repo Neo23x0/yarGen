@@ -3,7 +3,7 @@
 # A Bulk Rule Generator for Yara Rules
 #
 # Florian Roth
-# December 2013
+# January 2014
 
 Yara BRG is a generator for Yara rules. The reason why I developed another Yara
 rule generator was a special use case in which I had a directory full of 
