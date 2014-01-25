@@ -7,7 +7,7 @@
 #
 # Florian Roth
 # January 2014
-# v0.5
+# v0.6
 
 import os
 import sys
@@ -15,6 +15,7 @@ import betterwalk
 import argparse
 import re
 import traceback
+import zshelve
 from hashlib import md5
 from collections import OrderedDict
 
@@ -195,7 +196,7 @@ def printWelcome():
 	print "  "
 	print "  by Florian Roth"
 	print "  January 2014"
-	print "  Version 0.5"
+	print "  Version 0.6"
 	print " "
 	print "###############################################################################"                               
 
@@ -204,8 +205,10 @@ if __name__ == '__main__':
 	
 	# Parse Arguments
 	parser = argparse.ArgumentParser(description='Yara BRG')
-	parser.add_argument('-m', required=True, help='Path to scan for malware')
-	parser.add_argument('-g', required=True, help='Path to scan for goodware')
+	parser.add_argument('-m', help='Path to scan for malware')
+	parser.add_argument('-g', help='Path to scan for goodware (dont use the database shipped with yara-brg)')
+	parser.add_argument('-u', action='store_true', default=False, help='Update local goodware database (use with -g)')
+	parser.add_argument('-c', action='store_true', default=False, help='Create new local goodware database (use with -g)')	
 	parser.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yara_brg_rules.yar')
 	parser.add_argument('-p', help='Prefix for the rule description', metavar='prefix', default='Auto-generated rule')
 	parser.add_argument('-a', help='Athor Name', metavar='author', default='Yara Bulk Rule Generator')
@@ -223,222 +226,191 @@ if __name__ == '__main__':
 	printWelcome()
 
 	# Scan goodware files
-	print "Processing goodware files ..."
-	good_string_stats, file_info_good = parseDir(args.g, args.rg, False)
-	
-	# Scan malware files
-	print "Processing malware files ..."
-	mal_string_stats, file_info_mal = parseDir(args.m, args.rm, True)
+	if args.g:
+		print "Processing goodware files ..."
+		good_string_stats, file_info_good = parseDir(args.g, args.rg, False)
 		
-	# Generate Stats --------------------------------------------------
-	print "Generating statistical data ..."
-	file_strings = {}
-	combinations = {}
-	max_combi_count = 0
-	# Iterate through strings found in malware files
-	for string in mal_string_stats:
-		
-		# Skip if string is a good string
-		if string in good_string_stats:
-			continue
-		
-		# If string occurs not too often in malware files
-		if mal_string_stats[string]["count"] < 10:
-			if args.debug:
-				# print "String: " +string +" Found in: "+ ", ".join(mal_string_stats[string]["files"])
-				pass
-			# If string list in file dictionary not yet exists
-			for file in mal_string_stats[string]["files"]:
-				if file in file_strings:
-					# Append string
-					file_strings[file].append(string)
-				else:
-					# Create list and than add the first string to the file
-					file_strings[file] = []
-					file_strings[file].append(string)
-		
-		# SUPER RULES GENERATOR	- preliminary work					
-		# If a string occurs more than once in different files
-		if mal_string_stats[string]["count"] > 1:
-			if args.debug:
-				print "OVERLAP Count: %s\nString: \"%s\"%s" % ( mal_string_stats[string]["count"], string, "\nFILE: ".join(mal_string_stats[string]["files"]) )
-			# Create a cobination string from the file set that matches to that string
-			combi = ":".join(sorted(mal_string_stats[string]["files"]))
-			# print "STRING: " + string
-			# print "COMBI: " + combi
-			# If combination not yet known
-			if not combi in combinations:
-				combinations[combi] = {}
-				combinations[combi]["count"] = 1
-				combinations[combi]["strings"] = []
-				combinations[combi]["strings"].append(string)
-				combinations[combi]["files"] = mal_string_stats[string]["files"]
-			else:
-				combinations[combi]["count"] += 1
-				combinations[combi]["strings"].append(string)
-			# Set the maximum combination count
-			if combinations[combi]["count"] > max_combi_count:
-				max_combi_count = combinations[combi]["count"]
-				# print "Max Combi Count set to: %s" % max_combi_count 
-	
-	# SUPER RULE GENERATION -------------------------------------------
-	super_rules = []
-	if not args.nosuper:
-		print "Generating Super Rules ... (a lot of foo magic)"
-		for combi_count in range(max_combi_count, 1, -1):
-			for combi in combinations:
-				if combi_count == combinations[combi]["count"]:
-					#print "Count %s - Combi %s" % ( str(combinations[combi]["count"]), combi )
-					# Filter the string set
-					#print "BEFORE"
-					#print len(combinations[combi]["strings"])
-					string_set = combinations[combi]["strings"]
-					combinations[combi]["strings"] = []
-					combinations[combi]["strings"] = filterStringSet(string_set)
-					#print "AFTER"
-					#print len(combinations[combi]["strings"])
-					# Combi String count after filtering
-					#print "String count after filtering: %s" % str(len(combinations[combi]["strings"]))
-					# If the string set of the combination has a required size
-					if len(combinations[combi]["strings"]) >= int(args.rc):
-						# Remove the files in the combi rule from the simple set
-						for file in combinations[combi]["files"]:
-							if file in file_strings:
-								del file_strings[file]
-						# Add it as a super rule
-						print "Adding Super Rule with %s strings." % str(len(combinations[combi]["strings"]))
-						super_rules.append(combinations[combi])
-						
-	# PROCESS SIMPLE RULES					
-	# Apply intelligent filters ---------------------------------------
-	print "Applying intelligent filters to string findings ..."
-	for filePath in file_strings:
-					
-		# Replace the original string set with the filtered one
-		string_set = file_strings[filePath]
-		file_strings[filePath] = []
-		file_strings[filePath] = filterStringSet(string_set)
-	
-	# Write to file ---------------------------------------------------
-	if args.o:
-		try:
-			fh = open(args.o, 'w')
-		except Exception, e: 
-			traceback.print_exc()
-	
-	# GENERATE SIMPLE RULES -------------------------------------------
-	print "Generating simple rules ..."
-	rules = ""
-	printed_rules = {}
-	rule_count = 0
-	for filePath in file_strings:
-		try:
-			rule = ""
-			(path, file) = os.path.split(filePath)
-			# Prepare name
-			fileBase = os.path.splitext(file)[0]
-			# Create a clean new name
-			cleanedName = fileBase
-			# Adapt length of rule name
-			if len(fileBase) < 8: # if name is too short add part from path
-				cleanedName = path.split('\\')[-1:][0] + "_" + cleanedName
-			# File name starts with a number
-			if re.search(r'^[0-9]', cleanedName):
-				cleanedName = "sig_" + cleanedName
-			# clean name from all characters that would cause errors
-			cleanedName = re.sub('[^\w]', r'_', cleanedName)
-			# Check if already printed
-			if cleanedName in printed_rules:
-				printed_rules[cleanedName] += 1
-				cleanedName = cleanedName + "_" + str(printed_rules[cleanedName])
-			else:
-				printed_rules[cleanedName] = 1
-			# Print rule title
-			rule += "rule %s {\n" % cleanedName
-			rule += "\tmeta:\n"
-			rule += "\t\tdescription = \"%s - file %s\"\n" % ( args.p, file )
-			rule += "\t\tauthor = \"%s\"\n" %args.a
-			rule += "\t\thash = \"%s\"\n" % file_info_mal[filePath]["md5"]
-			rule += "\tstrings:\n"
-			# Adding the strings
-			for i, string in enumerate(file_strings[filePath]):
-				# Checking string length
-				fullword = True
-				if len(string) > 80:
-					# cut string
-					string = string[:80].rstrip("\\")
-					# not fullword anymore
-					fullword = False
-				# Add rule
-				if fullword:
-					rule += "\t\t$s%s = \"%s\" fullword\n" % ( str(i), string )
-				else:
-					rule += "\t\t$s%s = \"%s\"\n" % ( str(i), string )
-				# If too many string definitions found - cut it at the 
-				# count defined via command line param -rc
-				if i > int(args.rc):
-					break
-			rule += "\tcondition:\n"
-			rule += "\t\tall of them\n"		
-			rule += "}\n"
-			# print rule
-			# Add to rules string 
-			rules += rule
-			# Try to write rule to file
-			if args.o:
-				fh.write(rule)	
-			rule_count += 1
-		except Exception, e:
-			traceback.print_exc()	
+		# Update existing shelve
+		if args.u:
+			print "Updating local database ..."
+			try:
+				good_shelve = zshelve.btopen("good_strings.db")
+				print "Old database entries: %s" % len(good_shelve['good_string_stats'])
+				good_shelve['good_string_stats'] = dict(good_shelve['good_string_stats'].items() + good_string_stats.items())
+				good_shelve['file_info_good'] = dict(good_shelve['file_info_good'].items() + file_info_good.items())
+				print "New database entries: %s" % len(good_shelve['good_string_stats'])
+				good_shelve.sync()
+			except Exception, e:
+				traceback.print_exc()				
+			finally:
+				good_shelve.close()
 			
-	# GENERATE SUPER RULES --------------------------------------------
-	if not args.nosuper:
-		print "Generating super rules ..."
-		printed_combi = {}
-		super_rule_count = 0
-		for super_rule in super_rules:
+		# Create new shelve
+		if args.c:
+			print "Creating local database ..."
+			try:
+				if os.path.isfile("good_strings.db"):
+					os.remove("good_strings.db")
+				good_shelve = zshelve.btopen("good_strings.db")
+				good_shelve['good_string_stats'] = good_string_stats
+				good_shelve['file_info_good'] = file_info_good
+				good_shelve.sync()
+				print "New database with %s entries created." % len(good_shelve['good_string_stats'])
+			except Exception, e:
+				traceback.print_exc()
+			finally:
+				good_shelve.close()			
+	
+	# Dont use the Database
+	else:
+		print "Reading goodware files from database 'good_strings.db' ..."
+		try:
+			good_shelve = zshelve.btopen('good_strings.db')
+			good_string_stats = good_shelve['good_string_stats']
+			file_info_good = good_shelve['file_info_good']
+		except Exception, e:
+			traceback.print_exc()			
+		finally:
+			good_shelve.close()
+	
+	# If malware directory given
+	if args.m:
+		# Scan malware files
+		print "Processing malware files ..."
+		mal_string_stats, file_info_mal = parseDir(args.m, args.rm, True)
+			
+		# Generate Stats --------------------------------------------------
+		print "Generating statistical data ..."
+		file_strings = {}
+		combinations = {}
+		max_combi_count = 0
+		# Iterate through strings found in malware files
+		for string in mal_string_stats:
+			
+			# Skip if string is a good string
+			if string in good_string_stats:
+				continue
+			
+			# If string occurs not too often in malware files
+			if mal_string_stats[string]["count"] < 10:
+				if args.debug:
+					# print "String: " +string +" Found in: "+ ", ".join(mal_string_stats[string]["files"])
+					pass
+				# If string list in file dictionary not yet exists
+				for file in mal_string_stats[string]["files"]:
+					if file in file_strings:
+						# Append string
+						file_strings[file].append(string)
+					else:
+						# Create list and than add the first string to the file
+						file_strings[file] = []
+						file_strings[file].append(string)
+			
+			# SUPER RULES GENERATOR	- preliminary work					
+			# If a string occurs more than once in different files
+			if mal_string_stats[string]["count"] > 1:
+				if args.debug:
+					print "OVERLAP Count: %s\nString: \"%s\"%s" % ( mal_string_stats[string]["count"], string, "\nFILE: ".join(mal_string_stats[string]["files"]) )
+				# Create a cobination string from the file set that matches to that string
+				combi = ":".join(sorted(mal_string_stats[string]["files"]))
+				# print "STRING: " + string
+				# print "COMBI: " + combi
+				# If combination not yet known
+				if not combi in combinations:
+					combinations[combi] = {}
+					combinations[combi]["count"] = 1
+					combinations[combi]["strings"] = []
+					combinations[combi]["strings"].append(string)
+					combinations[combi]["files"] = mal_string_stats[string]["files"]
+				else:
+					combinations[combi]["count"] += 1
+					combinations[combi]["strings"].append(string)
+				# Set the maximum combination count
+				if combinations[combi]["count"] > max_combi_count:
+					max_combi_count = combinations[combi]["count"]
+					# print "Max Combi Count set to: %s" % max_combi_count 
+		
+		# SUPER RULE GENERATION -------------------------------------------
+		super_rules = []
+		if not args.nosuper:
+			print "Generating Super Rules ... (a lot of foo magic)"
+			for combi_count in range(max_combi_count, 1, -1):
+				for combi in combinations:
+					if combi_count == combinations[combi]["count"]:
+						#print "Count %s - Combi %s" % ( str(combinations[combi]["count"]), combi )
+						# Filter the string set
+						#print "BEFORE"
+						#print len(combinations[combi]["strings"])
+						string_set = combinations[combi]["strings"]
+						combinations[combi]["strings"] = []
+						combinations[combi]["strings"] = filterStringSet(string_set)
+						#print "AFTER"
+						#print len(combinations[combi]["strings"])
+						# Combi String count after filtering
+						#print "String count after filtering: %s" % str(len(combinations[combi]["strings"]))
+						# If the string set of the combination has a required size
+						if len(combinations[combi]["strings"]) >= int(args.rc):
+							# Remove the files in the combi rule from the simple set
+							for file in combinations[combi]["files"]:
+								if file in file_strings:
+									del file_strings[file]
+							# Add it as a super rule
+							print "Adding Super Rule with %s strings." % str(len(combinations[combi]["strings"]))
+							super_rules.append(combinations[combi])
+							
+		# PROCESS SIMPLE RULES					
+		# Apply intelligent filters ---------------------------------------
+		print "Applying intelligent filters to string findings ..."
+		for filePath in file_strings:
+						
+			# Replace the original string set with the filtered one
+			string_set = file_strings[filePath]
+			file_strings[filePath] = []
+			file_strings[filePath] = filterStringSet(string_set)
+		
+		# Write to file ---------------------------------------------------
+		if args.o:
+			try:
+				fh = open(args.o, 'w')
+			except Exception, e: 
+				traceback.print_exc()
+		
+		# GENERATE SIMPLE RULES -------------------------------------------
+		print "Generating simple rules ..."
+		rules = ""
+		printed_rules = {}
+		rule_count = 0
+		for filePath in file_strings:
 			try:
 				rule = ""
-				# Prepare Name
-				rule_name = ""
-				file_list = []
-				# Loop through files
-				for filePath in super_rule["files"]:
-					(path, file) = os.path.split(filePath)
-					file_list.append(file)
-					# Prepare name
-					fileBase = os.path.splitext(file)[0]
-					# Create a clean new name
-					cleanedName = fileBase
-					# Append it to the full name
-					rule_name += "_" + cleanedName
-					
-				# Create a list of files
-				file_listing = ", ".join(file_list)
-						
+				(path, file) = os.path.split(filePath)
+				# Prepare name
+				fileBase = os.path.splitext(file)[0]
+				# Create a clean new name
+				cleanedName = fileBase
+				# Adapt length of rule name
+				if len(fileBase) < 8: # if name is too short add part from path
+					cleanedName = path.split('\\')[-1:][0] + "_" + cleanedName
 				# File name starts with a number
-				if re.search(r'^[0-9]', rule_name):
-					rule_name = "sig_" + rule_name
+				if re.search(r'^[0-9]', cleanedName):
+					cleanedName = "sig_" + cleanedName
 				# clean name from all characters that would cause errors
-				rule_name = re.sub('[^\w]', r'_', rule_name)
+				cleanedName = re.sub('[^\w]', r'_', cleanedName)
 				# Check if already printed
-				if rule_name in printed_rules:
-					printed_combi[rule_name] += 1
-					rule_name = rule_name + "_" + str(printed_combi[rule_name])
+				if cleanedName in printed_rules:
+					printed_rules[cleanedName] += 1
+					cleanedName = cleanedName + "_" + str(printed_rules[cleanedName])
 				else:
-					printed_combi[rule_name] = 1
-						
+					printed_rules[cleanedName] = 1
 				# Print rule title
-				rule += "rule %s {\n" % rule_name
+				rule += "rule %s {\n" % cleanedName
 				rule += "\tmeta:\n"
-				rule += "\t\tdescription = \"%s - from files %s\"\n" % ( args.p, file_listing )
+				rule += "\t\tdescription = \"%s - file %s\"\n" % ( args.p, file )
 				rule += "\t\tauthor = \"%s\"\n" %args.a
-				rule += "\t\tsuper_rule = 1\n"
-				for i, filePath in enumerate(super_rule["files"]):
-					rule += "\t\thash%s = \"%s\"\n" % (str(i), file_info_mal[filePath]["md5"])
+				rule += "\t\thash = \"%s\"\n" % file_info_mal[filePath]["md5"]
 				rule += "\tstrings:\n"
 				# Adding the strings
-				for i, string in enumerate(super_rule["strings"]):
+				for i, string in enumerate(file_strings[filePath]):
 					# Checking string length
 					fullword = True
 					if len(string) > 80:
@@ -464,23 +436,100 @@ if __name__ == '__main__':
 				# Try to write rule to file
 				if args.o:
 					fh.write(rule)	
-				super_rule_count += 1
+				rule_count += 1
 			except Exception, e:
-				traceback.print_exc()				
-	
-	# Close the rules file --------------------------------------------
-	if args.o:
-		try:
-			fh.close()
-		except Exception, e:
-			traceback.print_exc()
+				traceback.print_exc()	
+				
+		# GENERATE SUPER RULES --------------------------------------------
+		if not args.nosuper:
+			print "Generating super rules ..."
+			printed_combi = {}
+			super_rule_count = 0
+			for super_rule in super_rules:
+				try:
+					rule = ""
+					# Prepare Name
+					rule_name = ""
+					file_list = []
+					# Loop through files
+					for filePath in super_rule["files"]:
+						(path, file) = os.path.split(filePath)
+						file_list.append(file)
+						# Prepare name
+						fileBase = os.path.splitext(file)[0]
+						# Create a clean new name
+						cleanedName = fileBase
+						# Append it to the full name
+						rule_name += "_" + cleanedName
+						
+					# Create a list of files
+					file_listing = ", ".join(file_list)
+							
+					# File name starts with a number
+					if re.search(r'^[0-9]', rule_name):
+						rule_name = "sig_" + rule_name
+					# clean name from all characters that would cause errors
+					rule_name = re.sub('[^\w]', r'_', rule_name)
+					# Check if already printed
+					if rule_name in printed_rules:
+						printed_combi[rule_name] += 1
+						rule_name = rule_name + "_" + str(printed_combi[rule_name])
+					else:
+						printed_combi[rule_name] = 1
+							
+					# Print rule title
+					rule += "rule %s {\n" % rule_name
+					rule += "\tmeta:\n"
+					rule += "\t\tdescription = \"%s - from files %s\"\n" % ( args.p, file_listing )
+					rule += "\t\tauthor = \"%s\"\n" %args.a
+					rule += "\t\tsuper_rule = 1\n"
+					for i, filePath in enumerate(super_rule["files"]):
+						rule += "\t\thash%s = \"%s\"\n" % (str(i), file_info_mal[filePath]["md5"])
+					rule += "\tstrings:\n"
+					# Adding the strings
+					for i, string in enumerate(super_rule["strings"]):
+						# Checking string length
+						fullword = True
+						if len(string) > 80:
+							# cut string
+							string = string[:80].rstrip("\\")
+							# not fullword anymore
+							fullword = False
+						# Add rule
+						if fullword:
+							rule += "\t\t$s%s = \"%s\" fullword\n" % ( str(i), string )
+						else:
+							rule += "\t\t$s%s = \"%s\"\n" % ( str(i), string )
+						# If too many string definitions found - cut it at the 
+						# count defined via command line param -rc
+						if i > int(args.rc):
+							break
+					rule += "\tcondition:\n"
+					rule += "\t\tall of them\n"		
+					rule += "}\n"
+					# print rule
+					# Add to rules string 
+					rules += rule
+					# Try to write rule to file
+					if args.o:
+						fh.write(rule)	
+					super_rule_count += 1
+				except Exception, e:
+					traceback.print_exc()				
+		
+		# Close the rules file --------------------------------------------
+		if args.o:
+			try:
+				fh.close()
+			except Exception, e:
+				traceback.print_exc()
+				
+		# Print rules to command line -------------------------------------
+		if args.debug:
+			print rules
 			
-	# Print rules to command line -------------------------------------
-	if args.debug:
-		print rules
-		
-	print "Generated %s SIMPLE rules." % str(rule_count)
-	if not args.nosuper: 
-		print "Generated %s SUPER rules." % str(super_rule_count)
-	print "All rules written to %s" % args.o
-		
+		print "Generated %s SIMPLE rules." % str(rule_count)
+		if not args.nosuper: 
+			print "Generated %s SUPER rules." % str(super_rule_count)
+		print "All rules written to %s" % args.o
+			
