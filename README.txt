@@ -10,31 +10,35 @@ rule generator was a special use case in which I had a directory full of
 hackware samples for which I had to write Yara rules. 
 
 === What does Yara BRG do? 
-It takes two directories (optionally recursive) and extracts usable strings from 
-both of them. 
-One directory contains the hackware/malware samples. The other one
-is a directory of trusted files that gets analyzed as well to minimize the 
-chance to trigger false positives with the newly generated rules. 
-It is called "goodware directory" in the help text.
+The main principle is the creation of yara rules from strings found in malware
+files while removing all strings that also appear in goodware files. 
 
-With 0.5 I introduced a "Super Rule" generation in which he tries to map string
-appearances over various files in order to combine signatures to more powerful
-ones that match on different malware types of the same family. 
-The output still may be a bit redudant and it is your task to review the rules
-anyway. The super rules can be identified by "super_rule" meta variable. 
+Since version 0.6 Yara BRG ships with a goodware strings database that can be 
+used to create your rules wihtout scanning any goodware directories and thus
+making the process of rule creation much faster.
+This way I minimized the chance to trigger false positives with the newly 
+generated rules.
+
+The rule generation process tries to identify similarities between the files 
+that get analyzed and then combines the strings to so called "super rules". 
+Up to now the super rule generation does not remove the simple rule for the
+files that have been combined in that single super rule. This means that there
+is some redundancy when super rules are created. It is you task to identify
+and check the super rules and remove the simple rules matching on a single 
+file if the super rule works well for you. 
 
 === Command Line Parameters
 
-usage: yara-brg.py [-h] -m M -g G [-o output] [-l dir] [-rm] [-rg] [-fs dir]
-                   [-rc maxstrings] [--nosuper] [--debug]
+usage: yara-brg.py [-h] [-m M] [-g G] [-o output] [-l dir] [-u] -[c] [-rm] [-rg] 
+				   [-fs dir] [-rc maxstrings] [--debug]
 
 Yara BRG
 
-required arguments:
+optional arguments:
   -m M            Path to scan for malware
   -g G            Path to scan for goodware
-
-optional arguments:
+  -c			  Create a new database with goodware strings
+  -u			  Update the goodware string database
   -h, --help      show this help message and exit
   -o output       Output rule file
   -l size         Minimal string length to consider
@@ -43,14 +47,31 @@ optional arguments:
   -fs dir         Max file size to analyze (default: 2000000)
   -rc maxstrings  Maximum number of strings per rule (intelligent filtering
                   will be applied) (default: 20)
-  --nosuper       Don't try to create super rules that match against
-                  various files  
   --debug         Debug output
  
 === Examples
 
-python yara-brg.py --debug -rm -g C:\Windows\System32 -m "X:\PortScanners"
+= Dont use the database and create your own string set from goodware files 
+  (behavior in versions pre 0.6)
+
+python yara-brg.py -rm -g C:\Windows\System32 -m "X:\PortScanners"
 
 Scan the System32 directory for goodware samples (-g). Scan the PortScanners
 directory for hackware samples (-m) and be recursive in this case (-rm). 
 Show debug output. 
+
+= Use the shipped database (FAST)
+
+python yara-brg.py -rm -m "X:\MAL"
+
+Use the shipped database of goodware strings and scan the malware directory 
+"X:\MAL" recursively. Create rules for all files included in this directory and 
+below.
+
+= Create a new goodware strings database
+
+python yara-brg.py -c -rg -g C:\Windows\System32
+
+= Update the goodware strings database
+
+python yara-brg.py -u -rg -g "C:\Program Files"
