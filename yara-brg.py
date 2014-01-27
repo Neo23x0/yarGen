@@ -42,7 +42,7 @@ def parseDir(dir, recursive=False, generateInfo=False):
 	for filePath in getFiles(dir, recursive):				
 		# Get Extension
 		extension = os.path.splitext(filePath)[1];
-		if not extension in [ ".exe", ".dll", ".cmd", ".asp", ".php", ".jsp" ]:
+		if not extension in [ ".exe", ".dll", ".cmd", ".asp", ".php", ".jsp", ".bin", ".infected" ]:
 			continue
 		
 		# Size Check
@@ -196,7 +196,7 @@ def printWelcome():
 	print "  "
 	print "  by Florian Roth"
 	print "  January 2014"
-	print "  Version 0.6"
+	print "  Version 0.6.1"
 	print " "
 	print "###############################################################################"                               
 
@@ -236,8 +236,12 @@ if __name__ == '__main__':
 			try:
 				good_shelve = zshelve.btopen("good_strings.db")
 				print "Old database entries: %s" % len(good_shelve['good_string_stats'])
-				good_shelve['good_string_stats'] = dict(good_shelve['good_string_stats'].items() + good_string_stats.items())
-				good_shelve['file_info_good'] = dict(good_shelve['file_info_good'].items() + file_info_good.items())
+				new_good = {}
+				new_info = {}
+				new_good = dict(good_shelve['good_string_stats'].items() + good_string_stats.items())
+				new_info = dict(good_shelve['good_string_stats'].items() + good_string_stats.items())
+				good_shelve['good_string_stats'] = new_good
+				good_shelve['file_info_good'] = new_info
 				print "New database entries: %s" % len(good_shelve['good_string_stats'])
 				good_shelve.sync()
 			except Exception, e:
@@ -265,7 +269,8 @@ if __name__ == '__main__':
 	else:
 		print "Reading goodware files from database 'good_strings.db' ..."
 		try:
-			good_shelve = zshelve.btopen('good_strings.db')
+			good_shelve = zshelve.btopen("good_strings.db")
+			print good_shelve.keys()
 			good_string_stats = good_shelve['good_string_stats']
 			file_info_good = good_shelve['file_info_good']
 		except Exception, e:
