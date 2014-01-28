@@ -51,6 +51,15 @@ optional arguments:
  
 === Examples
 
+= Use the shipped database (FAST) to create some rules
+
+python yara-brg.py -rm -m "X:\MAL\Case1401"
+
+Use the shipped database of goodware strings and scan the malware directory 
+"X:\MAL" recursively. Create rules for all files included in this directory and 
+below. A file named 'yara_brg_rules.yar' will be generated in the current 
+directory.
+
 = Dont use the database and create your own string set from goodware files 
   (behavior in versions pre 0.6)
 
@@ -59,14 +68,6 @@ python yara-brg.py -rm -g C:\Windows\System32 -m "X:\PortScanners"
 Scan the System32 directory for goodware samples (-g). Scan the PortScanners
 directory for hackware samples (-m) and be recursive in this case (-rm). 
 Show debug output. 
-
-= Use the shipped database (FAST)
-
-python yara-brg.py -rm -m "X:\MAL"
-
-Use the shipped database of goodware strings and scan the malware directory 
-"X:\MAL" recursively. Create rules for all files included in this directory and 
-below.
 
 = Create a new goodware strings database
 
