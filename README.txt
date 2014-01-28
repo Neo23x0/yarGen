@@ -25,7 +25,12 @@ Up to now the super rule generation does not remove the simple rule for the
 files that have been combined in that single super rule. This means that there
 is some redundancy when super rules are created. It is you task to identify
 and check the super rules and remove the simple rules matching on a single 
-file if the super rule works well for you. 
+file if the super rule works well for you.
+
+=== Extensions to check
+
+Check line 45 in the code to extend the list of file extensions to check during
+the scanning. If you don't get any results, this might be the cause. 
 
 === Command Line Parameters
 
