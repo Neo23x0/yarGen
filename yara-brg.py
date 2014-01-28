@@ -270,7 +270,7 @@ if __name__ == '__main__':
 		print "Reading goodware files from database 'good_strings.db' ..."
 		try:
 			good_shelve = zshelve.btopen("good_strings.db")
-			print good_shelve.keys()
+			# print good_shelve.keys()
 			good_string_stats = good_shelve['good_string_stats']
 			file_info_good = good_shelve['file_info_good']
 		except Exception, e:
