@@ -35,7 +35,7 @@ the scanning. If you don't get any results, this might be the cause.
 === Command Line Parameters
 
 usage: yara-brg.py [-h] [-m M] [-g G] [-o output] [-l dir] [-u] -[c] [-rm] [-rg] 
-				   [-fs dir] [-rc maxstrings] [--debug]
+				   [-ie] [-fs dir] [-rc maxstrings] [--debug]
 
 Yara BRG
 
@@ -49,6 +49,7 @@ optional arguments:
   -l size         Minimal string length to consider
   -rm             Recursive scan of malware directories
   -rg             Recursive scan of goodware directories
+  -ie	          Ignore the extension of the files and analyze all
   -fs dir         Max file size to analyze (default: 2000000)
   -rc maxstrings  Maximum number of strings per rule (intelligent filtering
                   will be applied) (default: 20)
@@ -58,12 +59,13 @@ optional arguments:
 
 = Use the shipped database (FAST) to create some rules
 
-python yara-brg.py -rm -m "X:\MAL\Case1401"
+python yara-brg.py -rm -ie -m "X:\MAL\Case1401"
 
 Use the shipped database of goodware strings and scan the malware directory 
 "X:\MAL" recursively. Create rules for all files included in this directory and 
 below. A file named 'yara_brg_rules.yar' will be generated in the current 
-directory.
+directory. All files in that directory are malware files and should be analyzed
+regardless of their extension (--ie)
 
 = Dont use the database and create your own string set from goodware files 
   (behavior in versions pre 0.6)

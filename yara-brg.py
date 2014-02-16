@@ -11,7 +11,6 @@
 
 import os
 import sys
-import betterwalk
 import argparse
 import re
 import traceback
@@ -22,7 +21,7 @@ from collections import OrderedDict
 def getFiles(dir, recursive):
 	# Recursive
 	if recursive:
-		for root, directories, files in betterwalk.walk (dir, followlinks=False):
+		for root, directories, files in os.walk (dir, followlinks=False):
 			for filename in files:
 				filePath = os.path.join(root,filename)
 				yield filePath
@@ -42,7 +41,7 @@ def parseDir(dir, recursive=False, generateInfo=False):
 	for filePath in getFiles(dir, recursive):				
 		# Get Extension
 		extension = os.path.splitext(filePath)[1];
-		if not extension in [ ".exe", ".dll", ".cmd", ".asp", ".php", ".jsp", ".bin", ".infected" ]:
+		if not extension in [ ".exe", ".dll", ".cmd", ".asp", ".php", ".jsp", ".bin", ".infected" ] and not args.ie:
 			continue
 		
 		# Size Check
@@ -196,7 +195,7 @@ def printWelcome():
 	print "  "
 	print "  by Florian Roth"
 	print "  January 2014"
-	print "  Version 0.6.1"
+	print "  Version 0.6.2"
 	print " "
 	print "###############################################################################"                               
 
@@ -215,6 +214,7 @@ if __name__ == '__main__':
 	parser.add_argument('-l', help='Minimal string length to consider (default=6)', metavar='size', default=6)
 	parser.add_argument('-rm', action='store_true', default=False, help='Recursive scan of malware directories')
 	parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
+	parser.add_argument('-ie', action='store_true', default=False, help='Ignore file extension (see source to adjust default extensions to scan)')	
 	parser.add_argument('-fs', help='Max file size to analyze (default=2000000)', metavar='dir', default=2000000)
 	parser.add_argument('-rc', help='Maximum number of strings per rule (default=10, intelligent filtering will be applied)', metavar='maxstrings', default=10)
 	parser.add_argument('--nosuper', action='store_true', default=False, help='Don\'t try to create super rules that match against various files')
