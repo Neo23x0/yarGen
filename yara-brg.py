@@ -88,13 +88,13 @@ def parseDir(dir, recursive=False, generateInfo=False):
 def extractStrings(filePath, generateInfo):
 	# String list
 	strings = []
+	md5sum = ""
 	# Read file data
 	try:
 		f = open(filePath, 'rb')
 		filedata = f.read()
 		f.close()
 		# Generate md5
-		md5sum = ""
 		if generateInfo:
 			md5sum = md5(filedata).hexdigest()
 		# Read strings to list
@@ -216,7 +216,7 @@ if __name__ == '__main__':
 	parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
 	parser.add_argument('-ie', action='store_true', default=False, help='Ignore file extension (see source to adjust default extensions to scan)')	
 	parser.add_argument('-fs', help='Max file size to analyze (default=2000000)', metavar='dir', default=2000000)
-	parser.add_argument('-rc', help='Maximum number of strings per rule (default=10, intelligent filtering will be applied)', metavar='maxstrings', default=10)
+	parser.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering will be applied)', metavar='maxstrings', default=20)
 	parser.add_argument('--nosuper', action='store_true', default=False, help='Don\'t try to create super rules that match against various files')
 	parser.add_argument('--debug', action='store_true', default=False, help='Debug output')
 	
