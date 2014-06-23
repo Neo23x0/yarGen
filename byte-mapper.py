@@ -127,7 +127,7 @@ def printHeatLegend(fileCount):
 	print ""
 	print Fore.GREEN + 'GREEN\tContent of all %s files' % str(fileCount) + Fore.WHITE
 	if fileCount > 1:
-		print Fore.CYAN + 'YELLOW\tContent of %s files' % str(fileCount-1) + Fore.WHITE
+		print Fore.CYAN + 'CYAN\tContent of %s files' % str(fileCount-1) + Fore.WHITE
 	if fileCount > 2:
 		print Fore.YELLOW + 'YELLOW\tContent of %s files' % str(fileCount-2) + Fore.WHITE
 	if fileCount > 3:
