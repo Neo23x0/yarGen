@@ -6,8 +6,8 @@
 # A bulk rule generator for Yara rules
 #
 # Florian Roth
-# January 2014
-# v0.6
+# July 2014
+# v0.7b Unicode Support
 
 import os
 import sys
@@ -15,7 +15,9 @@ import argparse
 import re
 import traceback
 import zshelve
-from hashlib import md5
+import operator
+from lib import gibDetector
+from hashlib import sha1
 from collections import OrderedDict
 
 def getFiles(dir, recursive):
@@ -54,19 +56,19 @@ def parseDir(dir, recursive=False, generateInfo=False):
 			pass
 			
 		# Extract strings from file
-		( strings, md5sum ) = extractStrings(filePath, generateInfo)
+		( strings, sha1sum ) = extractStrings(filePath, generateInfo)
 		
 		# Skip if MD5 already known - avoid duplicate files
-		if md5sum in known_md5s:
+		if sha1sum in known_md5s:
 			#if args.debug:
 			print "Skipping strings from %s due to MD5 duplicate detection" % filePath
 			continue
 		
 		# Add md5 value
 		if generateInfo:
-			known_md5s.append(md5sum)
+			known_md5s.append(sha1sum)
 			file_info[filePath] = {}
-			file_info[filePath]["md5"] = md5sum
+			file_info[filePath]["md5"] = sha1sum
 		
 		# Add strings to statistics
 		invalid_count = 0
@@ -88,98 +90,91 @@ def parseDir(dir, recursive=False, generateInfo=False):
 def extractStrings(filePath, generateInfo):
 	# String list
 	strings = []
-	md5sum = ""
+	escaped_strings	= []		
+	sha1sum = ""
 	# Read file data
 	try:
 		f = open(filePath, 'rb')
-		filedata = f.read()
+		data = f.read()
 		f.close()
 		# Generate md5
 		if generateInfo:
-			md5sum = md5(filedata).hexdigest()
-		# Read strings to list
-		string = ""
-		for byte in filedata:
-			if isAscii(byte):
-				string += byte 
-			else:
-				if len(string) >= args.l:
-					# Escape string and than add it to the list
-					string = string.replace('\\','\\\\')
-					string = string.replace('"','\\"')
-					if not string in strings:
-						strings.append(string)
-						if args.debug:
-							#print string
-							pass
-				string = ""
-		# Check if last bytes have been string and not yet saved to list
-		if len(string) > 0:
-			string = string.replace('\\','\\\\')
-			string = string.replace('"','\\"')
-			if not string in strings:
-				strings.append(string)
+			sha1sum = sha1(data).hexdigest()
+		
+		# Read strings
+		strings = re.findall("[\x1f-\x7e]{6,}", data)
+		strings += [str("UTF16LE:%s" % ws.decode("utf-16le")) for ws in re.findall("(?:[\x1f-\x7e][\x00]){6,}", data)]
+		
+		# Escape strings
+		for string in strings:
+			# Check if last bytes have been string and not yet saved to list
+			if len(string) > 0:
+				string = string.replace('\\','\\\\')
+				string = string.replace('"','\\"')
+				if not string in escaped_strings:
+					escaped_strings.append(string)					
+				
 	except Exception,e:
 		if args.debug:
 			traceback.print_exc()
 		pass
 		
-	return strings, md5sum
+	return escaped_strings, sha1sum
 
 def filterStringSet(string_set):
-
-	string_count = len(string_set)
 	
-	# filter = [ "words", "length" ] # first filter
-	filter = "words"
 	# This is the only set we have - even if it's a weak one
-	last_useful_set = string_set
+	useful_set = []
 	
-	# As long as too many strings are in the result set		
-	while string_count > int(args.rc):
+	# Gibberish Detector
+	gib = gibDetector.GibDetector()
+	
+	# String scores
+	stringScores = {}
+	for string in string_set:
 			
+		# Gibberish Score
+		score = gib.getScore(string)
+		#score = 1
+		if score > 10:
+			score = 1
 		if args.debug:
-			print "Filtering: " + filePath
-			
-		# Length filter
-		if filter == "length":
-			# Get the shortest string length
-			shortest_string_length = len(min(string_set, key=len))
-			if args.debug:
-				print "BEFORE LENGTH FILTER: Size %s" % len(string_set)
-			string_set = [ s for s in string_set if len(s) != shortest_string_length ]
-			if args.debug:
-				print "AFTER LENGTH FILTER: Size %s" % len(string_set)
-				
-		# Words filter
-		if filter == "words":
-			new_string_set = []
-			for string in string_set:
-				if re.search(r'[qwrtzpsdfghjklxcvbnm][euioa][qwrtzpsdfghjklxcvbnm]', string, re.IGNORECASE):
-					new_string_set.append(string)
-
-			# If new string count is too low - try the other filter
-			if not len(new_string_set) < int(args.rc):
-				# Replace string set
-				string_set = new_string_set					
-			# Now set filter to length
-			filter = "length"					
-
-		# Count the new size
-		string_count = len(string_set)
+			print "%s - %s" % ( str(score), string)
+		stringScores[string] = score
 		
-		# Save the last useful set
-		if string_count > 3:
-			last_useful_set = string_set
-			if args.debug:
-				print "Setting last useful set with a length of %s" % str(string_count)
+		# Length Score
+		length = len(string)
+		if length > int(args.l) and length < int(args.s):
+			stringScores[string] += round( len(string) / 10, 2)
+		if length >= int(args.s):
+			stringScores[string] += 1
+			
+		# Certain strings addons
+		if re.search(r'([A-Za-z]:\\|\.exe|\.dll|\.[a-z][a-z][a-z]$)', string, re.IGNORECASE):
+			print "Match on : %s" % string
+			stringScores[string] += 4
+			
+		# Certain string reduce	
+		if re.search(r'(rundll32\.exe$|kernel\.dll$)', string, re.IGNORECASE):
+			stringScores[string] -= 4			
 	
-	# If filtering has gone too far
-	if string_count < int(args.rc):
-		string_set = last_useful_set
+	sorted_set = sorted(stringScores.iteritems(), key=operator.itemgetter(1), reverse=True)
+	
+	if args.debug:
+		print sorted_set
+	# Only the top X strings
+	c = 0
+	result_set = []
+	for string in sorted_set:
+		result_set.append(string[0])
+		c += 1
+		if c > int(args.rc):
+			break
+			
+	print result_set
 	
 	# return the filtered set
-	return last_useful_set
+	return result_set
 	
 def isAscii(b):
 	if ord(b)<127 and ord(b)>31 :
@@ -194,8 +189,8 @@ def printWelcome():
 	print "   /_/\_,_/_/  \_,_/ /____/_/|_|\___/  "
 	print "  "
 	print "  by Florian Roth"
-	print "  January 2014"
-	print "  Version 0.6.2"
+	print "  July 2014"
+	print "  Version 0.7b"
 	print " "
 	print "###############################################################################"                               
 
@@ -211,7 +206,8 @@ if __name__ == '__main__':
 	parser.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yara_brg_rules.yar')
 	parser.add_argument('-p', help='Prefix for the rule description', metavar='prefix', default='Auto-generated rule')
 	parser.add_argument('-a', help='Athor Name', metavar='author', default='Yara Bulk Rule Generator')
-	parser.add_argument('-l', help='Minimal string length to consider (default=6)', metavar='size', default=6)
+	parser.add_argument('-l', help='Minimum string length to consider (default=6)', metavar='min-size', default=5)
+	parser.add_argument('-s', help='Maximum length to consider (default=64)', metavar='max-size', default=64)
 	parser.add_argument('-rm', action='store_true', default=False, help='Recursive scan of malware directories')
 	parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
 	parser.add_argument('-ie', action='store_true', default=False, help='Ignore file extension (see source to adjust default extensions to scan)')	
@@ -424,10 +420,14 @@ if __name__ == '__main__':
 						# not fullword anymore
 						fullword = False
 					# Add rule
+					wide = ""
+					if string[:8] == "UTF16LE:":
+						string = string[8:]
+						wide = " wide"
 					if fullword:
-						rule += "\t\t$s%s = \"%s\" fullword\n" % ( str(i), string )
+						rule += "\t\t$s%s = \"%s\" fullword%s\n" % ( str(i), string, wide )
 					else:
-						rule += "\t\t$s%s = \"%s\"\n" % ( str(i), string )
+						rule += "\t\t$s%s = \"%s\"%s\n" % ( str(i), string, wide )
 					# If too many string definitions found - cut it at the 
 					# count defined via command line param -rc
 					if i > int(args.rc):
@@ -501,10 +501,14 @@ if __name__ == '__main__':
 							# not fullword anymore
 							fullword = False
 						# Add rule
+						wide = ""
+						if string[:8] == "UTF16LE:":
+							string = string[8:]
+							wide = " wide"
 						if fullword:
-							rule += "\t\t$s%s = \"%s\" fullword\n" % ( str(i), string )
+							rule += "\t\t$s%s = \"%s\" fullword%s\n" % ( str(i), string, wide )
 						else:
-							rule += "\t\t$s%s = \"%s\"\n" % ( str(i), string )
+							rule += "\t\t$s%s = \"%s\"%s\n" % ( str(i), string, wide )
 						# If too many string definitions found - cut it at the 
 						# count defined via command line param -rc
 						if i > int(args.rc):
