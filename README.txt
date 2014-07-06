@@ -3,7 +3,7 @@
 # A Bulk Rule Generator for Yara Rules
 #
 # Florian Roth
-# January 2014
+# July 2014
 
 Yara BRG is a generator for Yara rules. The reason why I developed another Yara
 rule generator was a special use case in which I had a directory full of 
@@ -19,6 +19,11 @@ making the process of rule creation much faster.
 This way I minimized the chance to trigger false positives with the newly 
 generated rules.
 
+Since version 0.7 it supports utf16le encoded strings (wide; Unicode strings) 
+strings and uses the GibberishDetector of Rob Renaud to value strings higher
+that contain language words in contrast to totally mixed up character chains.  
+https://github.com/rrenaud/Gibberish-Detector
+
 The rule generation process tries to identify similarities between the files 
 that get analyzed and then combines the strings to so called "super rules". 
 Up to now the super rule generation does not remove the simple rule for the
@@ -33,27 +38,35 @@ Check line 45 in the code to extend the list of file extensions to check during
 the scanning. If you don't get any results, this might be the cause. 
 
 === Command Line Parameters
-
-usage: yara-brg.py [-h] [-m M] [-g G] [-o output] [-l dir] [-u] -[c] [-rm] [-rg] 
-				   [-ie] [-fs dir] [-rc maxstrings] [--debug]
+usage: yara-brg.py [-h] [-m M] [-g G] [-u] [-c] [-o output_rule_file]
+                   [-p prefix] [-a author] [-l min-size] [-s max-size] [-rm]
+                   [-rg] [-ie] [-fs dir] [-rc maxstrings] [--nosuper]
+                   [--debug]
 
 Yara BRG
 
 optional arguments:
-  -m M            Path to scan for malware
-  -g G            Path to scan for goodware
-  -c			  Create a new database with goodware strings
-  -u			  Update the goodware string database
-  -h, --help      show this help message and exit
-  -o output       Output rule file
-  -l size         Minimal string length to consider
-  -rm             Recursive scan of malware directories
-  -rg             Recursive scan of goodware directories
-  -ie	          Ignore the extension of the files and analyze all
-  -fs dir         Max file size to analyze (default: 2000000)
-  -rc maxstrings  Maximum number of strings per rule (intelligent filtering
-                  will be applied) (default: 20)
-  --debug         Debug output
+  -h, --help           show this help message and exit
+  -m M                 Path to scan for malware
+  -g G                 Path to scan for goodware (dont use the database
+                       shipped with yara-brg)
+  -u                   Update local goodware database (use with -g)
+  -c                   Create new local goodware database (use with -g)
+  -o output_rule_file  Output rule file
+  -p prefix            Prefix for the rule description
+  -a author            Athor Name
+  -l min-size          Minimum string length to consider (default=6)
+  -s max-size          Maximum length to consider (default=64)
+  -rm                  Recursive scan of malware directories
+  -rg                  Recursive scan of goodware directories
+  -ie                  Ignore file extension (see source to adjust default
+                       extensions to scan)
+  -fs dir              Max file size to analyze (default=2000000)
+  -rc maxstrings       Maximum number of strings per rule (default=20,
+                       intelligent filtering will be applied)
+  --nosuper            Don't try to create super rules that match against
+                       various files
+  --debug              Debug output
  
 === Examples
 
