@@ -7,7 +7,7 @@
 #
 # Florian Roth
 # July 2014
-# v0.7b Unicode Support
+# v0.7.2b Unicode Support
 
 import os
 import sys
@@ -135,7 +135,7 @@ def filterStringSet(string_set):
 			
 		# Gibberish Score
 		score = gib.getScore(string)
-		#score = 1
+		# score = 1
 		if score > 10:
 			score = 1
 		if args.debug:
@@ -145,15 +145,35 @@ def filterStringSet(string_set):
 		# Length Score
 		length = len(string)
 		if length > int(args.l) and length < int(args.s):
-			stringScores[string] += round( len(string) / 10, 2)
+			stringScores[string] += round( len(string) / 8, 2)
 		if length >= int(args.s):
 			stringScores[string] += 1
 			
 		# Certain strings addons
-		if re.search(r'([A-Za-z]:\\|\.exe|\.dll|\.[a-z][a-z][a-z]$)', string, re.IGNORECASE):
-			print "Match on : %s" % string
+		if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.[a-z][a-z][a-z]$)', string, re.IGNORECASE):
+			# print "Match on : %s" % string
 			stringScores[string] += 4
-			
+		if re.search(r'(User\-Agent|ftp|irc|smtp|command|GET|POST)', string, re.IGNORECASE):
+			stringScores[string] += 5
+		if re.search(r'(error|http|port|closed|failed|failure)', string, re.IGNORECASE):
+			stringScores[string] += 3
+		if re.search(r'(dump|sniff|scan|vulnerable|credentials|creds|coded|p0c|Content|host)', string, re.IGNORECASE):
+			stringScores[string] += 6		
+		if re.search(r'\.[a-zA-Z]{3}\b', string):
+			stringScores[string] += 3
+		if re.search(r'^[A-Z]{6,}$', string):
+			stringScores[string] += 2			
+		if re.search(r'^[a-z]{6,}$', string):
+			stringScores[string] += 2
+		if re.search(r'^[a-z\s]{6,}$', string):
+			stringScores[string] += 2
+		if re.search(r'^[A-Z][a-z]{5,}', string):
+			stringScores[string] += 2				
+		if re.search(r'(thawte|trustcenter|signing|class|crl|CA|certificate|assembly)', string, re.IGNORECASE):
+			stringScores[string] -= 4
+		if re.search(r'( \-[a-z]{,2}[\s]?[0-9]?| /[a-z]+[\s]?[\w]*)', string, re.IGNORECASE):
+			stringScores[string] += 4			
+						
 		# Certain string reduce	
 		if re.search(r'(rundll32\.exe$|kernel\.dll$)', string, re.IGNORECASE):
 			stringScores[string] -= 4			
@@ -190,7 +210,7 @@ def printWelcome():
 	print "  "
 	print "  by Florian Roth"
 	print "  July 2014"
-	print "  Version 0.7b"
+	print "  Version 0.7.2b"
 	print " "
 	print "###############################################################################"                               
 
