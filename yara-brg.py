@@ -440,14 +440,14 @@ if __name__ == '__main__':
 						# not fullword anymore
 						fullword = False
 					# Add rule
-					wide = ""
+					enc = " ascii"
 					if string[:8] == "UTF16LE:":
 						string = string[8:]
-						wide = " wide"
+						enc = " wide"
 					if fullword:
-						rule += "\t\t$s%s = \"%s\" fullword%s\n" % ( str(i), string, wide )
+						rule += "\t\t$s%s = \"%s\" fullword%s\n" % ( str(i), string, enc )
 					else:
-						rule += "\t\t$s%s = \"%s\"%s\n" % ( str(i), string, wide )
+						rule += "\t\t$s%s = \"%s\"%s\n" % ( str(i), string, enc )
 					# If too many string definitions found - cut it at the 
 					# count defined via command line param -rc
 					if i > int(args.rc):
