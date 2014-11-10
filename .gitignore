@@ -6,3 +6,4 @@ yara-brg-portscanner.yar
 yara-brg-webshells.yar
 
 webshells.yar
+creditcards.yar
