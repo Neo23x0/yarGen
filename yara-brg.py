@@ -16,6 +16,7 @@ import re
 import traceback
 import zshelve
 import operator
+import datetime
 from lib import gibDetector
 from hashlib import sha1
 from collections import OrderedDict
@@ -195,6 +196,12 @@ def filterStringSet(string_set):
 	
 	# return the filtered set
 	return result_set
+
+def getTimestampBasic(date_obj=None):
+	if not date_obj:
+		date_obj = datetime.datetime.now()
+	date_str = date_obj.strftime("%Y/%m/%d")
+	return date_str
 	
 def isAscii(b):
 	if ord(b)<127 and ord(b)>31 :
@@ -209,8 +216,8 @@ def printWelcome():
 	print "   /_/\_,_/_/  \_,_/ /____/_/|_|\___/  "
 	print "  "
 	print "  by Florian Roth"
-	print "  July 2014"
-	print "  Version 0.7.2b"
+	print "  December 2014"
+	print "  Version 0.8.0"
 	print " "
 	print "###############################################################################"                               
 
@@ -427,7 +434,8 @@ if __name__ == '__main__':
 				rule += "rule %s {\n" % cleanedName
 				rule += "\tmeta:\n"
 				rule += "\t\tdescription = \"%s - file %s\"\n" % ( args.p, file )
-				rule += "\t\tauthor = \"%s\"\n" %args.a
+				rule += "\t\tauthor = \"%s\"\n" % args.a
+				rule += "\t\tdate = \"%s\"\n" % getTimestampBasic()
 				rule += "\t\thash = \"%s\"\n" % file_info_mal[filePath]["md5"]
 				rule += "\tstrings:\n"
 				# Adding the strings
@@ -506,7 +514,8 @@ if __name__ == '__main__':
 					rule += "rule %s {\n" % rule_name
 					rule += "\tmeta:\n"
 					rule += "\t\tdescription = \"%s - from files %s\"\n" % ( args.p, file_listing )
-					rule += "\t\tauthor = \"%s\"\n" %args.a
+					rule += "\t\tauthor = \"%s\"\n" % args.a
+					rule += "\t\tdate = \"%s\"\n" % getTimestampBasic()					
 					rule += "\t\tsuper_rule = 1\n"
 					for i, filePath in enumerate(super_rule["files"]):
 						rule += "\t\thash%s = \"%s\"\n" % (str(i), file_info_mal[filePath]["md5"])
