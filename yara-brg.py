@@ -6,8 +6,8 @@
 # A bulk rule generator for Yara rules
 #
 # Florian Roth
-# July 2014
-# v0.7.2b Unicode Support
+# December 2014
+# v0.8.2 Unicode Support
 
 import os
 import sys
@@ -17,6 +17,8 @@ import traceback
 import zshelve
 import operator
 import datetime
+import time
+from lxml import etree
 from lib import gibDetector
 from hashlib import sha1
 from collections import OrderedDict
@@ -44,7 +46,7 @@ def parseDir(dir, recursive=False, generateInfo=False):
 	for filePath in getFiles(dir, recursive):				
 		# Get Extension
 		extension = os.path.splitext(filePath)[1];
-		if not extension in [ ".exe", ".dll", ".cmd", ".asp", ".php", ".jsp", ".bin", ".infected" ] and not args.ie:
+		if not extension in [ ".exe", ".dll", ".cmd", ".asp", ".php", ".jsp", ".bin", ".infected" ] and args.oe:
 			continue
 		
 		# Size Check
@@ -149,17 +151,36 @@ def filterStringSet(string_set):
 			stringScores[string] += round( len(string) / 8, 2)
 		if length >= int(args.s):
 			stringScores[string] += 1
+
+		# In suspicious strings
+		if string in suspicious_strings:
+			stringScores[string] += 6
 			
 		# Certain strings addons
-		if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.[a-z][a-z][a-z]$)', string, re.IGNORECASE):
-			# print "Match on : %s" % string
+		if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.[a-z][a-z][a-z])', string, re.IGNORECASE):
 			stringScores[string] += 4
+		if re.search(r'(cmd.exe|system32|users|Documents and|SystemRoot|Grant|hello|password|process|log|unc)', string, re.IGNORECASE):
+			stringScores[string] += 5
 		if re.search(r'(User\-Agent|ftp|irc|smtp|command|GET|POST)', string, re.IGNORECASE):
 			stringScores[string] += 5
-		if re.search(r'(error|http|port|closed|failed|failure)', string, re.IGNORECASE):
+		if re.search(r'(error|http|port|closed|failed|failure|version)', string, re.IGNORECASE):
 			stringScores[string] += 3
+		if re.search(r'(Mozilla|MSIE|Windows NT|Macintosh;)', string, re.IGNORECASE):
+			stringScores[string] += 4
+		if re.search(r'(TEMP|Temporary|Appdata|Recycler)', string, re.IGNORECASE):
+			stringScores[string] += 4
+		if re.search(r'(scan|sniff|poison|fake|spoof|sweep|dump|flood|inject|forward|command)', string, re.IGNORECASE):
+			stringScores[string] += 5
+		if re.search(r'(address|port|listen|remote|local|process|service|mutex|pipe|frame|key|lookup|connection)', string, re.IGNORECASE):
+			stringScores[string] += 3
+		if re.search(r'([D-Z]:\\)', string, re.IGNORECASE):
+			stringScores[string] += 4
+		if re.search(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b', string, re.IGNORECASE): # IP Address
+			stringScores[string] += 4
 		if re.search(r'(dump|sniff|scan|vulnerable|credentials|creds|coded|p0c|Content|host)', string, re.IGNORECASE):
-			stringScores[string] += 6		
+			stringScores[string] += 6
+		if re.search(r'( by | coded | c0d3d |cr3w\b)', string, re.IGNORECASE):
+			stringScores[string] += 2
 		if re.search(r'\.[a-zA-Z]{3}\b', string):
 			stringScores[string] += 3
 		if re.search(r'^[A-Z]{6,}$', string):
@@ -169,7 +190,9 @@ def filterStringSet(string_set):
 		if re.search(r'^[a-z\s]{6,}$', string):
 			stringScores[string] += 2
 		if re.search(r'^[A-Z][a-z]{5,}', string):
-			stringScores[string] += 2				
+			stringScores[string] += 2
+		if re.search(r'(%[a-z][:\-,;]|\\\\%s|\\\\[A-Z0-9a-z%]+\\[A-Z0-9a-z%]+)', string):
+			stringScores[string] += 3
 		if re.search(r'(thawte|trustcenter|signing|class|crl|CA|certificate|assembly)', string, re.IGNORECASE):
 			stringScores[string] -= 4
 		if re.search(r'( \-[a-z]{,2}[\s]?[0-9]?| /[a-z]+[\s]?[\w]*)', string, re.IGNORECASE):
@@ -197,6 +220,14 @@ def filterStringSet(string_set):
 	# return the filtered set
 	return result_set
 
+def readPEStudioStrings():
+	tree = etree.parse('PeStudioBlackListStrings.xml')
+	string_elems = tree.findall(".//String")
+	strings = []
+	for elem in string_elems:
+		strings.append(elem.text)
+	return strings
+
 def getTimestampBasic(date_obj=None):
 	if not date_obj:
 		date_obj = datetime.datetime.now()
@@ -217,7 +248,7 @@ def printWelcome():
 	print "  "
 	print "  by Florian Roth"
 	print "  December 2014"
-	print "  Version 0.8.0"
+	print "  Version 0.8.2"
 	print " "
 	print "###############################################################################"                               
 
@@ -233,11 +264,12 @@ if __name__ == '__main__':
 	parser.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yara_brg_rules.yar')
 	parser.add_argument('-p', help='Prefix for the rule description', metavar='prefix', default='Auto-generated rule')
 	parser.add_argument('-a', help='Athor Name', metavar='author', default='Yara Bulk Rule Generator')
+	parser.add_argument('-r', help='Reference', metavar='ref', default='not set')
 	parser.add_argument('-l', help='Minimum string length to consider (default=6)', metavar='min-size', default=5)
 	parser.add_argument('-s', help='Maximum length to consider (default=64)', metavar='max-size', default=64)
 	parser.add_argument('-rm', action='store_true', default=False, help='Recursive scan of malware directories')
 	parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
-	parser.add_argument('-ie', action='store_true', default=False, help='Ignore file extension (see source to adjust default extensions to scan)')	
+	parser.add_argument('-oe', action='store_true', default=False, help='Only scan executable extensions EXE and DLL')
 	parser.add_argument('-fs', help='Max file size to analyze (default=2000000)', metavar='dir', default=2000000)
 	parser.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering will be applied)', metavar='maxstrings', default=20)
 	parser.add_argument('--nosuper', action='store_true', default=False, help='Don\'t try to create super rules that match against various files')
@@ -247,6 +279,14 @@ if __name__ == '__main__':
 	
 	# Print Welcome
 	printWelcome()
+
+	# Read PEStudio string list
+	suspicious_strings = []
+	if os.path.exists("PeStudioBlackListStrings.xml"):
+		suspicious_strings = readPEStudioStrings()
+	else:
+		print "To improve the process pleas download PEStudio from http://winitor.com and place the file 'PeStudioBlackListStrings.xml' in this program directory."
+		time.sleep(5)
 
 	# Scan goodware files
 	if args.g:
@@ -435,6 +475,7 @@ if __name__ == '__main__':
 				rule += "\tmeta:\n"
 				rule += "\t\tdescription = \"%s - file %s\"\n" % ( args.p, file )
 				rule += "\t\tauthor = \"%s\"\n" % args.a
+				rule += "\t\treference = \"%s\"\n" % args.r
 				rule += "\t\tdate = \"%s\"\n" % getTimestampBasic()
 				rule += "\t\thash = \"%s\"\n" % file_info_mal[filePath]["md5"]
 				rule += "\tstrings:\n"
@@ -515,6 +556,7 @@ if __name__ == '__main__':
 					rule += "\tmeta:\n"
 					rule += "\t\tdescription = \"%s - from files %s\"\n" % ( args.p, file_listing )
 					rule += "\t\tauthor = \"%s\"\n" % args.a
+					rule += "\t\treference = \"%s\"\n" % args.r
 					rule += "\t\tdate = \"%s\"\n" % getTimestampBasic()					
 					rule += "\t\tsuper_rule = 1\n"
 					for i, filePath in enumerate(super_rule["files"]):
