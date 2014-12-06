@@ -1,15 +1,15 @@
-#
-# yarGen
-# A Rule Generator for Yara Rules
-#
-# Florian Roth
-# December 2014
+yarGen
+A Rule Generator for Yara Rules
+
+Florian Roth
+December 2014
 
 yarGen is a generator for Yara rules. The reason why I developed another Yara
 rule generator was a special use case in which I had a directory full of 
 hackware samples for which I had to write Yara rules. 
 
-=== What does yarGen do? 
+What does yarGen do?
+===========
 The main principle is the creation of yara rules from strings found in malware
 files while removing all strings that also appear in goodware files. 
 
@@ -32,12 +32,13 @@ is some redundancy when super rules are created. It is you task to identify
 and check the super rules and remove the simple rules matching on a single 
 file if the super rule works well for you.
 
-=== Extensions to check
+Memory Requirements
+===========
+Warning: yarGen pulls the whole goodstring database to memory and uses up to 
+1200 Megabyte of memory for a few seconds. 
 
-Check line 45 in the code to extend the list of file extensions to check during
-the scanning. If you don't get any results, this might be the cause. 
-
-=== Command Line Parameters
+Command Line Parameters
+===========
 usage: yarGen.py [-h] [-m M] [-g G] [-u] [-c] [-o output_rule_file]
                  [-p prefix] [-a author] [-r ref] [-l min-size] [-s max-size]
                  [-rm] [-rg] [-oe] [-fs dir] [-rc maxstrings] [--nosuper]
@@ -69,7 +70,8 @@ optional arguments:
                        various files
   --debug              Debug output
  
-=== Examples
+Examples
+===========
 
 = Use the shipped database (FAST) to create some rules
 
@@ -77,7 +79,7 @@ python yarGen.py -rm -m "X:\MAL\Case1401"
 
 Use the shipped database of goodware strings and scan the malware directory 
 "X:\MAL" recursively. Create rules for all files included in this directory and 
-below. A file named 'yara_brg_rules.yar' will be generated in the current 
+below. A file named 'yarGen_rules.yar' will be generated in the current 
 directory. 
 
 = Dont use the database and create your own string set from goodware files 
@@ -93,6 +95,6 @@ Show debug output.
 
 python yarGen.py -c -rg -g C:\Windows\System32
 
-= Update the goodware strings database
+= Update the goodware strings database (append new strings to the old ones)
 
 python yarGen.py -u -rg -g "C:\Program Files"
