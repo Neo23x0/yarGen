@@ -38,10 +38,10 @@ Check line 45 in the code to extend the list of file extensions to check during
 the scanning. If you don't get any results, this might be the cause. 
 
 === Command Line Parameters
-usage: yaraGen.py [-h] [-m M] [-g G] [-u] [-c] [-o output_rule_file]
-                   [-p prefix] [-a author] [-l min-size] [-s max-size] [-rm]
-                   [-rg] [-ie] [-fs dir] [-rc maxstrings] [--nosuper]
-                   [--debug]
+usage: yarGen.py [-h] [-m M] [-g G] [-u] [-c] [-o output_rule_file]
+                 [-p prefix] [-a author] [-r ref] [-l min-size] [-s max-size]
+                 [-rm] [-rg] [-oe] [-fs dir] [-rc maxstrings] [--nosuper]
+                 [--debug]
 
 yarGen
 
@@ -55,11 +55,13 @@ optional arguments:
   -o output_rule_file  Output rule file
   -p prefix            Prefix for the rule description
   -a author            Athor Name
+  -r ref               Reference
   -l min-size          Minimum string length to consider (default=6)
   -s max-size          Maximum length to consider (default=64)
   -rm                  Recursive scan of malware directories
   -rg                  Recursive scan of goodware directories
-  -eo                  
+  -oe                  Only scan executable extensions EXE, DLL, ASP, JSP,
+                       PHP, BIN, INFECTED
   -fs dir              Max file size to analyze (default=2000000)
   -rc maxstrings       Maximum number of strings per rule (default=20,
                        intelligent filtering will be applied)

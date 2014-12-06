@@ -46,7 +46,7 @@ def parseDir(dir, recursive=False, generateInfo=False):
 	for filePath in getFiles(dir, recursive):				
 		# Get Extension
 		extension = os.path.splitext(filePath)[1];
-		if not extension in [ ".exe", ".dll", ".cmd", ".asp", ".php", ".jsp", ".bin", ".infected" ] and args.oe:
+		if not extension in [ ".exe", ".dll", ".asp", ".php", ".jsp", ".bin", ".infected" ] and args.oe:
 			continue
 		
 		# Size Check
@@ -256,7 +256,7 @@ def printWelcome():
 if __name__ == '__main__':
 	
 	# Parse Arguments
-	parser = argparse.ArgumentParser(description='Yara BRG')
+	parser = argparse.ArgumentParser(description='yarGen')
 	parser.add_argument('-m', help='Path to scan for malware')
 	parser.add_argument('-g', help='Path to scan for goodware (dont use the database shipped with yara-brg)')
 	parser.add_argument('-u', action='store_true', default=False, help='Update local goodware database (use with -g)')
@@ -269,7 +269,7 @@ if __name__ == '__main__':
 	parser.add_argument('-s', help='Maximum length to consider (default=64)', metavar='max-size', default=64)
 	parser.add_argument('-rm', action='store_true', default=False, help='Recursive scan of malware directories')
 	parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
-	parser.add_argument('-oe', action='store_true', default=False, help='Only scan executable extensions EXE and DLL')
+	parser.add_argument('-oe', action='store_true', default=False, help='Only scan executable extensions EXE, DLL, ASP, JSP, PHP, BIN, INFECTED')
 	parser.add_argument('-fs', help='Max file size to analyze (default=2000000)', metavar='dir', default=2000000)
 	parser.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering will be applied)', metavar='maxstrings', default=20)
 	parser.add_argument('--nosuper', action='store_true', default=False, help='Don\'t try to create super rules that match against various files')
