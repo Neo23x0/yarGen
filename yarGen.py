@@ -2,19 +2,18 @@
 # -*- coding: iso-8859-1 -*-
 # -*- coding: utf-8 -*-
 #
-# Yara BRG
-# A bulk rule generator for Yara rules
+# yarGen
+# A rule generator for Yara rules
 #
 # Florian Roth
-# December 2014
-# v0.8.2 Unicode Support
 
 import os
 import sys
 import argparse
 import re
 import traceback
-import zshelve
+import pickle
+import gzip
 import operator
 import datetime
 import time
@@ -22,6 +21,7 @@ from lxml import etree
 from lib import gibDetector
 from hashlib import sha1
 from collections import OrderedDict
+
 
 def getFiles(dir, recursive):
 	# Recursive
@@ -36,7 +36,8 @@ def getFiles(dir, recursive):
 			filePath = os.path.join(dir,filename)
 			yield filePath		
 
-def parseDir(dir, recursive=False, generateInfo=False):
+
+def parseDir(dir, recursive=False, generateInfo=False, ignoreExtensions=False):
 
 	# Prepare dictionary
 	string_stats = {}
@@ -46,7 +47,9 @@ def parseDir(dir, recursive=False, generateInfo=False):
 	for filePath in getFiles(dir, recursive):				
 		# Get Extension
 		extension = os.path.splitext(filePath)[1];
-		if not extension in [ ".exe", ".dll", ".asp", ".php", ".jsp", ".bin", ".infected" ] and args.oe:
+		if not extension in [ ".exe", ".dll", ".asp", ".php", ".jsp", ".bin", ".infected" ] and not ignoreExtensions:
+			if args.debug:
+				print "EXTENSION %s - Skipping file %s" % ( extension, filePath )
 			continue
 		
 		# Size Check
@@ -89,7 +92,8 @@ def parseDir(dir, recursive=False, generateInfo=False):
 			print "Processed " + filePath + " Size: "+ str(size) +" Strings: "+ str(len(string_stats)) + " ... "				
 					
 	return string_stats, file_info			
-			
+
+
 def extractStrings(filePath, generateInfo):
 	# String list
 	strings = []
@@ -123,6 +127,7 @@ def extractStrings(filePath, generateInfo):
 		pass
 		
 	return escaped_strings, sha1sum
+
 
 def filterStringSet(string_set):
 	
@@ -220,6 +225,7 @@ def filterStringSet(string_set):
 	# return the filtered set
 	return result_set
 
+
 def readPEStudioStrings():
 	tree = etree.parse('PeStudioBlackListStrings.xml')
 	string_elems = tree.findall(".//String")
@@ -228,29 +234,51 @@ def readPEStudioStrings():
 		strings.append(elem.text)
 	return strings
 
+
 def getTimestampBasic(date_obj=None):
 	if not date_obj:
 		date_obj = datetime.datetime.now()
 	date_str = date_obj.strftime("%Y/%m/%d")
 	return date_str
-	
+
+
 def isAscii(b):
 	if ord(b)<127 and ord(b)>31 :
 		return 1 
 	return 0
 
+
+def save(object, filename, bin = 1):
+	file = gzip.GzipFile(filename, 'wb')
+	file.write(pickle.dumps(object, bin))
+	file.close()
+
+
+def load(filename):
+	file = gzip.GzipFile(filename, 'rb')
+	buffer = ""
+	while 1:
+		data = file.read()
+		if data == "":
+			break
+		buffer += data
+	object = pickle.loads(buffer)
+	file.close()
+	return object
+
+
 def printWelcome():
 	print "###############################################################################"
-	print "  __  __                ___  ___  _____"
-	print "  \ \/ /__ ________ _  / _ )/ _ \/ ___/"
-	print "   \  / _ `/ __/ _ `/ / _  / , _/ (_ / "
-	print "   /_/\_,_/_/  \_,_/ /____/_/|_|\___/  "
+	print "  "
+	print "  yarGen"
+	print "  Yara Rule Generator"
 	print "  "
 	print "  by Florian Roth"
 	print "  December 2014"
-	print "  Version 0.8.2"
+	print "  Version 0.9"
 	print " "
 	print "###############################################################################"                               
+
 
 # MAIN ################################################################
 if __name__ == '__main__':
@@ -261,9 +289,9 @@ if __name__ == '__main__':
 	parser.add_argument('-g', help='Path to scan for goodware (dont use the database shipped with yara-brg)')
 	parser.add_argument('-u', action='store_true', default=False, help='Update local goodware database (use with -g)')
 	parser.add_argument('-c', action='store_true', default=False, help='Create new local goodware database (use with -g)')	
-	parser.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yara_brg_rules.yar')
+	parser.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yargen_rules.yar')
 	parser.add_argument('-p', help='Prefix for the rule description', metavar='prefix', default='Auto-generated rule')
-	parser.add_argument('-a', help='Athor Name', metavar='author', default='Yara Bulk Rule Generator')
+	parser.add_argument('-a', help='Athor Name', metavar='author', default='YarGen Rule Generator')
 	parser.add_argument('-r', help='Reference', metavar='ref', default='not set')
 	parser.add_argument('-l', help='Minimum string length to consider (default=6)', metavar='min-size', default=5)
 	parser.add_argument('-s', help='Maximum length to consider (default=64)', metavar='max-size', default=64)
@@ -288,64 +316,67 @@ if __name__ == '__main__':
 		print "To improve the process pleas download PEStudio from http://winitor.com and place the file 'PeStudioBlackListStrings.xml' in this program directory."
 		time.sleep(5)
 
+	# Ignore File Type on Malware Scan
+	ignore_extension = True
+	if args.oe:
+		ignore_extension = False
+
 	# Scan goodware files
 	if args.g:
 		print "Processing goodware files ..."
-		good_string_stats, file_info_good = parseDir(args.g, args.rg, False)
+		good_string_stats, file_info_good = parseDir(args.g, args.rg, False, ignoreExtensions=False)
 		
-		# Update existing shelve
+		# Update existing Pickle
 		if args.u:
 			print "Updating local database ..."
 			try:
-				good_shelve = zshelve.btopen("good_strings.db")
-				print "Old database entries: %s" % len(good_shelve['good_string_stats'])
+				good_pickle = load("good_strings.db")
+				print "Old database entries: %s" % len(good_pickle['good_string_stats'])
 				new_good = {}
 				new_info = {}
-				new_good = dict(good_shelve['good_string_stats'].items() + good_string_stats.items())
-				new_info = dict(good_shelve['good_string_stats'].items() + good_string_stats.items())
-				good_shelve['good_string_stats'] = new_good
-				good_shelve['file_info_good'] = new_info
-				print "New database entries: %s" % len(good_shelve['good_string_stats'])
-				good_shelve.sync()
+				new_good = dict(good_pickle['good_string_stats'].items() + good_string_stats.items())
+				new_info = dict(good_pickle['good_string_stats'].items() + good_string_stats.items())
+				good_pickle['good_string_stats'] = new_good
+				good_pickle['file_info_good'] = new_info
+				print "New database entries: %s" % len(good_pickle['good_string_stats'])
+				save(good_pickle, "good_strings.db")
+
 			except Exception, e:
-				traceback.print_exc()				
-			finally:
-				good_shelve.close()
-			
-		# Create new shelve
+				traceback.print_exc()
+
+		# Create new Pickle
 		if args.c:
 			print "Creating local database ..."
 			try:
 				if os.path.isfile("good_strings.db"):
 					os.remove("good_strings.db")
-				good_shelve = zshelve.btopen("good_strings.db")
-				good_shelve['good_string_stats'] = good_string_stats
-				good_shelve['file_info_good'] = file_info_good
-				good_shelve.sync()
-				print "New database with %s entries created." % len(good_shelve['good_string_stats'])
+
+				good_pickle = {}
+				good_pickle['good_string_stats'] = good_string_stats
+				good_pickle['file_info_good'] = file_info_good
+
+				save(good_pickle, "good_strings.db")
+
+				print "New database with %s entries created." % len(good_pickle['good_string_stats'])
 			except Exception, e:
 				traceback.print_exc()
-			finally:
-				good_shelve.close()			
-	
-	# Dont use the Database
+
+	# Don't use the Database
 	else:
 		print "Reading goodware files from database 'good_strings.db' ..."
 		try:
-			good_shelve = zshelve.btopen("good_strings.db")
-			# print good_shelve.keys()
-			good_string_stats = good_shelve['good_string_stats']
-			file_info_good = good_shelve['file_info_good']
+			good_pickle = load("good_strings.db")
+			# print good_pickle.keys()
+			good_string_stats = good_pickle['good_string_stats']
+			file_info_good = good_pickle['file_info_good']
 		except Exception, e:
-			traceback.print_exc()			
-		finally:
-			good_shelve.close()
-	
+			traceback.print_exc()
+
 	# If malware directory given
 	if args.m:
 		# Scan malware files
 		print "Processing malware files ..."
-		mal_string_stats, file_info_mal = parseDir(args.m, args.rm, True)
+		mal_string_stats, file_info_mal = parseDir(args.m, args.rm, True, ignoreExtensions=ignore_extension)
 			
 		# Generate Stats --------------------------------------------------
 		print "Generating statistical data ..."
