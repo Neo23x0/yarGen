@@ -1,4 +1,5 @@
 yara_brg_rules.yar
+yargen_rules.yar
 scanners.yar
 
 yara-brg-portscanner.yar
