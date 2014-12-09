@@ -97,7 +97,7 @@ def parseDir(dir, recursive=False, generateInfo=False, ignoreExtensions=False):
 def extractStrings(filePath, generateInfo):
 	# String list
 	strings = []
-	escaped_strings	= []		
+	cleaned_strings	= []
 	sha1sum = ""
 	# Read file data
 	try:
@@ -118,15 +118,15 @@ def extractStrings(filePath, generateInfo):
 			if len(string) > 0:
 				string = string.replace('\\','\\\\')
 				string = string.replace('"','\\"')
-				if not string in escaped_strings:
-					escaped_strings.append(string)					
+				if not string in cleaned_strings:
+					cleaned_strings.append(string.lstrip(" "))
 				
 	except Exception,e:
 		if args.debug:
 			traceback.print_exc()
 		pass
 		
-	return escaped_strings, sha1sum
+	return cleaned_strings, sha1sum
 
 
 def filterStringSet(string_set):
@@ -275,7 +275,7 @@ def printWelcome():
 	print "  "
 	print "  by Florian Roth"
 	print "  December 2014"
-	print "  Version 0.9"
+	print "  Version 0.9.1"
 	print " "
 	print "###############################################################################"                               
 
