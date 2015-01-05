@@ -28,28 +28,29 @@ except Exception, e:
 from lib import gibDetector
 
 
-def getFiles(dir, recursive):
+def getFiles(dir, notRecursive):
 	# Recursive
-	if recursive:
+	if notRecursive:
+		for filename in os.listdir(dir):
+			filePath = os.path.join(dir,filename)
+			yield filePath
+	# Non recursive
+	else:
+
 		for root, directories, files in os.walk (dir, followlinks=False):
 			for filename in files:
 				filePath = os.path.join(root,filename)
 				yield filePath
-	# Non recursive
-	else:
-		for filename in os.listdir(dir):
-			filePath = os.path.join(dir,filename)
-			yield filePath		
 
 
-def parseDir(dir, recursive=False, generateInfo=False, ignoreExtensions=False):
+def parseDir(dir, notRecursive=False, generateInfo=False, ignoreExtensions=False):
 
 	# Prepare dictionary
 	string_stats = {}
 	file_info = {}
 	known_md5s = []
 	
-	for filePath in getFiles(dir, recursive):				
+	for filePath in getFiles(dir, notRecursive):
 		# Get Extension
 		extension = os.path.splitext(filePath)[1];
 		if not extension in [ ".exe", ".dll", ".asp", ".php", ".jsp", ".bin", ".infected" ] and not ignoreExtensions:
@@ -286,7 +287,7 @@ def printWelcome():
 	print "  "
 	print "  by Florian Roth"
 	print "  January 2015"
-	print "  Version 0.9.2"
+	print "  Version 0.9.4"
 	print " "
 	print "###############################################################################"                               
 
@@ -306,8 +307,9 @@ if __name__ == '__main__':
 	parser.add_argument('-r', help='Reference', metavar='ref', default='not set')
 	parser.add_argument('-l', help='Minimum string length to consider (default=6)', metavar='min-size', default=5)
 	parser.add_argument('-s', help='Maximum length to consider (default=64)', metavar='max-size', default=64)
-	parser.add_argument('-rm', action='store_true', default=False, help='Recursive scan of malware directories')
-	parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
+	parser.add_argument('-nr', action='store_true', default=False, help='Do not recursively scan directories')
+	# parser.add_argument('-rm', action='store_true', default=False, help='Recursive scan of malware directories')
+	# parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
 	parser.add_argument('-oe', action='store_true', default=False, help='Only scan executable extensions EXE, DLL, ASP, JSP, PHP, BIN, INFECTED')
 	parser.add_argument('-fs', help='Max file size to analyze (default=2000000)', metavar='dir', default=2000000)
 	parser.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering will be applied)', metavar='maxstrings', default=20)
@@ -336,7 +338,7 @@ if __name__ == '__main__':
 	# Scan goodware files
 	if args.g:
 		print "Processing goodware files ..."
-		good_string_stats, file_info_good = parseDir(args.g, args.rg, False, ignoreExtensions=False)
+		good_string_stats, file_info_good = parseDir(args.g, args.nr, False, ignoreExtensions=False)
 		
 		# Update existing Pickle
 		if args.u:
@@ -388,7 +390,7 @@ if __name__ == '__main__':
 	if args.m:
 		# Scan malware files
 		print "Processing malware files ..."
-		mal_string_stats, file_info_mal = parseDir(args.m, args.rm, True, ignoreExtensions=ignore_extension)
+		mal_string_stats, file_info_mal = parseDir(args.m, args.nr, True, ignoreExtensions=ignore_extension)
 			
 		# Generate Stats --------------------------------------------------
 		print "Generating statistical data ..."
