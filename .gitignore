@@ -1,11 +1,9 @@
 yara_brg_rules.yar
 yargen_rules.yar
 scanners.yar
-
 yara-brg-portscanner.yar
-
 yara-brg-webshells.yar
-
 webshells.yar
 creditcards.yar
 PeStudioBlackListStrings.xml
+good_strings.db.old
