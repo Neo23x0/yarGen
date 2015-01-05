@@ -72,6 +72,12 @@ optional arguments:
 ![Generator Run](./screens/yargen-running.png)
 
 ![Output Rule](./screens/output-rule.png)
+
+As you can see in the screenshot above you'll get a rule that contains strings, which are not found in the goodware strings database. 
+
+You should clean up the rules afterwards. In the example above, remove the strings $s14, $s17, $s19, $s20 that look like random code to get a cleaner rule that is more likely to match on other samples of the same family. 
+
+To get a more generic rule, remove string $s5, which is very specific for this compiled executable. 
  
 ## Examples
 
