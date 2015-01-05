@@ -327,7 +327,7 @@ if __name__ == '__main__':
 		suspicious_strings = readPEStudioStrings()
 	else:
 		if lxml_available:
-			print "To improve the process pleas download PEStudio from http://winitor.com and place the file 'PeStudioBlackListStrings.xml' in this program directory."
+			print "To improve the analysis process please download PEStudio from http://winitor.com and place the file 'PeStudioBlackListStrings.xml' in the yarGen program directory."
 			time.sleep(5)
 
 	# Ignore File Type on Malware Scan

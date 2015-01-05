@@ -1,0 +1,1926 @@
+﻿<!--
+This file is part of the PEStudio solution, which can be downloaded at www.winitor.com. 
+      
+It contains the list of Strings that will be detected as blackListed by this solution.
+      
+Remarks:
+1. This list does NOT contain API Names of Library Names (since these are part of another BlackList)
+2. The items are used for Blacklisting ASCII and UNICODE Strings.
+-->
+
+<xml version="1.0" encoding="utf-8">
+
+	<Settings>
+		<Setting>
+			<!--  
+      1: Enable the for BlackListed strings
+      0: Disable the search for BlackListed strings 
+      -->
+			<Enable>1</Enable>
+
+			<!--
+      1: Be case-sensitive when searching for BlackListed strings
+      0: Don't be case-sensitive when searching for BlackListed strings
+      -->
+			<CaseSensitive>0</CaseSensitive>
+
+			<!--
+      1: Enable Substring when searching for BlackListed strings (e.g. "soft" being a substring of "software")
+      0: Disable Substring when searching for BlackListed strings
+      -->
+			<Substring>0</Substring>
+
+			<!--  
+      The Minimum size of a string that will be detected by PEStudio 
+      (the PEStudio internal minimum is set to 5)
+      -->
+			<MinimumStringLength>5</MinimumStringLength>
+
+			<!--  
+      0: Show Imported Library Names in Strings collection
+      1: Hide Imported Library Names from Strings collection 
+      -->
+			<HideImportedLibraryNames>0</HideImportedLibraryNames>
+
+			<!--  
+      0: Show Imported String Names in Strings collection
+      1: Hide Imported String Names from Strings collection 
+      -->
+			<HideImportedFunctionNames>0</HideImportedFunctionNames>
+
+		</Setting>
+	</Settings>
+
+	<!-- Enumeration of the MD5 of Blacklisted Overlays-->
+	<BlackListOverlays>
+		<md5>CE8DE7A4FF8849D59B13DF2A4E2C31DC</md5>
+		<md5>93C94C569F19D93D0CF8BBB63DC3B4C9</md5>
+		<md5>0CE1C890C1E18ED679968BD9575A52E5</md5>
+		<md5>0CE1C890C1E18ED679968BD9575A52E5</md5>
+		<md5>CCE66D62D021BC3B4A6DB74D4D108B41</md5>
+		<md5>F2E321E66E9BD634397421E8EB7AC8E5</md5>
+	</BlackListOverlays>
+
+	<Regexs>
+		<regex>((b|B)[0-9]{13,19}\^[A-Za-z\s]{0,30}\/[A-Za-z\s]{0,30}\^(0[7-9]|1[0-5])((0[1-9])|(1[0-2]))[0-9\s]{3,50}[0-9]{1})</regex>
+		<regex>([0-9]{15,16}[D=](0[7-9]|1[0-5])((0[1-9])|(1[0-2]))[0-9]{8,30})</regex>
+		<regex>[0-9]{15,16}\^[a-zA-Z0-9=*></regex>
+		<regex>[0-9]{15,16}=[0-9]{5,32}.{1,20}</regex>
+		<regex>([0-9]{13,19}[=D][0-9]{5,50})\?</regex>
+		<regex>([0-9]{13,19}[\^][A-Za-z\s]{0,30}[\/][[A-Za-z\s]{0,30}[\^]([0-9\s]{1,70})\?)</regex>
+		<regex>("^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$")</regex>
+		<regex>^http[s]?://([^\/:\s]+)(:[^\/\s]+)?(\/?[^\s]*)$</regex>
+		<regex>{[!11!]}{[!4!]}</regex>
+		<regex>{[!12!]}{[!10!]}http://%s:%d{[!4!]}</regex>
+		<regex>{[!13!]}{[!4!]}</regex>
+		<regex>{[!14!]}{[!4!]}</regex>
+		<regex>{[!15!]}{[!4!]}</regex>
+		<regex>{[!16!]}{[!20!]}{[!26!]}%s</regex>
+		<regex>{[!16!]}{[!46!]}%s (%d)</regex>
+		<regex>{[!17!]}{[!18!]}</regex>
+		<regex>{[!17!]}{[!19!]}</regex>
+		<regex>{[!2!]}{[!20!]}{[!21!]}%s</regex>
+		<regex>{[!22!]}%s{[!5!]}</regex>
+		<regex>{[!22!]}{[!18!]}{[!33!]}{[!4!]}{[!34!]}= %d, {[!35!]}= 0x%x.{[!36!]}</regex>
+		<regex>{[!22!]}{[!5!]}%s -> %s [%d]{[!35!]}= 0x%x (== 0x%x)</regex>
+		<regex>{[!23!]}{[!22!]}, {[!24!]}{[!4!]}%d{[!25!]}</regex>
+		<regex>{[!27!]}{[!30!]}{[!4!]}%s.{[!2!]}</regex>
+		<regex>{[!28!]}%d.%d, {[!29!]}%d.%d.{[!1!]}</regex>
+		<regex>{[!29!]}{[!1!]}</regex>
+		<regex>{[!29!]}{[!32!]}%s</regex>
+		<regex>{[!3!]}%s{[!4!]}</regex>
+		<regex>{[!30!]}{[!31!]}{[!4!]}</regex>
+		<regex>{[!37!]}{[!35!]}{[!4!]}{[!38!]}0x%x,{[!39!]}0x%x.</regex>
+		<regex>{[!37!]}{[!35!]}{[!4!]}{[!38!]}0x%x,{[!39!]}0x%x.{[!36!]}</regex>
+		<regex>{[!4!]}{[!10!]}{[!44!]}{[!43!]}{[!21!]}</regex>
+		<regex>{[!4!]}{[!45!]}{[!21!]}</regex>
+		<regex>{[!40!]}{[!4!]}{[!36!]}</regex>
+		<regex>{[!41!]}{[!4!]}{[!42!]}= 0x%x, {[!34!]}= 0x%x.{[!36!]}</regex>
+		<regex>{[!43!]}{[!4!]}</regex>
+		<regex>{[!46!]}%d{[!1!]}</regex>
+	</Regexs>
+
+	<Strings>
+		<!-- SSDL -->
+		<String>S:(ML;;NRNWNX;;;LW)</String>
+		<String>S:(ML;CIOI;NRNWNX;;;LW)</String>
+		<String>S:(ML;CIOI;NRNWNX;;;LW)</String>
+		<String>S:(ML;;NW;;;LW)</String>
+		<String>D:(D;OICI;GA;;;BG)(D;OICI;GA;;;AN)(A;OICI;GA;;;AU)(A;OICI;GA;;;BA)</String>
+
+		<!-- Common folder variables, http://www.microsoft.com/security/portal/mmpc/shared/variables.aspx#startup -->
+		<String>%ALLUSERPROFILE%</String>
+		<String>%APPDATA%</String>
+		<String>commonappdata</String>
+		<String>%CommonProgramFiles%</String>
+		<String>%HOMEPATH%</String>
+		<String>%LOCALAPPDATA%</String>
+		<String>%ProgramData%</String>
+		<String>%ProgramFiles%</String>
+		<String>%PUBLIC%</String>
+		<String>%SystemDrive%</String>
+		<String>%SystemRoot%</String>
+		<String>%TEMP%</String>
+		<String>%USERPROFILE%</String>
+
+		<!-- The KNOWNFOLDERID constants represent GUIDs that identify standard folders registered with the system as Known Folders, 
+		http://msdn.microsoft.com/en-us/library/dd378457(v=vs.85).aspx  -->
+		<String name="Account Pictures">{008ca0b1-55b4-4c56-b8a8-4de4b299d3be}</String>
+		<String name="Get Programs">{de61d971-5ebc-4f02-a3a9-6c82895e5c04}</String>
+		<String name="Administrative">{724EF170-A42D-4FEF-9F26-B60E846FBA4F}</String>
+		<String name="Application">{A3918781-E5F2-4890-B3D9-A7E54332328C}</String>
+		<String name="Applications">{1e87508d-89c2-42f0-8a7e-645a0f50ca58}</String>
+		<String name="Installed Updates">{a305ce99-f527-492b-8b1a-7e76fa98d6e4}</String>
+		<String name="Camera Roll">{AB5FB87B-7CE2-4F83-915D-550846C9537B}</String>
+		<String name="Temporary Burn Folder">{9E52AB10-F80D-49DF-ACB8-4330F5687855}</String>
+		<String name="Programs and Features">{df7266ac-9274-4867-8d55-3bd661de872d}</String>
+		<String name="Administrative Tools">{D0384E7D-BAC3-4797-8F14-CBA229B392B5}</String>
+		<String name="OEM Links">{C1BAE2D0-10DF-4334-BEDD-7AA20B227A9D}</String>
+		<String name="Programs	Folder">{0139D44E-6AFE-49F2-8690-3DAFCAE6FFB8}</String>
+		<String name="Start Menu">{A4115719-D62E-491D-AA7C-E74B8BE3B067}</String>
+		<String name="Startup">{82A5EA35-D9CD-47C5-9629-E15D2F714E6E}</String>
+		<String name="Templates">{B94237E7-57AC-4347-9151-B08C6C32D1F7}</String>
+		<String name="Computer">{0AC0837C-BBF8-452A-850D-79D08E667CA7}</String>
+		<String name="Conflicts">{4bfefb45-347d-4006-a5be-ac0cb0567192}</String>
+		<String name="Network Connections">{6F0CD92B-2E97-45D1-88FF-B0D186B8DEDD}</String>
+		<String name="Contacts">{56784854-C6CB-462b-8169-88E350ACB882}</String>
+		<String name="Control Panel">{82A74AEB-AEB4-465C-A014-D097EE346D63}</String>
+		<String name="Cookies">{2B0F765D-C0E9-4171-908E-08A611B84FF6}</String>
+		<String name="Desktop">{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}</String>
+		<String name="DeviceMetadataStore">{5CE4A5E9-E4EB-479D-B89F-130C02886155}</String>
+		<String name="Documents">{FDD39AD0-238F-46AF-ADB4-6C85480369C7}</String>
+		<String name="Documents">{7B0DB17D-9CD2-4A93-9733-46CC89022E7C}</String>
+		<String name="Downloads">{374DE290-123F-4565-9164-39C4925E467B}</String>
+		<String name="Favorites">{1777F761-68AD-4D8A-87BD-30B759FA33DD}</String>
+		<String name="Fonts">{FD228CB7-AE11-4AE3-864C-16F3910AB8FE}</String>
+		<String name="Games">{CAC52C1A-B53D-4edc-92D7-6B2E8AC19434}</String>
+		<String name="GameExplorer">{054FAE61-4DD8-4787-80B6-090220C4B700}</String>
+		<String name="History">{D9DC8A3B-B784-432E-A781-5A1130A75963}</String>
+		<String name="Homegroup">{52528A6B-B9E3-4ADD-B60D-588C2DBA842D}</String>
+		<String name="user's username">{9B74B6A3-0DFD-4f11-9E78-5F7800F2E772}</String>
+		<String name="ImplicitAppShortcuts">{BCB5256F-79F6-4CEE-B725-DC34E402FD46}</String>
+		<String name="Temporary Internet Files">{352481E8-33BE-4251-BA85-6007CAEDCF9D}</String>
+		<String name="The Internet">{4D9F7874-4E0C-4904-967B-40B0D20C3E4B}</String>
+		<String name="Libraries">{1B3EA5DC-B587-4786-B4EF-BD1DC332AEAE}</String>
+		<String name="Links">{bfb9d5e0-c6a9-404c-b2b2-ae6db6af4968}</String>
+		<String name="Local">{F1B32785-6FBA-4FCF-9D55-7B8E7F157091}</String>
+		<String name="LocalLow">{A520A1A4-1780-4FF6-BD18-167343C5AF16}</String>
+		<String name="None">{2A00375E-224C-49DE-B8D1-440DF7EF3DDC}</String>
+		<String name="Music">{4BD8D571-6D19-48D3-BE97-422220080E43}</String>
+		<String name="Music">{2112AB0A-C86A-4FFE-A368-0DE96E47012E}</String>
+		<String name="Network Shortcuts">{C5ABBF53-E17F-4121-8900-86626FC2C973}</String>
+		<String name="Network">{D20BEEC4-5CA8-4905-AE3B-BF251EA09B53}</String>
+		<String name="Original Images">{2C36C0AA-5812-4b87-BFD0-4CD0DFB19B39}</String>
+		<String name="Slide Shows">{69D2CF90-FC33-4FB7-9A0C-EBB0F0FCB43C}</String>
+		<String name="Pictures">{A990AE9F-A03B-4E80-94BC-9912D7504104}</String>
+		<String name="Pictures">{33E28130-4E1E-4676-835A-98395C3BC3BB}</String>
+		<String name="Playlists">{DE92C1C7-837F-4F69-A3BB-86E631204A23}</String>
+		<String name="Printers">{76FC4E2D-D6AD-4519-A663-37BD56068185}</String>
+		<String name="Printer Shortcuts">{9274BD8D-CFD1-41C3-B35E-B13F55A758F4}</String>
+		<String name="The user's username">{5E6C858F-0E22-4760-9AFE-EA3317B67173}</String>
+		<String name="ProgramData">{62AB5D82-FDC1-4DC3-A9DD-070D1D495D97}</String>
+		<String name="Program Files">{905e63b6-c1bf-494e-b29c-65b732d3d21a}</String>
+		<String name="Program Files">{6D809377-6AF0-444b-8957-A3773F02200E}</String>
+		<String name="Program Files">{7C5A40EF-A0FB-4BFC-874A-C0F2E0B9FA8E}</String>
+		<String name="Common Files">{F7F1ED05-9F6D-47A2-AAAE-29D317C6F066}</String>
+		<String name="Common Files">{6365D5A7-0F0D-45E5-87F6-0DA56B6A4F7D}</String>
+		<String name="Common Files">{DE974D24-D9C6-4D3E-BF91-F4455120B917}</String>
+		<String name="Programs">{A77F5D77-2E2B-44C3-A6A2-ABA601054A51}</String>
+		<String name="Public">{DFDF76A2-C82A-4D63-906A-5644AC457385}</String>
+		<String name="Public Desktop">{C4AA340D-F20F-4863-AFEF-F87EF2E6BA25}</String>
+		<String name="Public Documents">{ED4824AF-DCE4-45A8-81E2-FC7965083634}</String>
+		<String name="Public Downloads">{3D644C9B-1FB8-4f30-9B45-F670235F79C0}</String>
+		<String name="GameExplorer">{DEBF2536-E1A8-4c59-B6A2-414586476AEA}</String>
+		<String name="Libraries">{48DAF80B-E6CF-4F4E-B800-0E69D84EE384}</String>
+		<String name="Public">{3214FAB5-9757-4298-BB61-92A9DEAA44FF}</String>
+		<String name="Public Pictures">{B6EBFB86-6907-413C-9AF7-4FC2ABF07CC5}</String>
+		<String name="Ringtones">{E555AB60-153B-4D17-9F04-A5FE99FC15EC}</String>
+		<String name="Public Account Pictures">{0482af6c-08f1-4c34-8c90-e17ec98b1e17}</String>
+		<String name="Public Videos">{2400183A-6185-49FB-A2D8-4A392A602BA3}</String>
+		<String name="Quick Launch">{52a4f021-7b75-48a9-9f6b-4b87a210bc8f}</String>
+		<String name="Recent Items">{AE50C081-EBD2-438A-8655-8A092E34987A}</String>
+		<String name="Recorded TV">{1A6FDBA2-F42D-4358-A798-B74D745926C5}</String>
+		<String name="Recycle Bin">{B7534046-3ECB-4C18-BE4E-64CD4CB7D6AC}</String>
+		<String name="Resources">{8AD10C31-2ADB-4296-A8F7-E4701232C972}</String>
+		<String name="Ringtones">{C870044B-F49E-4126-A9C3-B52A1FF411E8}</String>
+		<String name="Roaming">{3EB685DB-65F9-4CF6-A03A-E3EF65729F3D}</String>
+		<String name="RoamedTileImages">{AAA8D5A5-F1D6-4259-BAA8-78E7EF60835E}</String>
+		<String name="RoamingTiles">{00BCFC5A-ED94-4e48-96A1-3F6217F21990}</String>
+		<String name="Sample Music">{B250C668-F57D-4EE1-A63C-290EE7D1AA1F}</String>
+		<String name="Sample Pictures">{C4900540-2379-4C75-844B-64E6FAF8716B}</String>
+		<String name="Sample Playlists">{15CA69B3-30EE-49C1-ACE1-6B5EC372AFB5}</String>
+		<String name="Sample Videos">{859EAD94-2E85-48AD-A71A-0969CB56A6CD}</String>
+		<String name="Saved Games">{4C5C32FF-BB9D-43b0-B5B4-2D72E54EAAA4}</String>
+		<String name="Searches">{7d1d3a04-debb-4115-95cf-2f29da2920da}</String>
+		<String name="Screenshots">{b7bede81-df94-4682-a7d8-57a52620b86f}</String>
+		<String name="Offline Files">{ee32e446-31ca-4aba-814f-a5ebd2fd6d5e}</String>
+		<String name="History">{0D4C3DB6-03A3-462F-A0E6-08924C41B5D4}</String>
+		<String name="Search Results">{190337d1-b8ca-4121-a639-6d472d16972a}</String>
+		<String name="Microsoft Office Outlook">{98ec0e18-2098-4d44-8644-66979315a281}</String>
+		<String name="Templates">{7E636BFE-DFA9-4D5E-B456-D7B39851D8A9}</String>
+		<String name="SendTo">{8983036C-27C0-404B-8F08-102D10DCFD74}</String>
+		<String name="Gadgets">{7B396E54-9EC5-4300-BE0A-2482EBAE1A26}</String>
+		<String name="Gadgets">{A75D362E-50FC-4fb7-AC2C-A8BEAA314493}</String>
+		<String name="OneDrive">{A52BBA46-E9E1-435f-B3D9-28DAA648C0F6}</String>
+		<String name="Camera Roll">{767E6811-49CB-4273-87C2-20F355E1085B}</String>
+		<String name="Documents">{24D89E24-2F19-4534-9DDE-6A6671FBB8FE}</String>
+		<String name="Pictures">{339719B5-8C47-4894-94C2-D8F77ADD44A6}</String>
+		<String name="Start Menu">{625B53C3-AB48-4EC1-BA1F-A1EF4146FC19},</String>
+		<String name="Startup">{B97D20BB-F46A-4C97-BA10-5E3608430854},</String>
+		<String name="Sync Center">{43668BF8-C14E-49B2-97C9-747784D784B7}</String>
+		<String name="Sync Results">{289a9a43-be44-4057-a41b-587a76d7e7f9,</String>
+		<String name="Sync Setup">{0F214138-B1D3-4a90-BBA9-27CBC0C5389A}</String>
+		<String name="System32">{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}</String>
+		<String name="System32">{D65231B0-B2F1-4857-A4CE-A8E7C6EA7D27}</String>
+		<String name="Templates">{A63293E8-664E-48DB-A079-DF759E0509F7}</String>
+		<String name="User Pinned">{9E3995AB-1F9C-4F13-B827-48B24B6C7174}</String>
+		<String name="Users">{0762D272-C50A-4BB0-A382-697DCD729B80}</String>
+		<String name="Programs">{5CD7AEE2-2219-4A67-B85D-6C9CE15660CB}</String>
+		<String name="Programs">{BCBD3057-CA5C-4622-B42D-BC56DB0AE516}</String>
+		<String name="The user's full name entered when the user account was created">{f3ce0f7c-4901-4acc-8648-d5d44b04ef8f}</String>
+		<String name="Libraries">{A302545D-DEFF-464b-ABE8-61C8648D939B}</String>
+		<String name="Videos">{18989B1D-99B5-455B-841C-AB7C74E4DDFC}</String>
+		<String name="Videos">{491E922F-5643-4AF4-A7EB-4E7A138D8174}</String>
+		<String name="Windows">{F38BF404-1D43-42F2-9305-67DE0B28FC23}</String>
+
+		<!-- Unclassified -->
+		<String>Windows 2000</String>
+		<String>Windows XP</String>
+		<String>Windows XP Professional x64</String>
+		<String>Windows Server 2003</String>
+		<String>Windows Home Server</String>
+		<String>Windows Server 2003 R2</String>
+		<String>Windows Vista</String>
+		<String>Windows Server 2008</String>
+		<String>Windows Server R2</String>
+		<String>Windows 7</String>
+
+		<String>SeAssignPrimaryTokenPrivilege</String>
+		<String>SeAuditPrivilege</String>
+		<String>SeBackupPrivilege</String>
+		<String>SeChangeNotifyPrivilege</String>
+		<String>SeCreateGlobalPrivilege</String>
+		<String>SeCreatePagefilePrivilege</String>
+		<String>SeCreatePermanentPrivilege</String>
+		<String>SeCreateSymbolicLinkPrivilege</String>
+		<String>SeCreateTokenPrivilege</String>
+		<String>SeDebugPrivilege</String>
+		<String>SeEnableDelegationPrivilege</String>
+		<String>SeImpersonatePrivilege</String>
+		<String>SeIncreaseBasePriorityPrivilege</String>
+		<String>SeIncreaseQuotaPrivilege</String>
+		<String>SeIncreaseWorkingSetPrivilege</String>
+		<String>SeLoadDriverPrivilege</String>
+		<String>SeLockMemoryPrivilege</String>
+		<String>SeMachineAccountPrivilege</String>
+		<String>SeManageVolumePrivilege</String>
+		<String>SeProfileSingleProcessPrivilege</String>
+		<String>SeRelabelPrivilege</String>
+		<String>SeRemoteShutdownPrivilege</String>
+		<String>SeRestorePrivilege</String>
+		<String>SeSecurityPrivilege</String>
+		<String>SeShutdownPrivilege</String>
+		<String>SeSyncAgentPrivilege</String>
+		<String>SeSystemEnvironmentPrivilege</String>
+		<String>SeSystemProfilePrivilege</String>
+		<String>SeSystemtimePrivilege</String>
+		<String>SeTakeOwnershipPrivilege</String>
+		<String>SeTcbPrivilege</String>
+		<String>SeTimeZonePrivilege</String>
+		<String>SeTrustedCredManAccessPrivilege</String>
+		<String>SeUndockPrivilege</String>
+		<String>SeUnsolicitedInputPrivilege</String>
+
+		<String>SC_MONITORPOWER</String>
+		<String>HWND_BROADCAST</String>
+		<String>IsConnectedToInternet</String>
+		<String>get_MachineName</String>
+		<String>MacAddress</String>
+
+		<String>GetMACAddress</String>
+		<String>GetProcessesByName</String>
+		<String>WebRequest</String>
+		<String>WebResponse</String>
+		<String>GetResponse</String>
+		<String>GetVolumeSerial</String>
+		<String>ENCRYPtSTRING</String>
+		<String>ENCRYPTBYTe</String>
+		<String>VBRUN</String>
+		<String>Blowfish</String>
+		<String>CreateDecryptor</String>
+		<String>MD5CryptoServiceProvider</String>
+		<String>TripleDESCryptoServiceProvider</String>
+		<String>PaddingMode</String>
+		<String>iexplorer</String>
+		<String>Shell_TrayWnd</String>
+		<String>ExecuteCommand</String>
+		<String>RunPE</String>
+		<String>CCleaner</String>
+		<String>Binder</String>
+		<String>SpyTheSpy</String>
+		<String>TCPEye</String>
+		<String>SpeedGear</String>
+		<String>taskmgr</String>
+		<String>IPBlocker</String>
+		<String>CCleaner</String>
+		<String>procexp</String>
+		<String>Windows Update</String>
+		<String>Payment ok</String>
+		<String>Payment Received. Proceed to decryption.</String>
+		<String>Waiting Payment</String>
+		<String>Waiting TOR Connection</String>
+		<String>TorLocker</String>
+		<String>proxyPort = 58010</String>
+		<String>socksParentProxy = 127.0.0.1:9150</String>
+		<String>socksProxyType = socks5</String>
+		<String>TorLocker_v0.9.3</String>
+		<String>127.0.0.1:58010</String>
+		<String>Wallpaper</String>
+		<String>kippohome</String>
+		<String>huffman</String>
+		<String>DecodeHuffman</String>
+		<String>Decode</String>
+		<String>Inflate</String>
+		<String>Unzip</String>
+		<String>ZipAndEncrypt</String>
+		<String>ZipAndAES</String>
+		<String>LoadFile</String>
+		<String>SafenSoft</String>
+		<String>SysWatch</String>
+		<String>McAfee</String>
+		<String>Security Center</String>
+		<String>Symantec</String>
+		<String>Protection</String>
+		<String>Norton</String>
+
+		<String>ReadPort</String>
+		<String>WritePort</String>
+		<String>cookie_module</String>
+		<String>Proxy-Connection</String>
+		<String>CompressAndSend</String>
+		<String>EncryptFile</String>
+		<String>RunAsShellUser</String>
+		<String>SVNCStartServer</String>
+		<String>Terminal Server</String>
+		<String>WinNT</String>
+		<String>Enterprise</String>
+		<String>LanmanNT</String>
+		<String>BEGIN</String>
+		<String>CONNECTED</String>
+		<String>SENDME</String>
+		<String>EXTEND</String>
+		<String>EXTENDED</String>
+		<String>TRUNCATE</String>
+		<String>TRUNCATED</String>
+		<String>RESOLVE</String>
+		<String>RESOLVED</String>
+		<String>BEGIN_DIR</String>
+		<String>ESTABLISH_INTRO</String>
+		<String>ESTABLISH_RENDEZVOUS</String>
+		<String>INTRODUCE1</String>
+		<String>INTRODUCE2</String>
+		<String>RENDEZVOUS1</String>
+		<String>RENDEZVOUS2</String>
+		<String>INTRO_ESTABLISHED</String>
+		<String>RENDEZVOUS_ESTABLISHED</String>
+		<String>INTRODUCE_ACK</String>
+		<String>system.log</String>
+		<String>tor.exe</String>
+		<String>ChewBacca/</String>
+		<String>chewbacca</String>
+		<String>.onion/</String>
+		<String>TMemoryScanner</String>
+		<String>Symantec Shared</String>
+		<String>CWSandbox</String>
+		<String>AVAST Software</String>
+		<String>VMware Pointing</String>
+		<String>VMware server memory</String>
+		<String>VMware Replay</String>
+		<String>Virtual HD</String>
+		<String>News Letter</String>
+		<String>Subject:</String>
+		<String>db2admin</String>
+		<String>nopassword</String>
+		<String>password12</String>
+		<String>secret</String>
+		<String>superman</String>
+		<String>iloveyou</String>
+		<String>hello</String>
+		<String>helpme</String>
+		<String>hockey</String>
+		<String>home123</String>
+		<String>changeme</String>
+		<String>MsComCtl.ocx</String>
+		<String>HotTracking</String>
+		<String>OpenProcessToken fail</String>
+		<String>AdjustTokenPrivileges fail</String>
+		<String>replacement</String>
+		<String>settings</String>
+		<String>formgrabber</String>
+		<String>redirects</String>
+		<String>httpinjects</String>
+		<String>Transfer-Encoding</String>
+		<String>modify</String>
+		<String>pattern</String>
+		<String>conditions</String>
+		<String>actions</String>
+		<String>process</String>
+		<String>NtShutdownSystem</String>
+		<String>coin-miner</String>
+		<String>regwrite</String>
+		<String>urlmon</String>
+		<String>Internet Explorer</String>
+		<String>inhibitPolicyMapping</String>
+		<String>infinite</String>
+		<String>Bad time value</String>
+		<String>pubkey.bin</String>
+		<String>openssl</String>
+		<String>relativename</String>
+		<String>Polynomial</String>
+		<String>AES</String>
+		<String>RSA</String>
+		<String>RID</String>
+		<String>cryptedcount.txt</String>
+		<String>explicitText</String>
+		<String>ASN1</String>
+		<String>requireExplicitPolicy</String>
+		<String>LanmanWorkstation</String>
+		<String>LanmanServer</String>
+		<String>DNS</String>
+		<String>Salt Length</String>
+		<String>Seed</String>
+		<String>Prime</String>
+		<String>config.nt</String>
+		<String>autoexec.nt</String>
+		<String>protocol testing</String>
+		<String>experience Destroy</String>
+		<String>go.exe</String>
+		<String>userinit.exe</String>
+		<String>Dispatch</String>
+		<String>winsock</String>
+		<String>connection failed</String>
+		<String>open internet failed</String>
+		<String>payload</String>
+		<String>Wscript.Shell</String>
+		<String>Shell.Application</String>
+		<String>createobject</String>
+		<String>Setup.exe</String>
+		<String>Extracting</String>
+		<String>UltraVnc</String>
+		<String>UltraVncSC</String>
+		<String>RunProgram</String>
+		<String>*.ocx</String>
+		<String>*.dll</String>
+		<String>IMAGEHLP.dll</String>
+		<String>Signature</String>
+		<String>installer.exe</String>
+		<String>Fast decoding</String>
+		<String>Win32.exe</String>
+		<String>Gina</String>
+		<String>cgets</String>
+		<String>Macromedia</String>
+		<String>FlashPlayer</String>
+		<String>NetworkService\Cookies\</String>
+		<String>Scheduler</String>
+		<String>Local Settings\History\History.IE5</String>
+		<String>leave the progress due to 10 attempts</String>
+		<String>unrarw32</String>
+		<String>server</String>
+		<String>verifyinginstaller</String>
+		<String>xxx.exe</String>
+		<String>Mozilla</String>
+		<String>CONNECT</String>
+		<String>system.exe</String>
+		<String>cmd.exe</String>
+		<String>AppData</String>
+		<String>admin</String>
+		<String>msnmsgr.exe</String>
+		<String>Microsoft.VisualBasic</String>
+		<String>Dictionary</String>
+		<String>Protocol not supported</String>
+		<String>referer</String>
+		<String>partner_online_url</String>
+		<String>partner_new_url</String>
+		<String>runprog.exe</String>
+		<String>CDATA[</String>
+		<String>exe.agent.mail</String>
+		<String>mail.ru</String>
+		<String>password</String>
+		<String>Launcher</String>
+		<String>setup</String>
+		<String>remote</String>
+		<String>random</String>
+		<String>inject</String>
+		<String>hook</String>
+		<String>crack</String>
+		<String>script</String>
+		<String>browse</String>
+		<String>Clipboard</String>
+		<String>Event</String>
+		<String>Privilege</String>
+		<String>Reboot</String>
+		<String>CABINET</String>
+		<String>extract</String>
+		<String>rundll32.exe</String>
+		<String>REGTLIB.EXE</String>
+		<String>VB Runtime Installation</String>
+		<String>Command.com</String>
+		<String>Resume</String>
+		<String>Pause</String>
+		<String>Socket</String>
+		<String>GetCode</String>
+		<String>Console</String>
+		<String>LZStart</String>
+		<String>About:blank</String>
+		<String>shell</String>
+		<String>666</String>
+		<String>alert</String>
+		<String>reverse</String>
+		<String>swap</String>
+		<String>logon</String>
+		<String>logoff</String>
+		<String>HookProc</String>
+		<String>attempt</String>
+		<String>users</String>
+		<String>load</String>
+		<String>query</String>
+		<String>scan</String>
+		<String>module</String>
+		<String>drop</String>
+		<String>loop</String>
+		<String>wait</String>
+		<String>iexplore.exe</String>
+		<String>Download</String>
+		<String>Upload</String>
+		<String>CONNECT</String>
+		<String>wuauclt.exe</String>
+		<String>Poison.exe</String>
+		<String>explorer.exe</String>
+		<String>pipe</String>
+		<String>Transaction</String>
+		<String>Created by</String>
+		<String>Accept: */*</String>
+		<String>setup.exe</String>
+		<String>inetinfo.exe</String>
+		<String>WinDir</String>
+		<String>update.html</String>
+		<String>exec error</String>
+		<String>application/x-www-form-urlencoded</String>
+		<String>LordPE</String>
+		<String>Silvana</String>
+		<String>petite</String>
+		<String>PROGRAM</String>
+		<String>deflate</String>
+		<String>60794-12b3-e4169440</String>
+		<String>Keep-Alive</String>
+		<String>Referer</String>
+		<String>WinSta0</String>
+		<String>Gh0st</String>
+		<String>Update</String>
+		<String>CapsLock</String>
+		<String>svcshost.exe</String>
+		<String>Forbidden</String>
+		<String>Accepted</String>
+		<String>sessionid</String>
+
+		<String>sharedaccess</String>
+		<String>localgroup</String>
+		<String>administrators</String>
+		<String>Administrator</String>
+		<String>guest</String>
+		<String>RDP-Tcp</String>
+		<String>UnknownProcess</String>
+		<String>%d Day %d Hour %d Min</String>
+		<String>termsrv_t</String>
+		<String>Winlogon</String>
+		<String>nsocket</String>
+		<String>repeat</String>
+		<String>compression</String>
+		<String>dictionary</String>
+		<String>userprofile</String>
+		<String>webkit</String>
+		<String>command</String>
+		<String>tracing</String>
+		<String>sandbox</String>
+		<String>keystroke</String>
+		<String>Adobe</String>
+		<String>scanning</String>
+		<String>Callback</String>
+		<String>torrent</String>
+		<String>Outsanding</String>
+		<String>localhost</String>
+		<String>proxy</String>
+		<String>downspeed</String>
+		<String>korean</String>
+		<String>chinese</String>
+		<String>japanese</String>
+		<String>interval</String>
+		<String>webseeds</String>
+		<String>666</String>
+		<String>POST</String>
+		<String>fingerprint</String>
+		<String>DNA_Proxy</String>
+		<String>min_http_connections</String>
+		<String>Unauthorized</String>
+		<String>pairing</String>
+		<String>TOKEN</String>
+		<String>subscribe</String>
+		<String>guest.html</String>
+		<String>announce</String>
+		<String>multicast</String>
+		<String>payload</String>
+		<String>DEBUG</String>
+		<String>UPnP</String>
+		<String>channel</String>
+		<String>tracker</String>
+		<String>NAT</String>
+		<String>DHCP</String>
+		<String>Host</String>
+		<String>keyhash</String>
+		<String>packet</String>
+		<String>watchdog</String>
+		<String>shared</String>
+		<String>are you debugging me</String>
+		<String>*.exe</String>
+		<String>ThisprogrammustberununderWin32</String>
+		<String>Shit!!</String>
+		<String>PrepareOurShit</String>
+		<String>Exefiles</String>
+		<String>Scanning</String>
+		<String>StdOut</String>
+		<String>Codecs</String>
+		<String>ProgramFilesDir</String>
+		<String>Install</String>
+		<String>\Temp</String>
+		<String>SHFOLDER</String>
+		<String>NullsoftInst</String>
+		<String>WinRAR SFX</String>
+		<String>287333.dat</String>
+		<String>\\cryptme\\</String>
+		<String>Autoit3.824383.exe</String>
+		<String>run.vbs</String>
+		<String>{0000054f-0000-0010-8000-00aa006d2ea4}</String>
+		<String>username</String>
+		<String>Password</String>
+		<String>Username</String>
+		<String>Expires</String>
+		<String>User-Agent</String>
+		<String>Cookie</String>
+		<String>taskmgr.exe</String>
+		<String>regedit.exe</String>
+		<String>*.txt</String>
+		<String>*.xls</String>
+		<String>*.xlw</String>
+		<String>*.docx</String>
+		<String>*.doc</String>
+		<String>*.cer</String>
+		<String>*.key</String>
+		<String>*.rtf</String>
+		<String>*.xlsm</String>
+		<String>*.xlsx</String>
+		<String>*.xlc</String>
+		<String>*.docm</String>
+		<String>*.xlk</String>
+		<String>*.htm</String>
+		<String>*.chm</String>
+		<String>*.text</String>
+		<String>*.ppt</String>
+		<String>*.pdf</String>
+		<String>*.sql</String>
+		<String>*.pps</String>
+		<String>*.lzh</String>
+		<String>*.arj</String>
+		<String>*.gzip</String>
+		<String>*.pst</String>
+		<String>serialNumber</String>
+		<String>userPassword</String>
+		<String>public_key</String>
+		<String>serial</String>
+		<String>Public-Key</String>
+		<String>Private-Key</String>
+		<String>Seed:</String>
+		<String>encryption</String>
+		<String>PECompact2</String>
+		<String>logFile</String>
+		<String>index.html</String>
+		<String>application/pdf</String>
+		<String>Run as a daemon</String>
+		<String>http.c</String>
+		<String>client.c</String>
+		<String>127.0.0.1</String>
+		<String>serverTimeout</String>
+		<String>Server closed connection</String>
+		<String>nameserver</String>
+		<String>autorun.exe</String>
+		<String>Autorun.exe</String>
+		<String>COMSPEC</String>
+		<String>csrss.exe</String>
+		<String>OLLYDBG</String>
+		<String>WinDbgFrameClass</String>
+		<String>BankID</String>
+		<String>DANCHODANCHEV_END_BRIANKREBS_GOT_FARRIED</String>
+		<String>Timer1</String>
+		<String>Timer2</String>
+		<String>Timer3</String>
+		<String>Mscomctl32.ocx</String>
+		<String>WebBrowser</String>
+		<String>Logout</String>
+		<String>VBA6.DLL</String>
+		<String>9368265E-85FE-11d1-8BE3-0000F8754DA1</String>
+		<String>TIPOFDAY.TXT</String>
+		<String>Scripting.FileSystemObject</String>
+		<String>LoVein1</String>
+		<String>MZKERNEL32.DLL</String>
+		<String>KerNel32.dll</String>
+		<String>downloader</String>
+		<String>browser</String>
+		<String>opera</String>
+		<String>RemoveRange</String>
+		<String>AuthenticationMode</String>
+		<String>Downloader</String>
+		<String>chromepref</String>
+		<String>Downloader.exe</String>
+		<String>ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/</String>
+		<String>FPC 2.7.1 [2013/10/22] for i386 - Win32</String>
+		<String>pipedatacontinue</String>
+		<String>sdwefa.gif</String>
+		<String>CONIN$</String>
+		<String>CONOUT$</String>
+		<String>~MS80547.bat</String>
+		<String>Shell</String>
+		<String>reg.exe</String>
+		<String>IE 8.5</String>
+		<String>start</String>
+		<String>whoami</String>
+		<String>pidrun</String>
+		<String>geturl</String>
+		<String>rusinfo.exe</String>
+		<String>letusgohtppmmv1.0</String>
+		<String>letusgohtppmmv2.0.0.1</String>
+		<String>Sometimes</String>
+		<String>Destroy</String>
+		<String>likubes</String>
+		<String>fine musicians</String>
+		<String>file not found</String>
+		<String>brothers-in-law</String>
+		<String>_RTL_CRITICAL_SECTION_DEBUG</String>
+		<String>_RTL_CRITICAL_SECTION</String>
+		<String>_SECURITY_ATTRIBUTES</String>
+		<String>lpSecurityDescriptor</String>
+		<String>SysUtils</String>
+		<String>ActiveX</String>
+		<String>.docx</String>
+		<String>700.bat</String>
+		<String>Sitikat</String>
+		<String>1.exe</String>
+		<String>UpdateOffice.exe</String>
+		<String>pangtip.bat</String>
+		<String>ping</String>
+		<String>pkxm</String>
+		<String>pangtip.bat</String>
+		<String>.pkxm</String>
+		<String>Reply from</String>
+		<String>DCOM not installed</String>
+		<String>PROXY_TYPE_DIRECT</String>
+		<String>PROXY_TYPE_AUTO_DETECT</String>
+		<String>downfile</String>
+		<String>upfile</String>
+		<String>quitz</String>
+		<String>debugmessage</String>
+		<String>debugclient</String>
+		<String>debugfile</String>
+		<String>delfile</String>
+		<String>delmessage</String>
+		<String>delclient</String>
+		<String>listfiles</String>
+		<String>listmessages</String>
+		<String>listclients</String>
+		<String>WinSta0\Default</String>
+		<String>POST</String>
+		<String>CONNECT</String>
+		<String>NetSubKey</String>
+		<String>FileDescrsiption</String>
+		<String>state.ini</String>
+		<String>Accepted:</String>
+		<String>sha256</String>
+		<String>sinzy</String>
+		<String>AckPacket</String>
+		<String>Connection</String>
+		<String>autoRunKeyPath</String>
+		<String>SIGNATURE</String>
+		<String>messageId</String>
+		<String>HeartBeat</String>
+		<String>Request</String>
+		<String>Unload</String>
+		<String>RequestLoop</String>
+		<String>HeartBeatLoop</String>
+		<String>TcpClient</String>
+		<String>Connect</String>
+		<String>Login</String>
+		<String>CurrentUser</String>
+		<String>CreateDomain</String>
+		<String>ComputeHash</String>
+		<String>cookies.*</String>
+		<String>Tfrmrpcap</String>
+		<String>ProcessLasso_Notification_Class</String>
+		<String>TSystemExplorerTrayForm.UnicodeClass</String>
+		<String>PROCMON_WINDOW_CLASS</String>
+		<String>PROCEXPL</String>
+		<String>WdcWindow</String>
+		<String>ProcessHacker</String>
+		<String>Dumper</String>
+		<String>Dumper64</String>
+		<String>APISpy32Class</String>
+		<String>VMwareDragDetWndClass</String>
+		<String>VMwareSwitchUserControlClass</String>
+		<String>VMware</String>
+		<String>Zone.Identifier</String>
+		<String>runas</String>
+		<String>sysprep</String>
+		<String>TokenPrivilege</String>
+		<String>Shutdown</String>
+		<String>WebKit2WebProcess</String>
+		<String>cmd /c net start %s</String>
+		<String>Sleeping</String>
+		<String>Ivan Medvedev</String>
+		<String>Rijndael</String>
+		<String>SystemBiosVersion</String>
+		<String>VideoBiosVersion</String>
+		<String>VirtualBox</String>
+		<String>Identifier</String>
+		<String>UDPV6</String>
+		<String>TCPV6</String>
+		<String>" deflate 1.1.4 Copyright 1995-2002 Jean-loup Gailly"</String>
+		<String> deflate 1.1.4 Copyright 1995-2002 Jean-loup Gailly</String>
+		<String> inflate 1.1.4 Copyright 1995-2002 Mark Adler</String>
+		<String>History</String>
+		<String>ProductType</String>
+		<String>RegisterRawInputDevices</String>
+		<String>GetRawInputData</String>
+		<String>protocol></String>
+		<String>sqlite3_open</String>
+		<String>sqlite3_close</String>
+		<String>sqlite3_prepare_v2</String>
+		<String>sqlite3_step</String>
+		<String>sqlite3_column_text</String>
+		<String>plugins</String>
+		<String>Hibernating</String>
+		<String>Valid</String>
+		<String>Running</String>
+		<String>downtime-started</String>
+		<String>uptime-started</String>
+		<String>Intel Hardware Cryptographic Service Provider</String>
+		<String>lpAddress</String>
+		<String>BeginInvoke</String>
+		<String>EndInvoke</String>
+		<String>StatusChecker</String>
+		<String>Encoding</String>
+		<String>semaphore</String>
+		<String>stand by</String>
+		<String>startime</String>
+		<String>status</String>
+		<String>taskeng.exe</String>
+		<String>taskhost.exe</String>
+		<String>taskhostex.exe</String>
+		<String>throttle</String>
+		<String>Mandatory Level</String>
+		<String>*.DMP</String>
+		<String>*.dmp</String>
+		<String>_invoke_watson</String>
+		<String>remove</String>
+		<String>debug</String>
+		<String>Starting...</String>
+		<String>hostname</String>
+		<String>clientkey</String>
+		<String>reqfilepath</String>
+		<String>reqfile</String>
+		<String>.html</String>
+		<String>postvalue</String>
+		<String>postfile</String>
+		<String>postdata</String>
+		<String>mkdir</String>
+		<String>rmdir</String>
+		<String>chdir</String>
+		<String>Creating service database record...</String>
+		<String>svchost</String>
+		<String>rpcsrv</String>
+		<String>Setting service description...</String>
+		<String>svchost</String>
+		<String>Opening and Quering Service...</String>
+		<String>Service is running, wait until stopped...</String>
+		<String>Stopped</String>
+		<String>Deleting Service...</String>
+		<String>Service uninstall success.</String>
+		<String>CompareString</String>
+		<String>Engine started</String>
+		<String>Running in background</String>
+		<String>Stale thread</String>
+		<String>Locking doors</String>
+		<String>Rotors engaged</String>
+		<String>I'm going to start it</String>
+		<String>\DosDevices\DKOM_Driver</String>
+		<String>\Device\DKOM_Driver</String>
+		<String>Process successfully hidden.</String>
+		<String>Process ID: %d</String>
+		<String>EPROCESS address: %#x</String>
+		<String>ActiveProcessLinks offset: %#x</String>
+		<String>Extracting %s</String>
+		<String>Your message has been sended</String>
+		<String>Couponserver</String>
+		<String>xmlUrl</String>
+		<String>yahoo</String>
+		<String>LoadXml</String>
+		<String>LocalMachine</String>
+		<String>DownloadAll</String>
+		<String>DownloadComplete</String>
+		<String>DownloadFile</String>
+		<String>DownloadFileAsync</String>
+		<String>DownloadServer</String>
+		<String>DownloadThreads</String>
+		<String>DownloadUrl</String>
+		<String>Downloaded</String>
+		<String>DownloadedBrowser</String>
+		<String>Downloading...</String>
+		<String>CorruptedMachine</String>
+		<String>HtmlGenerator</String>
+		<String>MachineInfo</String>
+		<String>MachineRestriction</String>
+		<String>RegSAM</String>
+		<String>Security</String>
+		<String>MemoryManagement</String>
+		<String>Trackingurls</String>
+		<String>TypeChekDomain</String>
+		<String>DownloadUrl</String>
+		<String>QueueDownloader</String>
+		<String>ZipManager</String>
+		<String>ZipStorer</String>
+		<String>Firefox</String>
+		<String>Chrome</String>
+		<String>InternetExplorer</String>
+		<String>GetIEVersion</String>
+		<String>GetWBVersion</String>
+		<String>webBrowser1</String>
+		<String>changeHtmlCode</String>
+		<String>retries</String>
+		<String>completed</String>
+		<String>addextension</String>
+		<String>DownloadComplete</String>
+		<String>add_DownloadComplete</String>
+		<String>remove_DownloadComplete</String>
+		<String>DownloadThreads</String>
+		<String>Arquitecture</String>
+		<String>Monetizer</String>
+		<String>yahoo</String>
+		<String>internetTurbo</String>
+		<String>strongvault</String>
+		<String>amonetize</String>
+		<String>Couponserver</String>
+		<String>ShoppingChip</String>
+		<String>UsedBrowser</String>
+		<String>AndroidAPK</String>
+		<String>IexplorerMinVersion</String>
+		<String>checkMachineInfo</String>
+		<String>checkYahooBug</String>
+		<String>checkCouponserver</String>
+		<String>checkInternet</String>
+		<String>checkAOLbug</String>
+		<String>hideWhenInstalling</String>
+		<String>idPromo</String>
+		<String>WebmasterId</String>
+		<String>firewalls</String>
+		<String>IsControlled</String>
+
+		<String>firewall</String>
+		<String>IsUserAdministrator</String>
+		<String>CreateSubKey</String>
+		<String>NotifyDownloading</String>
+		<String>isvirtualMachine</String>
+		<String>isdebugging</String>
+		<String>HasDebugger</String>
+		<String>debugging</String>
+		<String>checkurls</String>
+		<String>ListSoftwares</String>
+		<String>CheckAdminPrivileges</String>
+		<String>TrackOnDefaultBrowser</String>
+		<String>GetDomain</String>
+		<String>checkdomain</String>
+		<String>bytesDownloaded</String>
+		<String>God Mode</String>
+		<String>logger</String>
+		<String>This plugin is already loaded.</String>
+		<String>The plugin you are trying to load does not exist</String>
+		<String>Whitelist protection on</String>
+		<String>Hook cleaning on</String>
+		<String>PiD obfuscation on</String>
+		<String>Code injection successful!</String>
+		<String>Code injection failed!</String>
+		<String>Injecting code ...</String>
+		<String>Code Injection</String>
+		<String>Creating a remote thread ...</String>
+		<String>Keylogging disabled.</String>
+		<String>failed to get memory</String>
+		<String>$Id: qmath.h,v 1.1 2004/01/15 19:50:35 jonbennett Exp $</String>
+		<String>#requireadmin</String>
+		<String>#notrayicon</String>
+		<String>#include-once</String>
+		<String>regedt32.sys</String>
+		<String>D:\RECYCLER\</String>
+		<String>Windows Registry Editor Version 5.00</String>
+		<String>start</String>
+		<String>stop</String>
+		<String>DisallowRun</String>
+		<String>NoDriveTypeAutoRun</String>
+		<String>HideFileExt</String>
+		<String>Hidden</String>
+		<String>SuperHidden</String>
+		<String>Application cannot be run with debugger or monitoring tool(s) loaded!</String>
+		<String>Logon User Name</String>
+		<String>NoFolderOptions</String>
+		<String>Happy BirthDay my's Boss</String>
+		<String>Merry Christmas</String>
+		<String>.COM;.EXE;.BAT;.CMD;.VBS;.JS;.WS</String>
+		<String>Access denied!</String>
+		<String>Total entries: %d</String>
+		<String>Entries enumerated: %d</String>
+		<String>Upload file ok!</String>
+		<String>create remote file error!</String>
+		<String>Download file ok!</String>
+		<String>Reading remote file error!</String>
+		<String>create pipe error!</String>
+		<String>start cmd error!</String>
+		<String>Logon user err!</String>
+		<String>execute error!</String>
+		<String>bind cmd frist!</String>
+		<String>CS thread still active!</String>
+		<String>get user name error!</String>
+		<String>can't get ver info!</String>
+		<String>Windows?</String>
+		<String>Remote</String>
+		<String>Ramdisk</String>
+		<String>Client process-%d-stoped!</String>
+		<String>Create localfile error!</String>
+		<String>DownloadEnd</String>
+		<String>List domain server ok!#</String>
+		<String>fileupload</String>
+		<String>cruisenet</String>
+		<String>chunked</String>
+		<String>bankman</String>
+		<String>javascript:</String>
+
+		<String>Schedule service command line interface</String>
+		<String>This operation will delete all scheduled jobs.</String>
+		<String>The AT schedule file was cleared.</String>
+		<String>Deletes one or more files.</String>
+		<String>Creates a directory.</String>
+		<String>Removes (deletes) a directory.</String>
+		<String>already running</String>
+		<String>Botnet has been shutdown - restart bot?</String>
+		<String>Botnet shutdown</String>
+		<String>QUIT :Botnet shutdown</String>
+		<String>PRIVMSG %s :bingo - botnet shutting down</String>
+		<String>Resistance is futile</String>
+		<String>No malware here, honest guv!</String>
+		<String>Anti-debug</String>
+		<String>misery mystery</String>
+		<String>malfor</String>
+		<String>AppleMac</String>
+		<String>.detour</String>
+		<String>Detoured</String>
+		<String>.memdump</String>
+		<String>Client hook allocation failure.</String>
+		<String>silentpostback</String>
+		<String>AlreadyRunning</String>
+		<String>StubInfo</String>
+		<String>wrapper</String>
+		<String>keeplog</String>
+		<String>pingdialog</String>
+		<String>runonce</String>
+		<String>noreq</String>
+		<String>verifycookies</String>
+		<String>account</String>
+		<String>accountid</String>
+		<String>selftest</String>
+		<String>silenterr</String>
+		<String>preload</String>
+		<String>PostbackSent</String>
+		<String>StubRun</String>
+		<String>StubExtract</String>
+		<String>WaitablePort</String>
+		<String>Waiting</String>
+		<String>Waiting Connections</String>
+		<String>ServiceMain</String>
+		<String>ServTestDos</String>
+		<String>VBoxGuest</String>
+		<String>Betabot</String>
+		<String>HGFS</String>
+		<String>Hashtable</String>
+		<String>GetResourceString</String>
+		<String>Monitor</String>
+		<String>www.memtest86.com</String>
+		<String>boxedapp.com</String>
+		<String>julian seward</String>
+		<String>RegServer</String>
+		<String>Send ack is successful.</String>
+		<String>Get the right data.</String>
+		<String>Receiving acknowledgment is successful.</String>
+		<String>Receiving packet failed.</String>
+		<String>Sending packet success...</String>
+		<String>Can't get the right data</String>
+		<String>Initialization is successful.</String>
+		<String>Initialization is failed.</String>
+		<String>tempPass.txt</String>
+		<String>POP3 Password2</String>
+		<String>POP3 Server</String>
+		<String>POP3 User Name</String>
+		<String>HTTPMail Password2</String>
+		<String>Hotmail</String>
+		<String>HTTPMail User Name</String>
+		<String> 2004, 2005 Pierre le Riche / Professional Software Development</String>
+		<String>Broadcast adress :</String>
+		<String>Broadcasts : NO</String>
+		<String>Broadcasts : YES</String>
+		<String>SHELLEXECUTE</String>
+		<String>SHELLEXECUTEWAIT</String>
+		<String>#BOT#CloseServer</String>
+		<String>#BOT#OpenUrl</String>
+		<String>#BOT#Ping</String>
+		<String>#BOT#RunPrompt</String>
+		<String>#BOT#SvrUninstall</String>
+		<String>#BOT#URLDownload</String>
+		<String>#BOT#URLUpdate</String>
+		<String>#BOT#VisitUrl</String>
+		<String>#CAMEND</String>
+		<String>#FreezeIO</String>
+		<String>#GetClipboardText</String>
+		<String>#GetScreenSize</String>
+		<String>#KCMDDC51#-</String>
+		<String>#KEEPALIVE#</String>
+		<String>#RemoteScreenSize</String>
+		<String>#SendClip</String>
+		<String>#SendTaskMgr</String>
+		<String>#UnFreezeIO</String>
+		<String>%IPPORTSCAN</String>
+		<String>ActiveOfflineKeylogger</String>
+		<String>ActiveOnlineKeyStrokes</String>
+		<String>ActiveOnlineKeylogger</String>
+		<String>AntiVirusDisableNotify</String>
+		<String>BTMemoryLoadLibary: Can't attach library</String>
+		<String>Be Right Back</String>
+		<String>DownloadFail</String>
+		<String>DownloadSuccess</String>
+		<String>Progman</String>
+		<String>Sender</String>
+		<String>UPLOADEXEC</String>
+		<String>UPLOADFILE</String>
+		<String>UnActiveOfflineKeylogger</String>
+		<String>UnActiveOnlineKeyStrokes</String>
+		<String>UnBlockContact</String>
+		<String>Video Capture</String>
+		<String>WEBCAMLIVE</String>
+		<String>WEBCAMSTOP</String>
+		<String>drivers\etc\hosts</String>
+		<String>unknown compression method</String>
+		<String>wscsvc</String>
+		<String>fukoff</String>
+		<String>httpstop</String>
+		<String>logstop</String>
+		<String>ftfpstop</String>
+		<String>procsstop</String>
+		<String>securestop</String>
+		<String>reconnect</String>
+		<String>disconnect</String>
+		<String>botid</String>
+		<String>aliases</String>
+		<String>flusharp</String>
+		<String>flushdns</String>
+		<String>crash</String>
+		<String>killthreads</String>
+		<String>killproc</String>
+		<String>killid</String>
+		<String>.download</String>
+		<String>.update</String>
+		<String>Kennwort</String>
+		<String>Object dump complete.</String>
+		<String>PAYPAL</String>
+		<String>PAYPAL.COM</String>
+		<String>Ping flood</String>
+		<String>ROOTED</String>
+		<String>Rebooting system</String>
+		<String>Reconnecting</String>
+		<String>Referer: %s</String>
+		<String>Remote Command Prompt</String>
+		<String>Removing Bot</String>
+		<String>[DDoS]</String>
+		<String>[KEYLOG]: %s</String>
+		<String>[PRSC]</String>
+		<String>[PSNIFF]</String>
+		<String>[PING]</String>
+		<String>[TFTP]</String>
+		<String>[UPD]</String>
+		<String>administrador</String>
+		<String>administrat</String>
+		<String>administrateur</String>
+		<String>Download complete</String>
+		<String>ALIEN-Z</String>
+		<String>\Google\Chrome\User Data</String>
+		<String>VncSrvWndProc</String>
+		<String>VncStopServer</String>
+		<String>VncStartServer</String>
+		<String>VNCCreateServer</String>
+		<String>VNCServerThread</String>
+		<String>VNCStartServer</String>
+		<String>FPUMaskValue</String>
+		<String>PhysicalDrive0</String>
+		<String>Protection Error</String>
+		<String>LOADER ERROR</String>
+		<String>The procedure entry point</String>
+		<String>Invalid DOS signature</String>
+		<String>Invalid COFF signature</String>
+		<String>Invalid Windows Image</String>
+		<String>Host is down.</String>
+		<String>No route to host.</String>
+		<String>CoMessengerU</String>
+		<String>debugger</String>
+		<String>sample</String>
+		<String>virtual</String>
+		<String>emulat</String>
+		<String>wireshark</String>
+		<String>GetProcesses</String>
+		<String>MemoryStream</String>
+		<String>GZipStream</String>
+		<String>MulticastDelegate</String>
+		<String>IAT processed</String>
+		<String>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/</String>
+		<String>putfile:</String>
+		<String>getfile:</String>
+		<String>outlook</String>
+		<String>iexplore</String>
+		<String>source</String>
+		<String>Connecting</String>
+		<String>Downloading</String>
+		<String>Cancelled</String>
+		<String>Connecting</String>
+		<String>Reconnect Pause</String>
+		<String>Terminated</String>
+		<String>Transfer Error</String>
+		<String>Connection Error</String>
+		<String>OpenRequest Error</String>
+		<String>SendRequest Error</String>
+		<String>URL Parts Error</String>
+		<String>CreateThread Error</String>
+		<String>Request Error</String>
+		<String>Server Error</String>
+		<String>Redirection</String>
+		<String>TypeLib</String>
+		<String>Hardware</String>
+		<String>Interface</String>
+		<String>FileType</String>
+		<String>Component Categories</String>
+		<String>CLSID</String>
+		<String>AppID</String>
+		<String>Delete</String>
+		<String>NoRemove</String>
+		<String>ForceRemove</String>
+		<String>Keylogger</String>
+		<String>crypter</String>
+		<String>dump</String>
+		<String>vbox</String>
+		<String>NetKeyLogger</String>
+		<String>TARGET</String>
+		<String>pipeline</String>
+		<String>miner</String>
+		<String>Execute ERROR</String>
+		<String>Download ERROR</String>
+		<String>Executed As</String>
+		<String>Execute ERROR</String>
+		<String>Update ERROR</String>
+		<String>Updating To</String>
+		<String>Update ERROR</String>
+		<String>ASPNET</String>
+		<String>IUSR_</String>
+		<String>IWAM_</String>
+		<String>ASPNET</String>
+		<String>POP3</String>
+		<String>Authors</String>
+		<String>Admins</String>
+		<String>Browsers</String>
+		<String>Guests</String>
+		<String>Users</String>
+		<String>Developers</String>
+		<String>webBrowser2</String>
+		<String>IEFrame</String>
+		<String>\\.\pipe\</String>
+		<String>permission denied</String>
+		<String>permission_denied</String>
+		<String>connection_already_in_progress</String>
+		<String>connection_aborted</String>
+		<String>connection_refused</String>
+		<String>host_unreachable</String>
+		<String>already_connected</String>
+		<String>network_down</String>
+		<String>network_reset</String>
+		<String>network_unreachable</String>
+		<String>not_connected</String>
+		<String>wrong_protocol_type</String>
+		<String>broken pipe</String>
+		<String>connection aborted</String>
+		<String>connection already in progress</String>
+		<String>connection refused</String>
+		<String>host unreachable</String>
+		<String>network down</String>
+		<String>network reset</String>
+		<String>network unreachable</String>
+		<String>owner dead</String>
+		<String>protocol error</String>
+		<String>wrong protocol type</String>
+		<String>EXECUTABLE</String>
+		<String>VMware Workstation v10</String>
+		<String>master</String>
+		<String>debian</String>
+		<String>mysql</String>
+		<String>daemon</String>
+		<String>backup</String>
+		<String>marta</String>
+		<String>oracle</String>
+		<String>redhat</String>
+		<String>VNC%d.%d</String>
+		<String>exploitable</String>
+		<String>passwd</String>
+		<String>proxypasswd</String>
+		<String>proxyuser</String>
+		<String>Login denied</String>
+		<String>Remote file not found</String>
+		<String>RenameFile</String>
+		<String>RunPrompt</String>
+		<String>RunSelectedAsAdmin</String>
+		<String>RunSelectedHidden</String>
+		<String>RunSelectedShow</String>
+		<String>RemoteMachineName</String>
+		<String>AheadLib</String>
+		<String>PlusDLL</String>
+		<String>PLUSUNIT</String>
+		<String>web-browser</String>
+
+		<String>IMAGE_DOS_HEADER</String>
+		<String>IMAGE_NT_HEADERS32</String>
+		<String>IMAGE_FILE_HEADER</String>
+		<String>IMAGE_OPTIONAL_HEADER32</String>
+		<String>IMAGE_OPTIONAL_HEADER64</String>
+		<String>IMAGE_DATA_DIRECTORY</String>
+		<String>IMAGE_NT_HEADERS64</String>
+		<String>IMAGE_IMPORT_BY_NAME</String>
+		<String>IMAGE_IMPORT_DESCRIPTOR</String>
+		<String>IMAGE_THUNK_DAT</String>
+		<String>IMAGE_THUNK_DATA32</String>
+		<String>IMAGE_DELAY_IMPORT_DESCRIPTOR</String>
+		<String>IMAGE_NT_OPTIONAL_HDR32_MAGIC</String>
+		<String>IMAGE_NT_OPTIONAL_HDR64_MAGIC</String>
+		<String>IMAGE_SUBSYSTEM_UNKNOWN</String>
+		<String>IMAGE_SUBSYSTEM_NATIVE</String>
+		<String>IMAGE_SUBSYSTEM_WINDOWS_GUI</String>
+		<String>IMAGE_SUBSYSTEM_WINDOWS_CUI</String>
+		<String>IMAGE_SUBSYSTEM_POSIX_CUI</String>
+		<String>IMAGE_SUBSYSTEM_WINDOWS_CE_GUI</String>
+		<String>IMAGE_SUBSYSTEM_EFI_APPLICATION</String>
+		<String>IMAGE_SUBSYSTEM_EFI_BOOT_SERVICE_DRIVER</String>
+		<String>IMAGE_SUBSYSTEM_EFI_RUNTIME_DRIVER</String>
+		<String>IMAGE_SUBSYSTEM_EFI_ROM</String>
+		<String>IMAGE_SUBSYSTEM_XBOX</String>
+		<String>IMAGE_DLL_CHARACTERISTICS_DYNAMIC_BASE</String>
+		<String>IMAGE_DLL_CHARACTERISTICS_FORCE_INTEGRITY</String>
+		<String>IMAGE_DLL_CHARACTERISTICS_NX_COMPAT</String>
+		<String>IMAGE_DLLCHARACTERISTICS_NO_ISOLATION</String>
+		<String>IMAGE_DLLCHARACTERISTICS_NO_SEH</String>
+		<String>IMAGE_DLLCHARACTERISTICS_NO_BIND</String>
+		<String>IMAGE_DLLCHARACTERISTICS_WDM_DRIVER</String>
+		<String>IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE</String>
+		<String>Protect</String>
+		<String>PAGE_NOACCESS</String>
+		<String>PAGE_READONLY</String>
+		<String>PAGE_READWRITE</String>
+		<String>PAGE_WRITECOPY</String>
+		<String>PAGE_EXECUTE</String>
+		<String>PAGE_EXECUTE_READ</String>
+		<String>PAGE_EXECUTE_READWRITE</String>
+		<String>PAGE_EXECUTE_WRITECOPY</String>
+		<String>PAGE_GUARD</String>
+		<String>PAGE_NOCACHE</String>
+		<String>PAGE_WRITECOMBINE</String>
+
+		<String>EXECUTE</String>
+		<String>EXECUTE_READ</String>
+		<String>EXECUTE_READWRITE</String>
+		<String>EXECUTE_WRITECOPY</String>
+		<String>NOACCESS</String>
+		<String>READONLY</String>
+		<String>READWRITE</String>
+		<String>WRITECOPY</String>
+		<String>MOVEFILE_REPLACE_EXISTING</String>
+		<String>MOVEFILE_COPY_ALLOWED</String>
+		<String>MOVEFILE_DELAY_UNTIL_REBOOT</String>
+		<String>MOVEFILE_WRITE_THROUGH</String>
+
+		<String>TokenUser</String>
+		<String>TokenGroups</String>
+		<String>TokenPrivileges</String>
+		<String>TokenOwner</String>
+		<String>TokenPrimaryGroup</String>
+		<String>TokenDefaultDacl</String>
+		<String>TokenSource</String>
+		<String>TokenType</String>
+		<String>TokenImpersonationLevel</String>
+		<String>TokenStatistics</String>
+		<String>TokenRestrictedSids</String>
+		<String>TokenSessionId</String>
+		<String>TokenGroupsAndPrivileges</String>
+		<String>TokenSessionReference</String>
+		<String>TokenSandBoxInert</String>
+		<String>TokenAuditPolicy</String>
+		<String>TokenOrigin</String>
+		<String>TokenElevationType</String>
+		<String>TokenLinkedToken</String>
+		<String>TokenElevation</String>
+		<String>TokenHasRestrictions</String>
+		<String>TokenAccessInformation</String>
+		<String>TokenVirtualizationAllowed</String>
+		<String>TokenVirtualizationEnabled</String>
+		<String>TokenIntegrityLevel</String>
+		<String>TokenUIAccess</String>
+		<String>TokenMandatoryPolicy</String>
+		<String>TokenLogonSid</String>
+		<String>TokenPrimary</String>
+		<String>TokenImpersonation</String>
+		<String>SecurityAnonymous</String>
+		<String>SecurityIdentification</String>
+		<String>SecurityImpersonation</String>
+		<String>SecurityDelegation</String>
+
+		<!-- AntiVirus patterns -->
+		<String>AntiVirtualBox</String>
+		<String>AntiVmWare</String>
+		<String>AntiVirtualPC</String>
+		<String>AntiMalwarebytes</String>
+		<String>AntiOllydbg</String>
+		<String>AntiWireshark</String>
+		<String>antiSpyware</String>
+		<String>Anti-Virus</String>
+		<String>avast!</String>
+		<String>AntiVir</String>
+		<String>Inspection</String>
+		<String>Malware</String>
+		<String>Kaspersky</String>
+		<String>BitDefender</String>
+		<String>Dr.Web</String>
+		<String>Kaspersky Antivirus</String>
+		<String>Nod32 Antivirus 2.x</String>
+		<String>Ewido Security Suite</String>
+		<String>McAfee VirusScan</String>
+		<String>Panda Antivirus/Firewall</String>
+		<String>Symantec/Norton</String>
+		<String>PC-cillin Antivirus</String>
+		<String>F-Secure</String>
+		<String>Kingsoft ShaDu</String>
+		<String>NOD32 Antivirus</String>
+		<String>Rising Antivirus</String>
+		<String>Jiangmin Antivirus</String>
+		<String>360 ShaDu</String>
+		<String>360 Safe</String>
+		<String>Norton Personal Firewall</String>
+		<String>ZoneAlarm</String>
+		<String>Comodo Firewall</String>
+		<String>eTrust EZ Firewall</String>
+		<String>F-Secure Internet Security</String>
+		<String>McAfee Personal Firewall</String>
+		<String>Outpost Personal Firewall</String>
+		<String>Panda Internet Seciruty Suite</String>
+		<String>Panda Anti-Virus/Firewall</String>
+		<String>BitDefnder/Bull Guard Antivirus</String>
+		<String>Rising Firewall</String>
+		<String>360Safe AntiArp</String>
+		<String>Kingsoft Safe</String>
+
+		<String>NEWGRAB</String>
+		<String>SCREENSHOT</String>
+
+		<String>,AddressBook</String>
+		<String>TrustedPeople</String>
+		<String>TrustedPublisher</String>
+		<String>RunProgram</String>
+		<String>GUIMode</String>
+		<String>@Install@</String>
+		<String>@InstallEnd@</String>
+		<String>protocol_not_supported</String>
+		<String>network down</String>
+		<String>network reset</String>
+		<String>network unreachable</String>
+		<String>network_down</String>
+		<String>network_reset</String>
+		<String>network_unreachable</String>
+		<String>host unreachable</String>
+		<String>host_unreachable</String>
+		<String>PendingFileRenameOperations</String>
+		<String>MyApplication.app</String>
+		<String>Microsoft.Windows.MyCoolApp</String>
+		<String>Application description here</String>
+		<String>InstallHOOK</String>
+		<String>InstallLocalHOOK</String>
+		<String>UninstallHOOK</String>
+		<String>ZLibEx</String>
+		<String>PsAPI</String>
+		<String>Xenocode Virtual Desktop</String>
+		<String>start.spoon.net</String>
+		<String>Spoon Virtual Machine</String>
+		<String>Xenocode Virtual Appliance Runtime</String>
+		<String>CPlApplet</String>
+		<String>Java Security Plugin</String>
+		<String>javaplugin</String>
+		<String>Java Security Plugin</String>
+		<String>Sun Java Security Plugin</String>
+		<String>VMProtect begin</String>
+		<String>VMProtect end</String>
+		<String>[BeginChat]</String>
+		<String>friend</String>
+		<String>KernelUtil</String>
+		<String>NETWORK SERVICE</String>
+		<String>Cookies</String>
+		<String>Administrative Tools</String>
+		<String>WinFTP</String>
+		<String>PortNumber</String>
+		<String>CREATE_SUSPENDED</String>
+		<String>VBScript.Encode</String>
+		<String>JScript.Encode</String>
+		<String>WScript</String>
+		<String>ExeScriptPAD</String>
+		<String>ExeScript</String>
+		<String>silent</String>
+		<String>ExeScript Host</String>
+		<String>onbeforeunload</String>
+		<String>onunload</String>
+		<String>Godmode</String>
+		<String>anonymous</String>
+		<String>Connecting....</String>
+		<String>DECOMPRESSOR</String>
+		<String>antivirus</String>
+		<String>AntivirusProduct</String>
+		<String>DefaultBrowser</String>
+		<String>MemoryProtection</String>
+		<String>Manager</String>
+		<String>BaseScript</String>
+		<String>Updater</String>
+		<String>SafeStarter</String>
+		<String>CreateProcessInternal</String>
+		<String>IDetourHook</String>
+		<String>DetourHook</String>
+
+		<!-- WMI-->
+		<String>root/cimv2</String>
+		<String>WbemScripting.SWbemLocator</String>
+		<String>ROOT\CIMV2</String>
+		<String>SELECT * from tab_online</String>
+		<String>SELECT * from %s</String>
+		<String>SELECT * from moz_logins</String>
+		<String>SELECT * from</String>
+		<String>SELECT * from</String>
+		<String>SELECT * from Win32_BaseBoard</String>
+		<String>SELECT * from Win32_OperatingSystem</String>
+		<String>SELECT * from Win32_Processor</String>
+		<String>SELECT * from Win32_TimeZone</String>
+		<String>SELECT * from msft_providers</String>
+		<String>SELECT * from __win32provider where Name</String>
+		<String>SELECT * from msft_providers</String>
+		<String>SELECT * from msft_providers where HostProcessIdentifier</String>
+		<String>SELECT * from AntivirusProduct</String>
+		<String>SELECT * from FirewallProduct</String>
+		<String>SELECT * from Win32_ComputerSystem</String>
+		<String>SELECT * from Win32_Process</String>
+		<String>SELECT * from Win32_BIOS</String>
+		<String>SELECT * from Win32_VideoController</String>
+		<String>SELECT * from Win32_SystemEnclosure</String>
+		<String>Manufacturer</String>
+		<String>Model</String>
+		<String>SerialNumber</String>
+		<String>ChassisTypes</String>
+		<String>SMBIOSAssetTag</String>
+
+		<!-- SQL -->
+		<String>CREATE %s %.*s</String>
+		<String>CREATE TABLE</String>
+		<String>CREATE TABLE %Q.%s(%s)</String>
+		<String>CREATE TABLE sqlite_master(</String>
+		<String>CREATE VIRTUAL TABLE %T</String>
+		<String>CREATE%s INDEX %.*s</String>
+
+		<String>WMessages</String>
+		<String>WM_HTML_GETOBJECT</String>
+		<String>WM_MOUSEMOVE</String>
+		<String>WM_LBUTTONUP</String>
+		<String>WM_LBUTTONDOWN</String>
+		<String>WM_COPYDATA</String>
+
+		<String>STANDARD_RIGHTS_REQUIRED</String>
+		<String>STANDARD_RIGHTS_READ</String>
+		<String>TOKEN_ASSIGN_PRIMARY</String>
+		<String>TOKEN_DUPLICATE</String>
+		<String>TOKEN_IMPERSONATE</String>
+		<String>TOKEN_QUERY</String>
+		<String>TOKEN_QUERY_SOURCE</String>
+		<String>TOKEN_ADJUST_PRIVILEGES</String>
+		<String>TOKEN_ADJUST_GROUPS</String>
+		<String>TOKEN_ADJUST_DEFAULT</String>
+		<String>TOKEN_ADJUST_SESSIONID</String>
+		<String>TOKEN_READ</String>
+		<String>TOKEN_ALL_ACCESS</String>
+		<String>ERROR_INSUFFICIENT_BUFFER</String>
+		<String>SECURITY_MANDATORY_UNTRUSTED_RID</String>
+		<String>SECURITY_MANDATORY_LOW_RID</String>
+		<String>SECURITY_MANDATORY_MEDIUM_RID</String>
+		<String>SECURITY_MANDATORY_HIGH_RID</String>
+		<String>SECURITY_MANDATORY_SYSTEM_RID</String>
+		<String>SECURITY_MANDATORY_LABEL_AUTHORITY</String>
+		<String>SE_GROUP_MANDATORY</String>
+		<String>SE_GROUP_ENABLED_BY_DEFAULT</String>
+		<String>SE_GROUP_ENABLED</String>
+		<String>SE_GROUP_OWNER</String>
+		<String>SE_GROUP_USE_FOR_DENY_ONLY</String>
+		<String>SE_GROUP_INTEGRITY</String>
+		<String>SE_GROUP_INTEGRITY_ENABLED</String>
+		<String>SE_GROUP_LOGON_ID</String>
+		<String>SE_GROUP_RESOURCE</String>
+		<String>SE_GROUP_VALID_ATTRIBUTES</String>
+
+		<!-- DOT NET-->
+		<String>RuntimeHelpers</String>
+		<String>System.Security</String>
+		<String>System.Runtime.CompilerServices</String>
+		<String>System.Security.Cryptography</String>
+		<String>System.Reflection</String>
+		<String>System.Text.RegularExpressions</String>
+		<String>System.Runtime.InteropServices</String>
+		<String>System.Security.Principal</String>
+		<String>System.Threading</String>
+		<String>System.IO.Compression</String>
+		<String>System.Net.Configuration</String>
+		<String>System.Net.Sockets</String>
+		<String>Microsoft.VisualBasic.CompilerServices</String>
+		<String>Internet Explorer_Server</String>
+		<String>vbscript</String>
+		<String>javascript</String>
+		<String>JavaScript</String>
+		<String>execScript</String>
+		<String>AutoRun</String>
+		<String>HashSize</String>
+		<String>Algorithm</String>
+		<String>BlockSize</String>
+		<String>CipherMode</String>
+		<String>Twofish</String>
+		<String>Wrong password</String>
+		<String>Proxy-Connection:</String>
+		<String>User-Agent:</String>
+		<String>WWW-Authenticate:</String>
+		<String>Proxy-authenticate:</String>
+		<String>Content-Length:</String>
+		<String>Connection:</String>
+		<String>Transfer-Encoding:</String>
+		<String>GOPHER</String>
+		<String>Digest</String>
+		<String>nonce</String>
+		<String>stale</String>
+		<String>realm</String>
+		<String>opaque</String>
+		<String>User-Agent:</String>
+		<String>Referer:</String>
+		<String>Range:</String>
+
+		<!-- guid -->
+		<String>{D27CDB6E-AE6D-11CF-96B8-444553540000}</String>
+		<String>abe2869f-9b47-4cd9-a358-c22904dba7f7</String>
+		<String>00000000-0000-0000-C000-000000000046</String>
+		<String>CLSID\{ADB880A6-D8FF-11CF-9377-00AA003B7A11}\InprocServer32</String>
+		<String>5e7e8100-9138-11d1-945a-00c04fc308ff</String>
+		<String>82bd0e67-9fea-4748-8672-d5efe5b779b0</String>
+		<!-- Storage System Provider containing the IE FTP Passwords -->
+		<String>5e7e8100-9138-11d1-945a-00c04fc308ff</String>
+		<!-- Domain Visible Network (.Net Passport) Passwords -->
+		<String>82BD0E67-9FEA-4748-8672-D5EFE5B779B0</String>
+
+		<!--Sandbox Product IDs -->
+		<String>76487-640-1457236-23837</String>
+		<String>76487-337-8429955-22614</String>
+		<String>76487-644-3177037-23510</String>
+		<String>76487-640-8834005-23195</String>
+		<String>76487-640-0716662-23535</String>
+		<String>76487-644-8648466-23106</String>
+		<String>76487-341-5883812-22420</String>
+		<String>76487-OEM-0027453-63796</String>
+		<String>76497-640-6308873-23835</String>
+		<String>55274-640-2673064-23950</String>
+		<String>00426-293-8170032-85146</String>
+
+		<!-- SID (Security Identifiers -->
+		<String name="">S-1-0</String>
+		<String name="">S-1-0-0</String>
+		<String name="">S-1-1</String>
+		<String name="">S-1-1-0</String>
+		<String name="">S-1-2</String>
+		<String name="">S-1-2-0</String>
+		<String name="">S-1-2-1</String>
+		<String name="">S-1-3</String>
+		<String name="">S-1-3-0</String>
+		<String name="">S-1-3-1</String>
+		<String name="">S-1-3-2</String>
+		<String name="">S-1-3-3</String>
+		<String name="">S-1-3-4</String>
+		<String name="">S-1-5-80-0</String>
+		<String name="">S-1-4</String>
+		<String name="">S-1-5</String>
+		<String name="">S-1-5-1</String>
+		<String name="">S-1-5-2</String>
+		<String name="">S-1-5-3</String>
+		<String name="">S-1-5-4</String>
+		<String name="">S-1-5-6</String>
+		<String name="">S-1-5-7</String>
+		<String name="">S-1-5-8</String>
+		<String name="">S-1-5-9</String>
+		<String name="">S-1-5-10</String>
+		<String name="">S-1-5-11</String>
+		<String name="">S-1-5-12</String>
+		<String name="">S-1-5-13</String>
+		<String name="">S-1-5-14</String>
+		<String name="">S-1-5-15</String>
+		<String name="">S-1-5-17</String>
+		<String name="">S-1-5-18</String>
+		<String name="">S-1-5-19</String>
+		<String name="">S-1-5-20</String>
+		<String name="">S-1-5-32-544</String>
+		<String name="">S-1-5-32-545</String>
+		<String name="">S-1-5-32-546</String>
+		<String name="">S-1-5-32-547</String>
+		<String name="">S-1-5-32-548</String>
+		<String name="">S-1-5-32-549</String>
+		<String name="">S-1-5-32-550</String>
+		<String name="">S-1-5-32-551</String>
+		<String name="">S-1-5-32-552</String>
+		<String name="">S-1-5-64-10</String>
+		<String name="">S-1-5-64-14</String>
+		<String name="">S-1-5-64-21</String>
+		<String name="">S-1-5-80</String>
+		<String name="">S-1-5-80-0</String>
+		<String name="">S-1-5-80-0</String>
+		<String name="">S-1-5-83-0</String>
+		<String name="">S-1-16-0</String>
+		<String name="">S-1-16-4096</String>
+		<String name="">S-1-16-8192</String>
+		<String name="">S-1-16-8448</String>
+		<String name="">S-1-16-12288</String>
+		<String name="">S-1-16-16384</String>
+		<String name="">S-1-16-20480</String>
+		<String name="">S-1-16-28672</String>
+		<String name="">S-1-5-32-554</String>
+		<String name="">S-1-5-32-555</String>
+		<String name="">S-1-5-32-556</String>
+		<String name="">S-1-5-32-557</String>
+		<String name="">S-1-5-32-558</String>
+		<String name="">S-1-5-32-559</String>
+		<String name="">S-1-5-32-560</String>
+		<String name="">S-1-5-32-561</String>
+		<String name="">S-1-5-32-562</String>
+		<String name="">S-1-5-32-569</String>
+		<String name="">S-1-5-32-573</String>
+		<String name="">S-1-5-32-574</String>
+		<String name="">S-1-5-32-575</String>
+		<String name="">S-1-5-32-576</String>
+		<String name="">S-1-5-32-577</String>
+		<String name="">S-1-5-32-578</String>
+		<String name="">S-1-5-32-579</String>
+		<String name="">S-1-5-32-580</String>
+		<String name="Trusted Installer">S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464</String>
+
+		<!-- Registry -->
+		<String>Software\Microsoft\Windows\CurrentVersion</String>
+		<String>Software\Microsoft\windows\currentversion\Internet Settings</String>
+		<String>Software\Microsoft\Windows\CurrentVersion\RunOnce</String>
+		<String>Software\Microsoft\Windows\CurrentVersion\Run</String>
+		<String>Software\Microsoft\Windows\CurrentVersion\Run\</String>
+		<String>Software\Microsoft\windows\currentversion\Internet Settings</String>
+		<String>SOFTWARE\Microsoft\Windows NT\CurrentVersion</String>
+		<String>Software\Microsoft\Windows NT\CurrentVersion\ProfileGuid</String>
+		<String>Software\Microsoft\Windows NT\CurrentVersion\ProfileList</String>
+		<String>Software\Microsoft\Windows NT\CurrentVersion\Winlogon</String>
+		<String>SOFTWARE\Microsoft\Windows NT\CurrentVersion\SvcHost</String>
+		<String>Software\Policies\Microsoft\Windows\System</String>
+		<String>System\CurrentControlSet\Control\Session Manager</String>
+		<String>CurrentVersion\Run</String>
+		<String>HKEY_CLASSES_ROOT</String>
+		<String>HKEY_CURRENT_USER</String>
+		<String>HKEY_LOCAL_MACHINE</String>
+		<String>HKEY_USERS</String>
+		<String>HKEY_PERFORMANCE_DATA</String>
+		<String>HKEY_CURRENT_CONFIG</String>
+		<String>HKEY_DYN_DATA</String>
+		<String>Hardware\Description\System\CentralProcessor</String>
+		<String>Hardware\ACPI\DSDT</String>
+		<String>HARDWARE\DEVICEMAP\SERIALCOMM</String>
+		<String>HARDWARE\DEVICEMAP\Scsi\Scsi Port 0\Scsi Bus 0\Target Id 0\Logical Unit Id 0</String>
+		<String>HARDWARE\DEVICEMAP\Scsi\Scsi Port 1\Scsi Bus 0\Target Id 0\Logical Unit Id 0</String>
+		<String>SYSTEM\CurrentControlSet\Services\mssmbios\data</String>
+		<String>SYSTEM\CurrentControlSet\Services\</String>
+		<String>SYSTEM\CurrentControlSet\Services\RemoteAccess\RouterManagers\Ip</String>
+		<String>hklm\SYSTEM\ControlSet001\Control\SafeBoot\Network\{4D36E967-E325-11CE-BFC1-08002BE10318}</String>
+		<String>hklm\SYSTEM\ControlSet001\Control\SafeBoot\Minimal\{4D36E967-E325-11CE-BFC1-08002BE10318}</String>
+		<String>SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall</String>
+		<String>HARDWARE\DESCRIPTION\System\CentralProcessor\0</String>
+		<String>SOFTWARE\Microsoft\Shared Tools\MSConfig\startupfolder</String>
+		<String>SOFTWARE\Microsoft\Shared Tools\MSConfig\startupfolder\</String>
+		<String>SOFTWARE\Microsoft\Shared Tools\MSConfig\startupreg</String>
+		<String>SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall</String>
+		<String>SYSTEM\CurrentControlSet\Control\Keyboard Layouts\</String>
+		<String>Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders</String>
+		<String>DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</String>
+		<String>DisableTaskManager</String>
+		<String>HKCU\Control Panel\Desktop</String>
+
+		<!-- Well-known (local) directories -->
+		<String>AppData\Local</String>
+		<String>AppData\Local\Microsoft\Windows\History</String>
+		<String>AppData\Local\Microsoft\Windows\Temporary Internet Files</String>
+		<String>AppData\Roaming</String>
+		<String>AppData\Roaming\Microsoft\Windows\Cookies</String>
+		<String>AppData\Roaming\Microsoft\Windows\Network Shortcuts</String>
+		<String>AppData\Roaming\Microsoft\Windows\Printer Shortcuts</String>
+		<String>AppData\Roaming\Microsoft\Windows\Recent</String>
+		<String>AppData\Roaming\Microsoft\Windows\SendTo</String>
+		<String>AppData\Roaming\Microsoft\Windows\Start Menu</String>
+		<String>AppData\Roaming\Microsoft\Windows\Start Menu\Programs</String>
+		<String>AppData\Roaming\Microsoft\Windows\Templates</String>
+		<String>Default</String>
+		<String>Documents</String>
+		<String>Microsoft\Windows\Start Menu</String>
+		<String>Microsoft\Windows\Start Menu\Programs</String>
+		<String>Microsoft\Windows\Templates</String>
+		<String>Music</String>
+		<String>Pictures</String>
+		<String>Public\Desktop</String>
+		<String>Public\Documents</String>
+		<String>Public\Favorites</String>
+		<String>Public\Music</String>
+		<String>Public\Pictures</String>
+		<String>Public\Videos</String>
+		<String>System</String>
+		<String>Videos</String>
+		<String>Windows NT</String>
+		<String>Windows NT\Accessories</String>
+		<String>Explorer\Shell Folders</String>
+
+		<!-- Borland -->
+		<String>TCoreThread</String>
+		<String>EObserver</String>
+		<String>TStream</String>
+		<String>TFiler</String>
+		<String>TReaderH</String>
+		<String>TWriter4</String>
+		<String>TComponent</String>
+		<String>TFPList</String>
+		<String>TList</String>
+		<String>TThreadList</String>
+		<String>TPersistent</String>
+		<String>TCollection</String>
+		<String>TStrings</String>
+		<String>TStringList</String>
+		<String>TOwnerStream</String>
+		<String>THandleStream</String>
+		<String>TFileStream</String>
+		<String>TCustomMemoryStream</String>
+		<String>TRegExpr</String>
+		<String>ERegExpr</String>
+
+		<!-- AutoIt -->
+		<String>/AutoIt3ExecuteLine</String>
+		<String>/AutoIt3ExecuteScript</String>
+		<String>/AutoIt3OutputDebug</String>
+		<String>AutoIt3GUI</String>
+		<String>AutoIt v3</String>
+		<String>AutoIt script files (*.au3, *.a3x)</String>
+		<String>AutoIt</String>
+		<String>AUTOIT SCRIPT</String>
+		<String>AUTOIT NO CMDEXECUTE</String>
+		<String>AutoIt3OutputDebug</String>
+		<String>AutoIt3ExecuteScript</String>
+		<String>AutoIt3ExecuteLine</String>
+		<String>#NoAutoIt3Execute</String>
+		<String>Software\AutoIt v3\AutoIt</String>
+		<String>*.au3;*.a3x</String>
+		<String>AutoIt Error</String>
+		<String>AutoIt has detected the stack has become corrupt.</String>
+		<String>CompiledScript</String>
+		<String>AutoIt v3 Script: 3, 3, 8, 1</String>
+		<String>AutoIt v3 Script: 3, 3, 8, 0</String>
+		<String>AutoIt3</String>
+		<String>AUTOITPID</String>
+		<String>AUTOITEXE</String>
+		<String>AUTOITVERSION</String>
+		<String>AUTOITSETOPTION</String>
+		<String>AUTOITWINGETTITLE</String>
+		<String>AUTOITWINSETTITLE</String>
+	</Strings>
+</xml>
+
