@@ -41,7 +41,7 @@ Command Line Parameters
 ===========
 usage: yarGen.py [-h] [-m M] [-g G] [-u] [-c] [-o output_rule_file]
                  [-p prefix] [-a author] [-r ref] [-l min-size] [-s max-size]
-                 [-rm] [-rg] [-oe] [-fs dir] [-rc maxstrings] [--nosuper]
+                 [-nr] [-oe] [-fs dir] [-rc maxstrings] [--nosuper]
                  [--debug]
 
 yarGen
@@ -59,8 +59,7 @@ optional arguments:
   -r ref               Reference
   -l min-size          Minimum string length to consider (default=6)
   -s max-size          Maximum length to consider (default=64)
-  -rm                  Recursive scan of malware directories
-  -rg                  Recursive scan of goodware directories
+  -nr                  Don't scan directories recursively
   -oe                  Only scan executable extensions EXE, DLL, ASP, JSP,
                        PHP, BIN, INFECTED
   -fs dir              Max file size to analyze (default=2000000)
@@ -69,32 +68,40 @@ optional arguments:
   --nosuper            Don't try to create super rules that match against
                        various files
   --debug              Debug output
+  
+  
+Screenshots
+===========
+
+![Generator Run](./screens/yargen-running.png)
+
+![Output Rule](./screens/output-rule.png)
  
 Examples
 ===========
 
 = Use the shipped database (FAST) to create some rules
 
-python yarGen.py -rm -m "X:\MAL\Case1401"
+python yarGen.py -m "X:\MAL\Case1401"
 
 Use the shipped database of goodware strings and scan the malware directory 
 "X:\MAL" recursively. Create rules for all files included in this directory and 
-below. A file named 'yarGen_rules.yar' will be generated in the current 
+below. A file named 'yargen_rules.yar' will be generated in the current 
 directory. 
 
 = Dont use the database and create your own string set from goodware files 
   (behavior in versions pre 0.6)
 
-python yarGen.py -rm -g C:\Windows\System32 -m "X:\PortScanners"
+python yarGen.py -g C:\Windows\System32 -m "X:\PortScanners"
 
 Scan the System32 directory for goodware samples (-g). Scan the PortScanners
-directory for hackware samples (-m) and be recursive in this case (-rm). 
+directory for hackware samples (-m) and be recursive in this case. 
 Show debug output. 
 
 = Create a new goodware strings database
 
-python yarGen.py -c -rg -g C:\Windows\System32
+python yarGen.py -c -g C:\Windows\System32
 
 = Update the goodware strings database (append new strings to the old ones)
 
-python yarGen.py -u -rg -g "C:\Program Files"
+python yarGen.py -u -g "C:\Program Files"
