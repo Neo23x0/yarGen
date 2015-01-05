@@ -17,10 +17,15 @@ import gzip
 import operator
 import datetime
 import time
-from lxml import etree
-from lib import gibDetector
 from hashlib import sha1
 from collections import OrderedDict
+try:
+	from lxml import etree
+	lxml_available = True
+except Exception, e:
+	print "lxml not found - disabling PeStudio string check functionality"
+	lxml_available = False
+from lib import gibDetector
 
 
 def getFiles(dir, recursive):
@@ -160,7 +165,13 @@ def filterStringSet(string_set):
 		# In suspicious strings
 		if string in suspicious_strings:
 			stringScores[string] += 6
-			
+
+		# Reduction
+		if ".." in string:
+			stringScores[string] -= 5
+		if "   " in string:
+			stringScores[string] -= 5
+
 		# Certain strings addons
 		if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.[a-z][a-z][a-z])', string, re.IGNORECASE):
 			stringScores[string] += 4
@@ -274,8 +285,8 @@ def printWelcome():
 	print "  Yara Rule Generator"
 	print "  "
 	print "  by Florian Roth"
-	print "  December 2014"
-	print "  Version 0.9.1"
+	print "  January 2015"
+	print "  Version 0.9.2"
 	print " "
 	print "###############################################################################"                               
 
@@ -310,11 +321,12 @@ if __name__ == '__main__':
 
 	# Read PEStudio string list
 	suspicious_strings = []
-	if os.path.exists("PeStudioBlackListStrings.xml"):
+	if os.path.exists("PeStudioBlackListStrings.xml") and lxml_available:
 		suspicious_strings = readPEStudioStrings()
 	else:
-		print "To improve the process pleas download PEStudio from http://winitor.com and place the file 'PeStudioBlackListStrings.xml' in this program directory."
-		time.sleep(5)
+		if lxml_available:
+			print "To improve the process pleas download PEStudio from http://winitor.com and place the file 'PeStudioBlackListStrings.xml' in this program directory."
+			time.sleep(5)
 
 	# Ignore File Type on Malware Scan
 	ignore_extension = True
