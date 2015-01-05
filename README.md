@@ -28,7 +28,7 @@ The rule generation process tries to identify similarities between the files
 that get analyzed and then combines the strings to so called "super rules". 
 Up to now the super rule generation does not remove the simple rule for the
 files that have been combined in that single super rule. This means that there
-is some redundancy when super rules are created. It is you task to identify
+is some redundancy when super rules are created. It is your task to identify
 and check the super rules and remove the simple rules matching on a single 
 file if the super rule works well for you.
 
