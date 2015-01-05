@@ -39,36 +39,33 @@ Warning: yarGen pulls the whole goodstring database to memory and uses up to
 
 Command Line Parameters
 ===========
+``
 usage: yarGen.py [-h] [-m M] [-g G] [-u] [-c] [-o output_rule_file]
                  [-p prefix] [-a author] [-r ref] [-l min-size] [-s max-size]
                  [-nr] [-oe] [-fs dir] [-rc maxstrings] [--nosuper]
                  [--debug]
 
 yarGen
-
 optional arguments:
-  -h, --help           show this help message and exit
-  -m M                 Path to scan for malware
-  -g G                 Path to scan for goodware (dont use the database
-                       shipped with yara-brg)
-  -u                   Update local goodware database (use with -g)
-  -c                   Create new local goodware database (use with -g)
-  -o output_rule_file  Output rule file
-  -p prefix            Prefix for the rule description
-  -a author            Athor Name
-  -r ref               Reference
-  -l min-size          Minimum string length to consider (default=6)
-  -s max-size          Maximum length to consider (default=64)
-  -nr                  Don't scan directories recursively
-  -oe                  Only scan executable extensions EXE, DLL, ASP, JSP,
-                       PHP, BIN, INFECTED
-  -fs dir              Max file size to analyze (default=2000000)
-  -rc maxstrings       Maximum number of strings per rule (default=20,
-                       intelligent filtering will be applied)
-  --nosuper            Don't try to create super rules that match against
-                       various files
-  --debug              Debug output
-  
+
+   -h, --help           show this help message and exit
+   -m M                 Path to scan for malware
+   -g G                 Path to scan for goodware (dont use the database shipped with yara-brg)
+   -u                   Update local goodware database (use with -g)
+   -c                   Create new local goodware database (use with -g)
+   -o output_rule_file  Output rule file
+   -p prefix            Prefix for the rule description
+   -a author            Athor Name
+   -r ref               Reference
+   -l min-size          Minimum string length to consider (default=6)
+   -s max-size          Maximum length to consider (default=64)
+   -nr                  Don't scan directories recursively
+   -oe                  Only scan executable extensions EXE, DLL, ASP, JSP, PHP, BIN, INFECTED
+   -fs dir              Max file size to analyze (default=2000000)
+   -rc maxstrings       Maximum number of strings per rule (default=20, intelligent filtering will be applied)
+   --nosuper            Don't try to create super rules that match against various files
+   --debug              Debug output
+```
   
 Screenshots
 ===========
