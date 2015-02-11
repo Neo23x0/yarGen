@@ -27,6 +27,10 @@ except Exception, e:
 	lxml_available = False
 from lib import gibDetector
 
+RELEVANT_EXTENSIONS = [ ".asp", ".vbs", ".ps", ".ps1", ".rar", ".tmp", ".bas", ".bat", ".chm", ".cmd", ".com", ".cpl",
+						 ".crt", ".dll", ".exe", ".hta", ".js", ".lnk", ".msc", ".ocx", ".pcd", ".pif", ".pot", ".reg",
+						 ".scr", ".sct", ".sys", ".vb", ".vbe", ".vbs", ".wsc", ".wsf", ".wsh", ".ct", ".t", ".input",
+						 ".war", ".jsp", ".php", ".asp", ".aspx", ".psd1", ".psm1" ]
 
 def getFiles(dir, notRecursive):
 	# Recursive
@@ -43,7 +47,7 @@ def getFiles(dir, notRecursive):
 				yield filePath
 
 
-def parseDir(dir, notRecursive=False, generateInfo=False, ignoreExtensions=False):
+def parseMalDir(dir, notRecursive=False, generateInfo=False, onlyRelevantExtensions=False):
 
 	# Prepare dictionary
 	string_stats = {}
@@ -52,8 +56,8 @@ def parseDir(dir, notRecursive=False, generateInfo=False, ignoreExtensions=False
 	
 	for filePath in getFiles(dir, notRecursive):
 		# Get Extension
-		extension = os.path.splitext(filePath)[1];
-		if not extension in [ ".exe", ".dll", ".asp", ".php", ".jsp", ".bin", ".infected" ] and not ignoreExtensions:
+		extension = os.path.splitext(filePath)[1].lower()
+		if not extension in RELEVANT_EXTENSIONS and onlyRelevantExtensions:
 			if args.debug:
 				print "EXTENSION %s - Skipping file %s" % ( extension, filePath )
 			continue
@@ -98,6 +102,37 @@ def parseDir(dir, notRecursive=False, generateInfo=False, ignoreExtensions=False
 			print "Processed " + filePath + " Size: "+ str(size) +" Strings: "+ str(len(string_stats)) + " ... "				
 					
 	return string_stats, file_info			
+
+
+def parseGoodDir(dir, notRecursive=False, onlyRelevantExtensions=True):
+
+	# Prepare dictionary
+	all_strings = []
+
+	for filePath in getFiles(dir, notRecursive):
+		# Get Extension
+		extension = os.path.splitext(filePath)[1].lower()
+		if not extension in RELEVANT_EXTENSIONS and onlyRelevantExtensions:
+			if args.debug:
+				print "EXTENSION %s - Skipping file %s" % ( extension, filePath )
+			continue
+
+		# Size Check
+		size = 0
+		try:
+			size = os.stat(filePath).st_size
+			if size > 3000000:
+				continue
+		except Exception, e:
+			pass
+
+		# Extract strings from file
+		( strings, sha1sum ) = extractStrings(filePath, generateInfo=False)
+		# Append to all strings
+		all_strings += strings
+
+	# return it as a set (unique strings)
+	return set(all_strings)
 
 
 def extractStrings(filePath, generateInfo):
@@ -145,7 +180,13 @@ def filterStringSet(string_set):
 	
 	# String scores
 	stringScores = {}
+	utfstrings = []
 	for string in string_set:
+
+		# UTF
+		if string[:8] == "UTF16LE:":
+			string = string[8:]
+			utfstrings.append(string)
 			
 		# Gibberish Score
 		score = gib.getScore(string)
@@ -173,66 +214,102 @@ def filterStringSet(string_set):
 		if "   " in string:
 			stringScores[string] -= 5
 
-		# Certain strings addons
+		# Certain strings add-ons ----------------------------------------------
+		# Extensions - Drive
 		if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.[a-z][a-z][a-z])', string, re.IGNORECASE):
 			stringScores[string] += 4
+		# System keywords
 		if re.search(r'(cmd.exe|system32|users|Documents and|SystemRoot|Grant|hello|password|process|log|unc)', string, re.IGNORECASE):
 			stringScores[string] += 5
-		if re.search(r'(User\-Agent|ftp|irc|smtp|command|GET|POST)', string, re.IGNORECASE):
+		# Protocol Keywords
+		if re.search(r'(ftp|irc|smtp|command|GET|POST|Agent|tor2web|HEAD)', string, re.IGNORECASE):
 			stringScores[string] += 5
-		if re.search(r'(error|http|port|closed|failed|failure|version)', string, re.IGNORECASE):
+		# Connection keywords
+		if re.search(r'(error|http|closed|failed|failure|version)', string, re.IGNORECASE):
 			stringScores[string] += 3
-		if re.search(r'(Mozilla|MSIE|Windows NT|Macintosh;)', string, re.IGNORECASE):
+		# Browser User Agents
+		if re.search(r'(Mozilla|MSIE|Windows NT|Macintosh|Gecko|Opera|User\-Agent)', string, re.IGNORECASE):
 			stringScores[string] += 4
+		# Temp and Recycler
 		if re.search(r'(TEMP|Temporary|Appdata|Recycler)', string, re.IGNORECASE):
 			stringScores[string] += 4
-		if re.search(r'(scan|sniff|poison|fake|spoof|sweep|dump|flood|inject|forward|command)', string, re.IGNORECASE):
+		# malicious keywords - hacktools
+		if re.search(r'(scan|sniff|poison|fake|spoof|sweep|dump|flood|inject|forward|scan|vulnerable|credentials|creds|coded|p0c|Content|host)', string, re.IGNORECASE):
 			stringScores[string] += 5
+		# network keywords
 		if re.search(r'(address|port|listen|remote|local|process|service|mutex|pipe|frame|key|lookup|connection)', string, re.IGNORECASE):
 			stringScores[string] += 3
+		# Drive non-C:
 		if re.search(r'([D-Z]:\\)', string, re.IGNORECASE):
 			stringScores[string] += 4
+		# IP
 		if re.search(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b', string, re.IGNORECASE): # IP Address
-			stringScores[string] += 4
-		if re.search(r'(dump|sniff|scan|vulnerable|credentials|creds|coded|p0c|Content|host)', string, re.IGNORECASE):
-			stringScores[string] += 6
+			stringScores[string] += 5
+		# Copyright Owner
 		if re.search(r'( by | coded | c0d3d |cr3w\b)', string, re.IGNORECASE):
 			stringScores[string] += 2
+		# Extension generic
 		if re.search(r'\.[a-zA-Z]{3}\b', string):
 			stringScores[string] += 3
+		# All upper case
 		if re.search(r'^[A-Z]{6,}$', string):
-			stringScores[string] += 2			
+			stringScores[string] += 2
+		# All lower case
 		if re.search(r'^[a-z]{6,}$', string):
 			stringScores[string] += 2
+		# All lower with space
 		if re.search(r'^[a-z\s]{6,}$', string):
 			stringScores[string] += 2
+		# All characters
 		if re.search(r'^[A-Z][a-z]{5,}', string):
 			stringScores[string] += 2
+		# URL
 		if re.search(r'(%[a-z][:\-,;]|\\\\%s|\\\\[A-Z0-9a-z%]+\\[A-Z0-9a-z%]+)', string):
 			stringScores[string] += 3
+		# certificates
 		if re.search(r'(thawte|trustcenter|signing|class|crl|CA|certificate|assembly)', string, re.IGNORECASE):
 			stringScores[string] -= 4
+		# Parameters
 		if re.search(r'( \-[a-z]{,2}[\s]?[0-9]?| /[a-z]+[\s]?[\w]*)', string, re.IGNORECASE):
-			stringScores[string] += 4			
-						
-		# Certain string reduce	
+			stringScores[string] += 4
+		# Directory
+		if re.search(r'(\\[A-Za-z]+\\)', string):
+			stringScores[string] += 4
+		# Executable - not in directory
+		if re.search(r'^[^\\]+\.(exe|com|scr|bat)$', string, re.IGNORECASE):
+			stringScores[string] += 4
+		# Date placeholders
+		if re.search(r'(yyyy|hh:mm|dd/mm|mm/dd|%s:%s:)', string, re.IGNORECASE):
+			stringScores[string] += 3
+		# Placeholders
+		if re.search(r'(%s|%d|%i)', string, re.IGNORECASE):
+			stringScores[string] += 3
+
+		# Certain string reduce	-----------------------------------------------
 		if re.search(r'(rundll32\.exe$|kernel\.dll$)', string, re.IGNORECASE):
 			stringScores[string] -= 4			
 	
 	sorted_set = sorted(stringScores.iteritems(), key=operator.itemgetter(1), reverse=True)
 	
 	if args.debug:
+		print "SORTED SET:"
 		print sorted_set
+
 	# Only the top X strings
 	c = 0
 	result_set = []
 	for string in sorted_set:
-		result_set.append(string[0])
+		if string[0] in utfstrings:
+			result_set.append("UTF16LE:%s" % string[0])
+		else:
+			result_set.append(string[0])
 		c += 1
 		if c > int(args.rc):
 			break
-			
-	print result_set
+
+	if args.debug:
+		print "RESULT SET:"
+		print result_set
 	
 	# return the filtered set
 	return result_set
@@ -275,6 +352,7 @@ def load(filename):
 			break
 		buffer += data
 	object = pickle.loads(buffer)
+	del(buffer)
 	file.close()
 	return object
 
@@ -287,7 +365,7 @@ def printWelcome():
 	print "  "
 	print "  by Florian Roth"
 	print "  January 2015"
-	print "  Version 0.9.4"
+	print "  Version 0.10.0"
 	print " "
 	print "###############################################################################"                               
 
@@ -331,28 +409,25 @@ if __name__ == '__main__':
 			time.sleep(5)
 
 	# Ignore File Type on Malware Scan
-	ignore_extension = True
+	onlyRelevantExtensions = False
 	if args.oe:
-		ignore_extension = False
+		onlyRelevantExtensions = True
 
 	# Scan goodware files
 	if args.g:
 		print "Processing goodware files ..."
-		good_string_stats, file_info_good = parseDir(args.g, args.nr, False, ignoreExtensions=False)
+		good_strings = parseGoodDir(args.g, args.nr, True)
 		
 		# Update existing Pickle
 		if args.u:
 			print "Updating local database ..."
 			try:
 				good_pickle = load("good_strings.db")
-				print "Old database entries: %s" % len(good_pickle['good_string_stats'])
-				new_good = {}
-				new_info = {}
-				new_good = dict(good_pickle['good_string_stats'].items() + good_string_stats.items())
-				new_info = dict(good_pickle['good_string_stats'].items() + good_string_stats.items())
-				good_pickle['good_string_stats'] = new_good
-				good_pickle['file_info_good'] = new_info
-				print "New database entries: %s" % len(good_pickle['good_string_stats'])
+				print "Old database entries: %s" % len(good_pickle)
+				new_good = set()
+				new_good = good_strings | good_pickle
+				good_pickle = new_good
+				print "New database entries: %s" % len(good_pickle)
 				save(good_pickle, "good_strings.db")
 
 			except Exception, e:
@@ -365,13 +440,12 @@ if __name__ == '__main__':
 				if os.path.isfile("good_strings.db"):
 					os.remove("good_strings.db")
 
-				good_pickle = {}
-				good_pickle['good_string_stats'] = good_string_stats
-				good_pickle['file_info_good'] = file_info_good
+				good_pickle = set()
+				good_pickle = good_strings
 
 				save(good_pickle, "good_strings.db")
 
-				print "New database with %s entries created." % len(good_pickle['good_string_stats'])
+				print "New database with %s entries created." % len(good_pickle)
 			except Exception, e:
 				traceback.print_exc()
 
@@ -381,8 +455,7 @@ if __name__ == '__main__':
 		try:
 			good_pickle = load("good_strings.db")
 			# print good_pickle.keys()
-			good_string_stats = good_pickle['good_string_stats']
-			file_info_good = good_pickle['file_info_good']
+			good_strings = good_pickle
 		except Exception, e:
 			traceback.print_exc()
 
@@ -390,18 +463,19 @@ if __name__ == '__main__':
 	if args.m:
 		# Scan malware files
 		print "Processing malware files ..."
-		mal_string_stats, file_info_mal = parseDir(args.m, args.nr, True, ignoreExtensions=ignore_extension)
+		mal_string_stats, file_info_mal = parseMalDir(args.m, args.nr, True, onlyRelevantExtensions)
 			
 		# Generate Stats --------------------------------------------------
 		print "Generating statistical data ..."
 		file_strings = {}
 		combinations = {}
 		max_combi_count = 0
+
 		# Iterate through strings found in malware files
 		for string in mal_string_stats:
 			
 			# Skip if string is a good string
-			if string in good_string_stats:
+			if string in good_strings:
 				continue
 			
 			# If string occurs not too often in malware files
