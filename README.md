@@ -56,7 +56,7 @@ optional arguments:
   -c                   Create new local goodware database (use with -g)
   -o output_rule_file  Output rule file
   -p prefix            Prefix for the rule description
-  -a author            Athor Name
+  -a author            Author Name
   -r ref               Reference
   -l min-size          Minimum string length to consider (default=6)
   -s max-size          Maximum length to consider (default=64)
@@ -75,6 +75,10 @@ optional arguments:
                        various files
   --debug              Debug output
 ```
+
+## Best Practice
+
+See the following blog post for a more detailed description on how to use yarGen for YARA rule creation: [How to Write Simple but Sound Yara Rules](https://www.bsk-consulting.de/2015/02/16/write-simple-sound-yara-rules/)
   
 ## Screenshots
 
