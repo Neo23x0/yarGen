@@ -80,7 +80,7 @@ optional arguments:
 
 ![Generator Run](./screens/yargen-running.png)
 
-![Output Rule](./screens/output-rule.png)
+![Output Rule](./screens/output-rule-v0.11.png)
 
 As you can see in the screenshot above you'll get a rule that contains strings, which are not found in the goodware strings database. 
 
