@@ -809,7 +809,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', action='store_true', default=False, help='Create new local goodware database (use with -g)')
     parser.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yargen_rules.yar')
     parser.add_argument('-p', help='Prefix for the rule description', metavar='prefix', default='Auto-generated rule')
-    parser.add_argument('-a', help='Athor Name', metavar='author', default='YarGen Rule Generator')
+    parser.add_argument('-a', help='Author Name', metavar='author', default='YarGen Rule Generator')
     parser.add_argument('-r', help='Reference', metavar='ref', default='not set')
     parser.add_argument('-l', help='Minimum string length to consider (default=6)', metavar='min-size', default=5)
     parser.add_argument('-s', help='Maximum length to consider (default=64)', metavar='max-size', default=64)
