@@ -329,11 +329,11 @@ def filterStringSet(string_set):
         if re.search(r'(ftp|irc|smtp|command|GET|POST|Agent|tor2web|HEAD)', string, re.IGNORECASE):
             stringScores[string] += 5
         # Connection keywords
-        if re.search(r'(error|http|closed|failed|failure|version)', string, re.IGNORECASE):
+        if re.search(r'(error|http|closed|fail|version)', string, re.IGNORECASE):
             stringScores[string] += 3
         # Browser User Agents
         if re.search(r'(Mozilla|MSIE|Windows NT|Macintosh|Gecko|Opera|User\-Agent)', string, re.IGNORECASE):
-            stringScores[string] += 4
+            stringScores[string] += 5
         # Temp and Recycler
         if re.search(r'(TEMP|Temporary|Appdata|Recycler)', string, re.IGNORECASE):
             stringScores[string] += 4
@@ -386,7 +386,16 @@ def filterStringSet(string_set):
         if re.search(r'(yyyy|hh:mm|dd/mm|mm/dd|%s:%s:)', string, re.IGNORECASE):
             stringScores[string] += 3
         # Placeholders
-        if re.search(r'(%s|%d|%i)', string, re.IGNORECASE):
+        if re.search(r'(%s|%d|%i|%02d|%04d|%2d|%3s)', string, re.IGNORECASE):
+            stringScores[string] += 3
+        # String parts from file system elements
+        if re.search(r'(cmd|com|pipe|tmp|temp|recycle|bin|secret|private|AppData|driver|config)', string, re.IGNORECASE):
+            stringScores[string] += 3
+        # Programming
+        if re.search(r'(execute|run|system|shell|root|cimv2|login|exec|stdin|read|process|netuse|script|share)', string, re.IGNORECASE):
+            stringScores[string] += 3
+        # Credentials
+        if re.search(r'(user|pass|login|logon|token|cookie|creds|hash|ticket|NTLM|LMHASH|kerberos|spnego|session|identif|account|login|auth|privilege)', string, re.IGNORECASE):
             stringScores[string] += 3
 
         # Certain string reduce	-----------------------------------------------
@@ -784,7 +793,7 @@ def printWelcome():
     print "  "
     print "  by Florian Roth"
     print "  May 2015"
-    print "  Version 0.11.0"
+    print "  Version 0.11.1"
     print " "
     print "###############################################################################"
 
