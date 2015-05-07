@@ -404,7 +404,7 @@ def filterStringSet(string_set):
         if re.search(r'%[A-Z_]+%', string, re.IGNORECASE):
             stringScores[string] += 4
 
-        # If string is base64
+        # BASE64 --------------------------------------------------------------
         try:
             if len(string) > 8:
                 # Try different ways - fuzz string
@@ -418,6 +418,11 @@ def filterStringSet(string_set):
                             base64strings[string] = decoded_string
         except Exception, e:
             pass
+
+        # Reversed String -----------------------------------------------------
+        if string[::-1] in good_strings:
+            stringScores[string] += 10
+            reversedStrings[string] = string[::-1]
 
         # Certain string reduce	-----------------------------------------------
         if re.search(r'(rundll32\.exe$|kernel\.dll$)', string, re.IGNORECASE):
@@ -584,17 +589,20 @@ def createRules(file_strings, super_rules, file_info_mal):
                 # Collect the data
                 enc = " ascii"
                 base64comment = ""
+                reversedComment = ""
                 fullword = ""
                 if is_fullword:
                     fullword = " fullword"
                 if string in base64strings:
                     base64comment = " /* base64 encoded string '%s' */" % base64strings[string]
+                if string in reversedStrings:
+                    reversedComment = " /* reversed string '%s' */" % reversedStrings[string]
                 if string[:8] == "UTF16LE:":
                     string = string[8:]
                     enc = " wide"
 
                 # No compose the rule line
-                rule += "\t\t$s%s = \"%s\"%s%s%s\n" % ( str(i), string, fullword, enc, base64comment )
+                rule += "\t\t$s%s = \"%s\"%s%s%s%s\n" % ( str(i), string, fullword, enc, base64comment, reversedComment )
 
                 # If too many string definitions found - cut it at the
                 # count defined via command line param -rc
@@ -691,17 +699,20 @@ def createRules(file_strings, super_rules, file_info_mal):
                     # Collect the data
                     enc = " ascii"
                     base64comment = ""
+                    reversedComment = ""
                     fullword = ""
                     if is_fullword:
                         fullword = " fullword"
                     if string in base64strings:
                         base64comment = " /* base64 encoded string '%s' */" % base64strings[string]
+                    if string in reversedStrings:
+                        reversedComment = " /* reversed string '%s' */" % reversedStrings[string]
                     if string[:8] == "UTF16LE:":
                         string = string[8:]
                         enc = " wide"
 
                     # No compose the rule line
-                    rule += "\t\t$s%s = \"%s\"%s%s%s\n" % ( str(i), string, fullword, enc, base64comment )
+                    rule += "\t\t$s%s = \"%s\"%s%s%s%s\n" % ( str(i), string, fullword, enc, base64comment, reversedComment )
 
                     # If too many string definitions found - cut it at the
                     # count defined via command line param -rc
@@ -847,7 +858,7 @@ def printWelcome():
     print "  "
     print "  by Florian Roth"
     print "  May 2015"
-    print "  Version 0.11.2"
+    print "  Version 0.11.3"
     print " "
     print "###############################################################################"
 
@@ -949,7 +960,11 @@ if __name__ == '__main__':
     if args.m:
         # Scan malware files
         print "Processing malware files ..."
+
+        # Special strings
         base64strings = {}
+        reversedStrings = {}
+
         # Extract all information
         mal_string_stats, file_info_mal = parseMalDir(args.m, args.nr, True, onlyRelevantExtensions)
 
