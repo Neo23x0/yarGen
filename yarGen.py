@@ -397,6 +397,27 @@ def filterStringSet(string_set):
         # Credentials
         if re.search(r'(user|pass|login|logon|token|cookie|creds|hash|ticket|NTLM|LMHASH|kerberos|spnego|session|identif|account|login|auth|privilege)', string, re.IGNORECASE):
             stringScores[string] += 3
+        # Malware
+        if re.search(r'(\.[a-z]/[^/]+\.txt|)', string, re.IGNORECASE):
+            stringScores[string] += 3
+        # Variables
+        if re.search(r'%[A-Z_]+%', string, re.IGNORECASE):
+            stringScores[string] += 4
+
+        # If string is base64
+        try:
+            if len(string) > 8:
+                # Try different ways - fuzz string
+                for m_string in ( string, string[1:], string[1:] + "=", string + "=", string + "==" ):
+                    if isBase64(m_string):
+                        decoded_string = m_string.decode('base64')
+                        # print decoded_string
+                        if isAsciiString(decoded_string, padding_allowed=True):
+                            # print "match"
+                            stringScores[string] += 6
+                            base64strings[string] = decoded_string
+        except Exception, e:
+            pass
 
         # Certain string reduce	-----------------------------------------------
         if re.search(r'(rundll32\.exe$|kernel\.dll$)', string, re.IGNORECASE):
@@ -553,21 +574,28 @@ def createRules(file_strings, super_rules, file_info_mal):
             # Adding the strings --------------------------------------
             for i, string in enumerate(file_strings[filePath]):
                 # Checking string length
-                fullword = True
+                is_fullword = True
                 if len(string) > 80:
                     # cut string
                     string = string[:80].rstrip("\\")
                     # not fullword anymore
-                    fullword = False
-                # Add rule
+                    is_fullword = False
+
+                # Collect the data
                 enc = " ascii"
+                base64comment = ""
+                fullword = ""
+                if is_fullword:
+                    fullword = " fullword"
+                if string in base64strings:
+                    base64comment = " /* base64 encoded string '%s' */" % base64strings[string]
                 if string[:8] == "UTF16LE:":
                     string = string[8:]
                     enc = " wide"
-                if fullword:
-                    rule += "\t\t$s%s = \"%s\" fullword%s\n" % ( str(i), string, enc )
-                else:
-                    rule += "\t\t$s%s = \"%s\"%s\n" % ( str(i), string, enc )
+
+                # No compose the rule line
+                rule += "\t\t$s%s = \"%s\"%s%s%s\n" % ( str(i), string, fullword, enc, base64comment )
+
                 # If too many string definitions found - cut it at the
                 # count defined via command line param -rc
                 if i > int(args.rc):
@@ -653,21 +681,28 @@ def createRules(file_strings, super_rules, file_info_mal):
                 # Adding the strings
                 for i, string in enumerate(super_rule["strings"]):
                     # Checking string length
-                    fullword = True
+                    is_fullword = True
                     if len(string) > 80:
                         # cut string
                         string = string[:80].rstrip("\\")
                         # not fullword anymore
-                        fullword = False
-                    # Add rule
-                    wide = ""
+                        is_fullword = False
+
+                    # Collect the data
+                    enc = " ascii"
+                    base64comment = ""
+                    fullword = ""
+                    if is_fullword:
+                        fullword = " fullword"
+                    if string in base64strings:
+                        base64comment = " /* base64 encoded string '%s' */" % base64strings[string]
                     if string[:8] == "UTF16LE:":
                         string = string[8:]
-                        wide = " wide"
-                    if fullword:
-                        rule += "\t\t$s%s = \"%s\" fullword%s\n" % ( str(i), string, wide )
-                    else:
-                        rule += "\t\t$s%s = \"%s\"%s\n" % ( str(i), string, wide )
+                        enc = " wide"
+
+                    # No compose the rule line
+                    rule += "\t\t$s%s = \"%s\"%s%s%s\n" % ( str(i), string, fullword, enc, base64comment )
+
                     # If too many string definitions found - cut it at the
                     # count defined via command line param -rc
                     if i > int(args.rc):
@@ -759,10 +794,29 @@ def getTimestampBasic(date_obj=None):
     return date_str
 
 
-def isAscii(b):
-    if ord(b)<127 and ord(b)>31 :
-        return 1
+def isAsciiChar(b, padding_allowed=False):
+    if padding_allowed:
+        if ( ord(b)<127 and ord(b)>31 ) or ord(b) == 0 :
+            return 1
+    else:
+        if ord(b)<127 and ord(b)>31 :
+            return 1
     return 0
+
+
+def isAsciiString(string, padding_allowed=False):
+    for b in string:
+        if padding_allowed:
+            if not ( ( ord(b)<127 and ord(b)>31 ) or ord(b) == 0 ):
+                return 0
+        else:
+            if not ( ord(b)<127 and ord(b)>31 ):
+                return 0
+    return 1
+
+
+def isBase64(s):
+    return (len(s) % 4 == 0) and re.match('^[A-Za-z0-9+/]+[=]{0,2}$', s)
 
 
 def save(object, filename, bin = 1):
@@ -793,7 +847,7 @@ def printWelcome():
     print "  "
     print "  by Florian Roth"
     print "  May 2015"
-    print "  Version 0.11.1"
+    print "  Version 0.11.2"
     print " "
     print "###############################################################################"
 
@@ -895,6 +949,7 @@ if __name__ == '__main__':
     if args.m:
         # Scan malware files
         print "Processing malware files ..."
+        base64strings = {}
         # Extract all information
         mal_string_stats, file_info_mal = parseMalDir(args.m, args.nr, True, onlyRelevantExtensions)
 
