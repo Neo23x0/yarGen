@@ -1,5 +1,7 @@
 # yarGen
 
+[![Join the chat at https://gitter.im/Neo23x0/yarGen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Neo23x0/yarGen?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A Rule Generator for Yara Rules
 
 Florian Roth, May 2015
