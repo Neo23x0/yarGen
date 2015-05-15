@@ -253,21 +253,27 @@ def malwareStringEvaluation(mal_string_stats, good_strings):
                     # Filter the string set
                     #print "BEFORE"
                     #print len(combinations[combi]["strings"])
+                    #print combinations[combi]["strings"]
                     string_set = combinations[combi]["strings"]
                     combinations[combi]["strings"] = []
                     combinations[combi]["strings"] = filterStringSet(string_set)
+                    #print combinations[combi]["strings"]
                     #print "AFTER"
                     #print len(combinations[combi]["strings"])
                     # Combi String count after filtering
                     #print "String count after filtering: %s" % str(len(combinations[combi]["strings"]))
+
                     # If the string set of the combination has a required size
                     if len(combinations[combi]["strings"]) >= int(args.rc):
                         # Remove the files in the combi rule from the simple set
-                        for file in combinations[combi]["files"]:
-                            if file in file_strings:
-                                del file_strings[file]
+                        if args.nosingle:
+                            for file in combinations[combi]["files"]:
+                                if file in file_strings:
+                                    del file_strings[file]
                         # Add it as a super rule
                         print "Adding Super Rule with %s strings." % str(len(combinations[combi]["strings"]))
+                        #if args.debug:
+                        #print "Rule Combi: %s" % combi
                         super_rules.append(combinations[combi])
 
     return (file_strings, combinations, super_rules)
@@ -281,7 +287,10 @@ def filterStringSet(string_set):
     # Gibberish Detector
     gib = gibDetector.GibDetector()
 
-    # String scores
+    # Local string scores
+    localStringScores = {}
+
+    # Local UTF strings
     utfstrings = []
 
     for string in string_set:
@@ -292,17 +301,21 @@ def filterStringSet(string_set):
         # Goodware Strings
         if string in good_strings:
             goodstring = True
+            if args.excludegood:
+                continue
 
         # UTF
+        original_string = string
         if string[:8] == "UTF16LE:":
+            # print "removed UTF16LE from %s" % string
             string = string[8:]
             utfstrings.append(string)
 
         # Good string valuation (after the UTF modification)
         if goodstring:
-            stringScores[string] = -10
+            localStringScores[string] = -10
         else:
-            stringScores[string] = 0
+            localStringScores[string] = 0
 
         # PEStudio String Blacklist Evaluation
         if pestudio_available:
@@ -310,7 +323,7 @@ def filterStringSet(string_set):
             if pescore > 0:
                 # print string
                 pestudioMarker[string] = type
-                stringScores[string] += pescore
+                localStringScores[string] += pescore
 
         if not goodstring:
 
@@ -321,110 +334,110 @@ def filterStringSet(string_set):
                 score = 1
             #if args.debug:
             #    print "Gibberish %s - %s" % ( str(score), string)
-            stringScores[string] += score
+            localStringScores[string] += score
 
             # Length Score
             length = len(string)
             if length > int(args.l) and length < int(args.s):
-                stringScores[string] += round( len(string) / 8, 2)
+                localStringScores[string] += round( len(string) / 8, 2)
             if length >= int(args.s):
-                stringScores[string] += 1
+                localStringScores[string] += 1
 
             # In suspicious strings
             #if string in suspicious_strings:
-            #    stringScores[string] += 6
+            #    localStringScores[string] += 6
 
             # Reduction
             if ".." in string:
-                stringScores[string] -= 5
+                localStringScores[string] -= 5
             if "   " in string:
-                stringScores[string] -= 5
+                localStringScores[string] -= 5
 
             # Certain strings add-ons ----------------------------------------------
             # Extensions - Drive
             if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.[a-z][a-z][a-z])', string, re.IGNORECASE):
-                stringScores[string] += 4
+                localStringScores[string] += 4
             # System keywords
             if re.search(r'(cmd.exe|system32|users|Documents and|SystemRoot|Grant|hello|password|process|log|unc)', string, re.IGNORECASE):
-                stringScores[string] += 5
+                localStringScores[string] += 5
             # Protocol Keywords
             if re.search(r'(ftp|irc|smtp|command|GET|POST|Agent|tor2web|HEAD)', string, re.IGNORECASE):
-                stringScores[string] += 5
+                localStringScores[string] += 5
             # Connection keywords
             if re.search(r'(error|http|closed|fail|version)', string, re.IGNORECASE):
-                stringScores[string] += 3
+                localStringScores[string] += 3
             # Browser User Agents
             if re.search(r'(Mozilla|MSIE|Windows NT|Macintosh|Gecko|Opera|User\-Agent)', string, re.IGNORECASE):
-                stringScores[string] += 5
+                localStringScores[string] += 5
             # Temp and Recycler
             if re.search(r'(TEMP|Temporary|Appdata|Recycler)', string, re.IGNORECASE):
-                stringScores[string] += 4
+                localStringScores[string] += 4
             # malicious keywords - hacktools
             if re.search(r'(scan|sniff|poison|fake|spoof|sweep|dump|flood|inject|forward|scan|vulnerable|credentials|creds|coded|p0c|Content|host)', string, re.IGNORECASE):
-                stringScores[string] += 5
+                localStringScores[string] += 5
             # network keywords
             if re.search(r'(address|port|listen|remote|local|process|service|mutex|pipe|frame|key|lookup|connection)', string, re.IGNORECASE):
-                stringScores[string] += 3
+                localStringScores[string] += 3
             # Drive non-C:
             if re.search(r'([D-Z]:\\)', string, re.IGNORECASE):
-                stringScores[string] += 4
+                localStringScores[string] += 4
             # IP
             if re.search(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b', string, re.IGNORECASE): # IP Address
-                stringScores[string] += 5
+                localStringScores[string] += 5
             # Copyright Owner
             if re.search(r'( by | coded | c0d3d |cr3w\b)', string, re.IGNORECASE):
-                stringScores[string] += 2
+                localStringScores[string] += 2
             # Extension generic
             if re.search(r'\.[a-zA-Z]{3}\b', string):
-                stringScores[string] += 3
+                localStringScores[string] += 3
             # All upper case
             if re.search(r'^[A-Z]{6,}$', string):
-                stringScores[string] += 2
+                localStringScores[string] += 2
             # All lower case
             if re.search(r'^[a-z]{6,}$', string):
-                stringScores[string] += 2
+                localStringScores[string] += 2
             # All lower with space
             if re.search(r'^[a-z\s]{6,}$', string):
-                stringScores[string] += 2
+                localStringScores[string] += 2
             # All characters
             if re.search(r'^[A-Z][a-z]{5,}', string):
-                stringScores[string] += 2
+                localStringScores[string] += 2
             # URL
             if re.search(r'(%[a-z][:\-,;]|\\\\%s|\\\\[A-Z0-9a-z%]+\\[A-Z0-9a-z%]+)', string):
-                stringScores[string] += 3
+                localStringScores[string] += 3
             # certificates
             if re.search(r'(thawte|trustcenter|signing|class|crl|CA|certificate|assembly)', string, re.IGNORECASE):
-                stringScores[string] -= 4
+                localStringScores[string] -= 4
             # Parameters
             if re.search(r'( \-[a-z]{,2}[\s]?[0-9]?| /[a-z]+[\s]?[\w]*)', string, re.IGNORECASE):
-                stringScores[string] += 4
+                localStringScores[string] += 4
             # Directory
             if re.search(r'(\\[A-Za-z]+\\)', string):
-                stringScores[string] += 4
+                localStringScores[string] += 4
             # Executable - not in directory
             if re.search(r'^[^\\]+\.(exe|com|scr|bat)$', string, re.IGNORECASE):
-                stringScores[string] += 4
+                localStringScores[string] += 4
             # Date placeholders
             if re.search(r'(yyyy|hh:mm|dd/mm|mm/dd|%s:%s:)', string, re.IGNORECASE):
-                stringScores[string] += 3
+                localStringScores[string] += 3
             # Placeholders
             if re.search(r'(%s|%d|%i|%02d|%04d|%2d|%3s)', string, re.IGNORECASE):
-                stringScores[string] += 3
+                localStringScores[string] += 3
             # String parts from file system elements
             if re.search(r'(cmd|com|pipe|tmp|temp|recycle|bin|secret|private|AppData|driver|config)', string, re.IGNORECASE):
-                stringScores[string] += 3
+                localStringScores[string] += 3
             # Programming
             if re.search(r'(execute|run|system|shell|root|cimv2|login|exec|stdin|read|process|netuse|script|share)', string, re.IGNORECASE):
-                stringScores[string] += 3
+                localStringScores[string] += 3
             # Credentials
             if re.search(r'(user|pass|login|logon|token|cookie|creds|hash|ticket|NTLM|LMHASH|kerberos|spnego|session|identif|account|login|auth|privilege)', string, re.IGNORECASE):
-                stringScores[string] += 3
+                localStringScores[string] += 3
             # Malware
             if re.search(r'(\.[a-z]/[^/]+\.txt|)', string, re.IGNORECASE):
-                stringScores[string] += 3
+                localStringScores[string] += 3
             # Variables
             if re.search(r'%[A-Z_]+%', string, re.IGNORECASE):
-                stringScores[string] += 4
+                localStringScores[string] += 4
 
             # BASE64 --------------------------------------------------------------
             try:
@@ -436,37 +449,43 @@ def filterStringSet(string_set):
                             # print decoded_string
                             if isAsciiString(decoded_string, padding_allowed=True):
                                 # print "match"
-                                stringScores[string] += 6
+                                localStringScores[string] += 6
                                 base64strings[string] = decoded_string
             except Exception, e:
                 pass
 
             # Reversed String -----------------------------------------------------
             if string[::-1] in good_strings:
-                stringScores[string] += 10
+                localStringScores[string] += 10
                 reversedStrings[string] = string[::-1]
 
             # Certain string reduce	-----------------------------------------------
             if re.search(r'(rundll32\.exe$|kernel\.dll$)', string, re.IGNORECASE):
-                stringScores[string] -= 4
+                localStringScores[string] -= 4
+
+        # Set the global string score
+        stringScores[original_string] = localStringScores[string]
 
         if args.debug:
-            print "SCORE: %s\tSTRING: %s" % ( string, stringScores[string] )
+            if string in utfstrings:
+                is_utf = True
+            else:
+                is_utf = False
+            print "SCORE: %s\tUTF: %s\tSTRING: %s" % ( localStringScores[string], is_utf, string )
 
-    sorted_set = sorted(stringScores.iteritems(), key=operator.itemgetter(1), reverse=True)
-
-    if args.debug:
-        print "SORTED SET:"
-        print sorted_set
+    sorted_set = sorted(localStringScores.iteritems(), key=operator.itemgetter(1), reverse=True)
 
     # Only the top X strings
     c = 0
     result_set = []
     for string in sorted_set:
+        # print string[0]
+
         if string[0] in utfstrings:
             result_set.append("UTF16LE:%s" % string[0])
         else:
             result_set.append(string[0])
+
         c += 1
         if c > int(args.rc):
             break
@@ -555,6 +574,8 @@ def createRules(file_strings, super_rules, file_info_mal):
     print "Applying intelligent filters to string findings ..."
     for filePath in file_strings:
 
+        print "Filtering string set for %s ..." % filePath
+
         # Replace the original string set with the filtered one
         string_set = file_strings[filePath]
         file_strings[filePath] = []
@@ -632,16 +653,18 @@ def createRules(file_strings, super_rules, file_info_mal):
             traceback.print_exc()
 
     # GENERATE SUPER RULES --------------------------------------------
+    super_rule_count = 0
     if not args.nosuper:
+
         print "Generating super rules ..."
         printed_combi = {}
-        super_rule_count = 0
         for super_rule in super_rules:
             try:
                 rule = ""
                 # Prepare Name
                 rule_name = ""
                 file_list = []
+
                 # Loop through files
                 for filePath in super_rule["files"]:
                     (path, file) = os.path.split(filePath)
@@ -746,6 +769,12 @@ def getRuleStrings(elements):
         if string in good_strings:
             goodware_comment = " /* Goodware String */"
 
+        if string in stringScores:
+            if args.score:
+                score_comment += " /* score: '%s' */" % stringScores[string]
+        else:
+            print "NO SCORE: %s" % string
+
         if string[:8] == "UTF16LE:":
             string = string[8:]
             enc = " wide"
@@ -753,12 +782,6 @@ def getRuleStrings(elements):
             base64comment = " /* base64 encoded string '%s' */" % base64strings[string]
         if string in pestudioMarker:
             pestudio_comment = " /* PEStudio Blacklist: %s */" % pestudioMarker[string]
-
-        if string in stringScores:
-            if args.score:
-                score_comment += " /* score: '%s' */" % stringScores[string]
-        else:
-            print "NO SCORE: %s" % string
 
         if string in reversedStrings:
             reversedComment = " /* reversed string '%s' */" % reversedStrings[string]
@@ -911,7 +934,7 @@ def printWelcome():
     print "  "
     print "  by Florian Roth"
     print "  May 2015"
-    print "  Version 0.12.0"
+    print "  Version 0.12.1"
     print " "
     print "###############################################################################"
 
@@ -937,7 +960,8 @@ if __name__ == '__main__':
     parser.add_argument('-oe', action='store_true', default=False, help='Only scan executable extensions EXE, DLL, ASP, JSP, PHP, BIN, INFECTED')
     parser.add_argument('-fs', help='Max file size in MB to analyze (default=3)', metavar='size-in-MB', default=3)
     parser.add_argument('--score', help='Show the string scores as comments in the rules', action='store_true', default=False)
-    parser.add_argument('--exclude-good', help='Force the exclude all goodware strings', action='store_true', default=False)
+    parser.add_argument('--excludegood', help='Force the exclude all goodware strings', action='store_true', default=False)
+    parser.add_argument('--nosingle', help='Skip single rule creation for files included in super rules', action='store_true', default=False)
     parser.add_argument('--nomagic', help='Don\'t include the magic header condition statement', action='store_true', default=False)
     parser.add_argument('--nofilesize', help='Don\'t include the filesize condition statement', action='store_true', default=False)
     parser.add_argument('-fm', help='Multiplier for the maximum \'filesize\' condition (default: 5)', default=5)
