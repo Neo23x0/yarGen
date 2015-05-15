@@ -200,8 +200,8 @@ def malwareStringEvaluation(mal_string_stats, good_strings):
     for string in mal_string_stats:
 
         # Skip if string is a good string
-        if string in good_strings:
-            continue
+        #if string in good_strings:
+        #    continue
 
         # If string occurs not too often in malware files
         if mal_string_stats[string]["count"] < 10:
@@ -282,151 +282,176 @@ def filterStringSet(string_set):
     gib = gibDetector.GibDetector()
 
     # String scores
-    stringScores = {}
     utfstrings = []
 
     for string in string_set:
+
+        # Goodware string marker
+        goodstring = False
+
+        # Goodware Strings
+        if string in good_strings:
+            goodstring = True
 
         # UTF
         if string[:8] == "UTF16LE:":
             string = string[8:]
             utfstrings.append(string)
 
-        # Gibberish Score
-        score = gib.getScore(string)
-        # score = 1
-        if score > 10:
-            score = 1
+        # Good string valuation (after the UTF modification)
+        if goodstring:
+            stringScores[string] = -5
+        else:
+            stringScores[string] = 0
+
+        # PEStudio String Blacklist Evaluation
+        if pestudio_available:
+            ( pescore, type ) = getPEStudioScore(string)
+            if pescore > 0:
+                # print string
+                pestudioMarker[string] = type
+                stringScores[string] += pescore
+
+        if not goodstring:
+
+            # Gibberish Score
+            score = gib.getScore(string)
+            # score = 1
+            if score > 10:
+                score = 1
+            #if args.debug:
+            #    print "Gibberish %s - %s" % ( str(score), string)
+            stringScores[string] += score
+
+            # Length Score
+            length = len(string)
+            if length > int(args.l) and length < int(args.s):
+                stringScores[string] += round( len(string) / 8, 2)
+            if length >= int(args.s):
+                stringScores[string] += 1
+
+            # In suspicious strings
+            #if string in suspicious_strings:
+            #    stringScores[string] += 6
+
+            # Reduction
+            if ".." in string:
+                stringScores[string] -= 5
+            if "   " in string:
+                stringScores[string] -= 5
+
+            # Certain strings add-ons ----------------------------------------------
+            # Extensions - Drive
+            if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.[a-z][a-z][a-z])', string, re.IGNORECASE):
+                stringScores[string] += 4
+            # System keywords
+            if re.search(r'(cmd.exe|system32|users|Documents and|SystemRoot|Grant|hello|password|process|log|unc)', string, re.IGNORECASE):
+                stringScores[string] += 5
+            # Protocol Keywords
+            if re.search(r'(ftp|irc|smtp|command|GET|POST|Agent|tor2web|HEAD)', string, re.IGNORECASE):
+                stringScores[string] += 5
+            # Connection keywords
+            if re.search(r'(error|http|closed|fail|version)', string, re.IGNORECASE):
+                stringScores[string] += 3
+            # Browser User Agents
+            if re.search(r'(Mozilla|MSIE|Windows NT|Macintosh|Gecko|Opera|User\-Agent)', string, re.IGNORECASE):
+                stringScores[string] += 5
+            # Temp and Recycler
+            if re.search(r'(TEMP|Temporary|Appdata|Recycler)', string, re.IGNORECASE):
+                stringScores[string] += 4
+            # malicious keywords - hacktools
+            if re.search(r'(scan|sniff|poison|fake|spoof|sweep|dump|flood|inject|forward|scan|vulnerable|credentials|creds|coded|p0c|Content|host)', string, re.IGNORECASE):
+                stringScores[string] += 5
+            # network keywords
+            if re.search(r'(address|port|listen|remote|local|process|service|mutex|pipe|frame|key|lookup|connection)', string, re.IGNORECASE):
+                stringScores[string] += 3
+            # Drive non-C:
+            if re.search(r'([D-Z]:\\)', string, re.IGNORECASE):
+                stringScores[string] += 4
+            # IP
+            if re.search(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b', string, re.IGNORECASE): # IP Address
+                stringScores[string] += 5
+            # Copyright Owner
+            if re.search(r'( by | coded | c0d3d |cr3w\b)', string, re.IGNORECASE):
+                stringScores[string] += 2
+            # Extension generic
+            if re.search(r'\.[a-zA-Z]{3}\b', string):
+                stringScores[string] += 3
+            # All upper case
+            if re.search(r'^[A-Z]{6,}$', string):
+                stringScores[string] += 2
+            # All lower case
+            if re.search(r'^[a-z]{6,}$', string):
+                stringScores[string] += 2
+            # All lower with space
+            if re.search(r'^[a-z\s]{6,}$', string):
+                stringScores[string] += 2
+            # All characters
+            if re.search(r'^[A-Z][a-z]{5,}', string):
+                stringScores[string] += 2
+            # URL
+            if re.search(r'(%[a-z][:\-,;]|\\\\%s|\\\\[A-Z0-9a-z%]+\\[A-Z0-9a-z%]+)', string):
+                stringScores[string] += 3
+            # certificates
+            if re.search(r'(thawte|trustcenter|signing|class|crl|CA|certificate|assembly)', string, re.IGNORECASE):
+                stringScores[string] -= 4
+            # Parameters
+            if re.search(r'( \-[a-z]{,2}[\s]?[0-9]?| /[a-z]+[\s]?[\w]*)', string, re.IGNORECASE):
+                stringScores[string] += 4
+            # Directory
+            if re.search(r'(\\[A-Za-z]+\\)', string):
+                stringScores[string] += 4
+            # Executable - not in directory
+            if re.search(r'^[^\\]+\.(exe|com|scr|bat)$', string, re.IGNORECASE):
+                stringScores[string] += 4
+            # Date placeholders
+            if re.search(r'(yyyy|hh:mm|dd/mm|mm/dd|%s:%s:)', string, re.IGNORECASE):
+                stringScores[string] += 3
+            # Placeholders
+            if re.search(r'(%s|%d|%i|%02d|%04d|%2d|%3s)', string, re.IGNORECASE):
+                stringScores[string] += 3
+            # String parts from file system elements
+            if re.search(r'(cmd|com|pipe|tmp|temp|recycle|bin|secret|private|AppData|driver|config)', string, re.IGNORECASE):
+                stringScores[string] += 3
+            # Programming
+            if re.search(r'(execute|run|system|shell|root|cimv2|login|exec|stdin|read|process|netuse|script|share)', string, re.IGNORECASE):
+                stringScores[string] += 3
+            # Credentials
+            if re.search(r'(user|pass|login|logon|token|cookie|creds|hash|ticket|NTLM|LMHASH|kerberos|spnego|session|identif|account|login|auth|privilege)', string, re.IGNORECASE):
+                stringScores[string] += 3
+            # Malware
+            if re.search(r'(\.[a-z]/[^/]+\.txt|)', string, re.IGNORECASE):
+                stringScores[string] += 3
+            # Variables
+            if re.search(r'%[A-Z_]+%', string, re.IGNORECASE):
+                stringScores[string] += 4
+
+            # BASE64 --------------------------------------------------------------
+            try:
+                if len(string) > 8:
+                    # Try different ways - fuzz string
+                    for m_string in ( string, string[1:], string[1:] + "=", string + "=", string + "==" ):
+                        if isBase64(m_string):
+                            decoded_string = m_string.decode('base64')
+                            # print decoded_string
+                            if isAsciiString(decoded_string, padding_allowed=True):
+                                # print "match"
+                                stringScores[string] += 6
+                                base64strings[string] = decoded_string
+            except Exception, e:
+                pass
+
+            # Reversed String -----------------------------------------------------
+            if string[::-1] in good_strings:
+                stringScores[string] += 10
+                reversedStrings[string] = string[::-1]
+
+            # Certain string reduce	-----------------------------------------------
+            if re.search(r'(rundll32\.exe$|kernel\.dll$)', string, re.IGNORECASE):
+                stringScores[string] -= 4
+
         if args.debug:
-            print "%s - %s" % ( str(score), string)
-        stringScores[string] = score
-
-        # Length Score
-        length = len(string)
-        if length > int(args.l) and length < int(args.s):
-            stringScores[string] += round( len(string) / 8, 2)
-        if length >= int(args.s):
-            stringScores[string] += 1
-
-        # In suspicious strings
-        if string in suspicious_strings:
-            stringScores[string] += 6
-
-        # Reduction
-        if ".." in string:
-            stringScores[string] -= 5
-        if "   " in string:
-            stringScores[string] -= 5
-
-        # Certain strings add-ons ----------------------------------------------
-        # Extensions - Drive
-        if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.[a-z][a-z][a-z])', string, re.IGNORECASE):
-            stringScores[string] += 4
-        # System keywords
-        if re.search(r'(cmd.exe|system32|users|Documents and|SystemRoot|Grant|hello|password|process|log|unc)', string, re.IGNORECASE):
-            stringScores[string] += 5
-        # Protocol Keywords
-        if re.search(r'(ftp|irc|smtp|command|GET|POST|Agent|tor2web|HEAD)', string, re.IGNORECASE):
-            stringScores[string] += 5
-        # Connection keywords
-        if re.search(r'(error|http|closed|fail|version)', string, re.IGNORECASE):
-            stringScores[string] += 3
-        # Browser User Agents
-        if re.search(r'(Mozilla|MSIE|Windows NT|Macintosh|Gecko|Opera|User\-Agent)', string, re.IGNORECASE):
-            stringScores[string] += 5
-        # Temp and Recycler
-        if re.search(r'(TEMP|Temporary|Appdata|Recycler)', string, re.IGNORECASE):
-            stringScores[string] += 4
-        # malicious keywords - hacktools
-        if re.search(r'(scan|sniff|poison|fake|spoof|sweep|dump|flood|inject|forward|scan|vulnerable|credentials|creds|coded|p0c|Content|host)', string, re.IGNORECASE):
-            stringScores[string] += 5
-        # network keywords
-        if re.search(r'(address|port|listen|remote|local|process|service|mutex|pipe|frame|key|lookup|connection)', string, re.IGNORECASE):
-            stringScores[string] += 3
-        # Drive non-C:
-        if re.search(r'([D-Z]:\\)', string, re.IGNORECASE):
-            stringScores[string] += 4
-        # IP
-        if re.search(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b', string, re.IGNORECASE): # IP Address
-            stringScores[string] += 5
-        # Copyright Owner
-        if re.search(r'( by | coded | c0d3d |cr3w\b)', string, re.IGNORECASE):
-            stringScores[string] += 2
-        # Extension generic
-        if re.search(r'\.[a-zA-Z]{3}\b', string):
-            stringScores[string] += 3
-        # All upper case
-        if re.search(r'^[A-Z]{6,}$', string):
-            stringScores[string] += 2
-        # All lower case
-        if re.search(r'^[a-z]{6,}$', string):
-            stringScores[string] += 2
-        # All lower with space
-        if re.search(r'^[a-z\s]{6,}$', string):
-            stringScores[string] += 2
-        # All characters
-        if re.search(r'^[A-Z][a-z]{5,}', string):
-            stringScores[string] += 2
-        # URL
-        if re.search(r'(%[a-z][:\-,;]|\\\\%s|\\\\[A-Z0-9a-z%]+\\[A-Z0-9a-z%]+)', string):
-            stringScores[string] += 3
-        # certificates
-        if re.search(r'(thawte|trustcenter|signing|class|crl|CA|certificate|assembly)', string, re.IGNORECASE):
-            stringScores[string] -= 4
-        # Parameters
-        if re.search(r'( \-[a-z]{,2}[\s]?[0-9]?| /[a-z]+[\s]?[\w]*)', string, re.IGNORECASE):
-            stringScores[string] += 4
-        # Directory
-        if re.search(r'(\\[A-Za-z]+\\)', string):
-            stringScores[string] += 4
-        # Executable - not in directory
-        if re.search(r'^[^\\]+\.(exe|com|scr|bat)$', string, re.IGNORECASE):
-            stringScores[string] += 4
-        # Date placeholders
-        if re.search(r'(yyyy|hh:mm|dd/mm|mm/dd|%s:%s:)', string, re.IGNORECASE):
-            stringScores[string] += 3
-        # Placeholders
-        if re.search(r'(%s|%d|%i|%02d|%04d|%2d|%3s)', string, re.IGNORECASE):
-            stringScores[string] += 3
-        # String parts from file system elements
-        if re.search(r'(cmd|com|pipe|tmp|temp|recycle|bin|secret|private|AppData|driver|config)', string, re.IGNORECASE):
-            stringScores[string] += 3
-        # Programming
-        if re.search(r'(execute|run|system|shell|root|cimv2|login|exec|stdin|read|process|netuse|script|share)', string, re.IGNORECASE):
-            stringScores[string] += 3
-        # Credentials
-        if re.search(r'(user|pass|login|logon|token|cookie|creds|hash|ticket|NTLM|LMHASH|kerberos|spnego|session|identif|account|login|auth|privilege)', string, re.IGNORECASE):
-            stringScores[string] += 3
-        # Malware
-        if re.search(r'(\.[a-z]/[^/]+\.txt|)', string, re.IGNORECASE):
-            stringScores[string] += 3
-        # Variables
-        if re.search(r'%[A-Z_]+%', string, re.IGNORECASE):
-            stringScores[string] += 4
-
-        # BASE64 --------------------------------------------------------------
-        try:
-            if len(string) > 8:
-                # Try different ways - fuzz string
-                for m_string in ( string, string[1:], string[1:] + "=", string + "=", string + "==" ):
-                    if isBase64(m_string):
-                        decoded_string = m_string.decode('base64')
-                        # print decoded_string
-                        if isAsciiString(decoded_string, padding_allowed=True):
-                            # print "match"
-                            stringScores[string] += 6
-                            base64strings[string] = decoded_string
-        except Exception, e:
-            pass
-
-        # Reversed String -----------------------------------------------------
-        if string[::-1] in good_strings:
-            stringScores[string] += 10
-            reversedStrings[string] = string[::-1]
-
-        # Certain string reduce	-----------------------------------------------
-        if re.search(r'(rundll32\.exe$|kernel\.dll$)', string, re.IGNORECASE):
-            stringScores[string] -= 4
+            print "SCORE: %s\tSTRING: %s" % ( string, stringScores[string] )
 
     sorted_set = sorted(stringScores.iteritems(), key=operator.itemgetter(1), reverse=True)
 
@@ -576,38 +601,9 @@ def createRules(file_strings, super_rules, file_info_mal):
             rule += "\t\thash = \"%s\"\n" % file_info_mal[filePath]["md5"]
             rule += "\tstrings:\n"
 
-            # Adding the strings --------------------------------------
-            for i, string in enumerate(file_strings[filePath]):
-                # Checking string length
-                is_fullword = True
-                if len(string) > 80:
-                    # cut string
-                    string = string[:80].rstrip("\\")
-                    # not fullword anymore
-                    is_fullword = False
-
-                # Collect the data
-                enc = " ascii"
-                base64comment = ""
-                reversedComment = ""
-                fullword = ""
-                if is_fullword:
-                    fullword = " fullword"
-                if string in base64strings:
-                    base64comment = " /* base64 encoded string '%s' */" % base64strings[string]
-                if string in reversedStrings:
-                    reversedComment = " /* reversed string '%s' */" % reversedStrings[string]
-                if string[:8] == "UTF16LE:":
-                    string = string[8:]
-                    enc = " wide"
-
-                # No compose the rule line
-                rule += "\t\t$s%s = \"%s\"%s%s%s%s\n" % ( str(i), string, fullword, enc, base64comment, reversedComment )
-
-                # If too many string definitions found - cut it at the
-                # count defined via command line param -rc
-                if i > int(args.rc):
-                    break
+            # Get the strings
+            rule_strings = getRuleStrings(file_strings[filePath])
+            rule += rule_strings
 
             # Condition -----------------------------------------------
             condition = "all of them"
@@ -685,39 +681,12 @@ def createRules(file_strings, super_rules, file_info_mal):
                 rule += "\t\tsuper_rule = 1\n"
                 for i, filePath in enumerate(super_rule["files"]):
                     rule += "\t\thash%s = \"%s\"\n" % (str(i), file_info_mal[filePath]["md5"])
+
                 rule += "\tstrings:\n"
+
                 # Adding the strings
-                for i, string in enumerate(super_rule["strings"]):
-                    # Checking string length
-                    is_fullword = True
-                    if len(string) > 80:
-                        # cut string
-                        string = string[:80].rstrip("\\")
-                        # not fullword anymore
-                        is_fullword = False
-
-                    # Collect the data
-                    enc = " ascii"
-                    base64comment = ""
-                    reversedComment = ""
-                    fullword = ""
-                    if is_fullword:
-                        fullword = " fullword"
-                    if string in base64strings:
-                        base64comment = " /* base64 encoded string '%s' */" % base64strings[string]
-                    if string in reversedStrings:
-                        reversedComment = " /* reversed string '%s' */" % reversedStrings[string]
-                    if string[:8] == "UTF16LE:":
-                        string = string[8:]
-                        enc = " wide"
-
-                    # No compose the rule line
-                    rule += "\t\t$s%s = \"%s\"%s%s%s%s\n" % ( str(i), string, fullword, enc, base64comment, reversedComment )
-
-                    # If too many string definitions found - cut it at the
-                    # count defined via command line param -rc
-                    if i > int(args.rc):
-                        break
+                rule_strings = getRuleStrings(super_rule["strings"])
+                rule += rule_strings
 
                 # Condition -------------------------------------------
                 # Default
@@ -758,13 +727,95 @@ def createRules(file_strings, super_rules, file_info_mal):
     return ( rule_count, super_rule_count )
 
 
+def getRuleStrings(elements):
+
+    rule_strings = ""
+
+    # Adding the strings --------------------------------------
+    for i, string in enumerate(elements):
+
+        # Collect the data
+        enc = " ascii"
+        base64comment = ""
+        reversedComment = ""
+        fullword = ""
+        pestudio_comment = ""
+        score_comment = ""
+        goodware_comment = ""
+
+        if string in good_strings:
+            goodware_comment = " /* Goodware String */"
+
+        if string[:8] == "UTF16LE:":
+            string = string[8:]
+            enc = " wide"
+        if string in base64strings:
+            base64comment = " /* base64 encoded string '%s' */" % base64strings[string]
+        if string in pestudioMarker:
+            pestudio_comment = " /* PEStudio Blacklist: %s */" % pestudioMarker[string]
+
+        if string in stringScores:
+            if args.score:
+                score_comment += " /* score: '%s' */" % stringScores[string]
+        else:
+            print "NO SCORE: %s" % string
+
+        if string in reversedStrings:
+            reversedComment = " /* reversed string '%s' */" % reversedStrings[string]
+
+        # Checking string length
+        is_fullword = True
+        if len(string) > 80:
+            # cut string
+            string = string[:80].rstrip("\\")
+            # not fullword anymore
+            is_fullword = False
+        # Show as fullword
+        if is_fullword:
+            fullword = " fullword"
+
+        # No compose the rule line
+        rule_strings += "\t\t$s%s = \"%s\"%s%s%s%s%s%s%s\n" % ( str(i), string, fullword, enc, base64comment, reversedComment, pestudio_comment, score_comment, goodware_comment )
+
+        # If too many string definitions found - cut it at the
+        # count defined via command line param -rc
+        if i > int(args.rc):
+            break
+
+    return rule_strings
+
+
 def readPEStudioStrings():
-    tree = etree.parse('PeStudioBlackListStrings.xml')
-    string_elems = tree.findall(".//String")
-    strings = []
-    for elem in string_elems:
-        strings.append(elem.text)
-    return strings
+    pestudio_strings = {}
+
+    tree = etree.parse('strings.xml')
+
+    pestudio_strings["strings"] = tree.findall(".//string")
+    pestudio_strings["av"] = tree.findall(".//av")
+    pestudio_strings["folder"] = tree.findall(".//folder")
+    pestudio_strings["os"] = tree.findall(".//os")
+    pestudio_strings["reg"] = tree.findall(".//reg")
+    pestudio_strings["guid"] = tree.findall(".//guid")
+    pestudio_strings["ssdl"] = tree.findall(".//ssdl")
+    pestudio_strings["ext"] = tree.findall(".//ext")
+    pestudio_strings["agent"] = tree.findall(".//agent")
+    pestudio_strings["oid"] = tree.findall(".//oid")
+    pestudio_strings["priv"] = tree.findall(".//priv")
+
+    # Obsolete
+    # for elem in string_elems:
+    #    strings.append(elem.text)
+
+    return pestudio_strings
+
+
+def getPEStudioScore(string):
+    for type in pestudio_strings:
+        for elem in pestudio_strings[type]:
+            # Full match
+            if string.lower() == elem.text.lower():
+                return 15, type
+    return 0, ""
 
 
 def getMagic(filePath):
@@ -858,7 +909,7 @@ def printWelcome():
     print "  "
     print "  by Florian Roth"
     print "  May 2015"
-    print "  Version 0.11.3"
+    print "  Version 0.12.0"
     print " "
     print "###############################################################################"
 
@@ -883,6 +934,8 @@ if __name__ == '__main__':
     # parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
     parser.add_argument('-oe', action='store_true', default=False, help='Only scan executable extensions EXE, DLL, ASP, JSP, PHP, BIN, INFECTED')
     parser.add_argument('-fs', help='Max file size in MB to analyze (default=3)', metavar='size-in-MB', default=3)
+    parser.add_argument('--score', help='Show the string scores as comments in the rules', action='store_true', default=False)
+    parser.add_argument('--exclude-good', help='Force the exclude all goodware strings', action='store_true', default=False)
     parser.add_argument('--nomagic', help='Don\'t include the magic header condition statement', action='store_true', default=False)
     parser.add_argument('--nofilesize', help='Don\'t include the filesize condition statement', action='store_true', default=False)
     parser.add_argument('-fm', help='Multiplier for the maximum \'filesize\' condition (default: 5)', default=5)
@@ -897,12 +950,14 @@ if __name__ == '__main__':
     printWelcome()
 
     # Read PEStudio string list
-    suspicious_strings = []
-    if os.path.exists("PeStudioBlackListStrings.xml") and lxml_available:
-        suspicious_strings = readPEStudioStrings()
+    pestudio_strings = {}
+    pestudio_available = False
+    if os.path.exists("strings.xml") and lxml_available:
+        pestudio_strings = readPEStudioStrings()
+        pestudio_available = True
     else:
         if lxml_available:
-            print "To improve the analysis process please download PEStudio from http://winitor.com and place the file 'PeStudioBlackListStrings.xml' in the yarGen program directory."
+            print "\nTo improve the analysis process please download the awesome PEStudio tool by marc @ochsenmeier from http://winitor.com and place the file 'strings.xml' in the yarGen program directory.\n"
             time.sleep(5)
 
     # Ignore File Type on Malware Scan
@@ -964,6 +1019,8 @@ if __name__ == '__main__':
         # Special strings
         base64strings = {}
         reversedStrings = {}
+        pestudioMarker = {}
+        stringScores = {}
 
         # Extract all information
         mal_string_stats, file_info_mal = parseMalDir(args.m, args.nr, True, onlyRelevantExtensions)
