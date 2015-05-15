@@ -300,7 +300,7 @@ def filterStringSet(string_set):
 
         # Good string valuation (after the UTF modification)
         if goodstring:
-            stringScores[string] = -5
+            stringScores[string] = -10
         else:
             stringScores[string] = 0
 
@@ -813,8 +813,10 @@ def getPEStudioScore(string):
     for type in pestudio_strings:
         for elem in pestudio_strings[type]:
             # Full match
-            if string.lower() == elem.text.lower():
-                return 15, type
+            if elem.text.lower() in string.lower():
+                # Exclude the "extension" black list for now
+                if type != "ext":
+                    return 13, type
     return 0, ""
 
 
@@ -953,6 +955,7 @@ if __name__ == '__main__':
     pestudio_strings = {}
     pestudio_available = False
     if os.path.exists("strings.xml") and lxml_available:
+        print "Processing PEStudio strings ..."
         pestudio_strings = readPEStudioStrings()
         pestudio_available = True
     else:
