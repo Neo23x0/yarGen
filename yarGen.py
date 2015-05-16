@@ -961,7 +961,7 @@ if __name__ == '__main__':
     parser.add_argument('-fs', help='Max file size in MB to analyze (default=3)', metavar='size-in-MB', default=3)
     parser.add_argument('--score', help='Show the string scores as comments in the rules', action='store_true', default=False)
     parser.add_argument('--excludegood', help='Force the exclude all goodware strings', action='store_true', default=False)
-    parser.add_argument('--nosingle', help='Skip single rule creation for files included in super rules', action='store_true', default=False)
+    parser.add_argument('--nosimple', help='Skip simple rule creation for files included in super rules', action='store_true', default=False)
     parser.add_argument('--nomagic', help='Don\'t include the magic header condition statement', action='store_true', default=False)
     parser.add_argument('--nofilesize', help='Don\'t include the filesize condition statement', action='store_true', default=False)
     parser.add_argument('-fm', help='Multiplier for the maximum \'filesize\' condition (default: 5)', default=5)
