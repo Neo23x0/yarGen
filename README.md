@@ -116,7 +116,7 @@ directory.
 
 python yarGen.py -a "Florian Roth" -r "http://goo.gl/c2qgFx" -m /opt/mal/case_441 -o case441.yar
 
-### Exclude strings from Goodware samples (default output: yargen_rules.yar)
+### Exclude strings from Goodware samples
 
 python yarGen.py --excludegood -m /opt/mal/case_441
 
