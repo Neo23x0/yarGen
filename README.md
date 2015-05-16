@@ -26,13 +26,14 @@ strings and uses the GibberishDetector of Rob Renaud to value strings higher
 that contain language words in contrast to totally mixed up character chains.  
 https://github.com/rrenaud/Gibberish-Detector
 
+Since version 0.12.0 yarGen does not completely remove the goodware strings from the analysis process but includes them with a very low score. The rules will be included if no better strings can be found and marked with a comment /* Goodware rule */. Force yarGen to remvoe all goodware strings with --excludegood. Also since version 0.12.0 yarGen allows to place the "strings.xml" from [PEstudio](https://winitor.com/) in the program directory in order to apply the blacklist definition during the string analysis process. You'll get better results. 
+
 The rule generation process tries to identify similarities between the files 
 that get analyzed and then combines the strings to so called "super rules". 
 Up to now the super rule generation does not remove the simple rule for the
-files that have been combined in that single super rule. This means that there
-is some redundancy when super rules are created. It is your task to identify
-and check the super rules and remove the simple rules matching on a single 
-file if the super rule works well for you.
+files that have been combined in a single super rule. This means that there
+is some redundancy when super rules are created. You can supress a simple rule
+for a file that was already covered by super rule by using --nosimple. 
 
 ### Memory Requirements
 
@@ -42,10 +43,12 @@ Warning: yarGen pulls the whole goodstring database to memory and uses up to
 ## Command Line Parameters
 
 ```
+
 usage: yarGen.py [-h] [-m M] [-g G] [-u] [-c] [-o output_rule_file]
                  [-p prefix] [-a author] [-r ref] [-l min-size] [-s max-size]
-                 [-nr] [-oe] [-fs size-in-MB] [--nomagic] [--nofilesize]
-                 [-fm FM] [--noglobal] [-rc maxstrings] [--nosuper] [--debug]
+                 [-nr] [-oe] [-fs size-in-MB] [--score] [--excludegood]
+                 [--nosimple] [--nomagic] [--nofilesize] [-fm FM] [--noglobal]
+                 [-rc maxstrings] [--nosuper] [--debug]
 
 yarGen
 
@@ -66,6 +69,10 @@ optional arguments:
   -oe                  Only scan executable extensions EXE, DLL, ASP, JSP,
                        PHP, BIN, INFECTED
   -fs size-in-MB       Max file size in MB to analyze (default=3)
+  --score              Show the string scores as comments in the rules
+  --excludegood        Force the exclude all goodware strings
+  --nosimple           Skip single rule creation for files included in super
+                       rules
   --nomagic            Don't include the magic header condition statement
   --nofilesize         Don't include the filesize condition statement
   -fm FM               Multiplier for the maximum 'filesize' condition
@@ -105,9 +112,21 @@ Use the shipped database of goodware strings and scan the malware directory
 below. A file named 'yargen_rules.yar' will be generated in the current 
 directory. 
 
-### Preset Author and Reference
+### Preset author and reference
 
-python yarGen.py -a "Florian Roth" -r "http://goo.gl/c2qgFx" -m /opt/mal/case_441
+python yarGen.py -a "Florian Roth" -r "http://goo.gl/c2qgFx" -m /opt/mal/case_441 -o case441.yar
+
+### Exclude strings from Goodware samples (default output: yargen_rules.yar)
+
+python yarGen.py --excludegood -m /opt/mal/case_441
+
+### Supress simple rule if alreay covered by a super rules
+
+python yarGen.py --nosimple -m /opt/mal/case_441
+
+### Show debugging output
+
+python yarGen.py --debug -m /opt/mal/case_441
 
 ### Create a new goodware strings database
 
