@@ -266,7 +266,7 @@ def malwareStringEvaluation(mal_string_stats, good_strings):
                     # If the string set of the combination has a required size
                     if len(combinations[combi]["strings"]) >= int(args.rc):
                         # Remove the files in the combi rule from the simple set
-                        if args.nosingle:
+                        if args.nosimple:
                             for file in combinations[combi]["files"]:
                                 if file in file_strings:
                                     del file_strings[file]
