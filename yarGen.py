@@ -438,6 +438,12 @@ def filterStringSet(string_set):
             # Variables
             if re.search(r'%[A-Z_]+%', string, re.IGNORECASE):
                 localStringScores[string] += 4
+            # RATs / Malware
+            if re.search(r'(spy|logger|dark|cryptor|RAT\b|eye|comet|evil|xtreme|poison)', string, re.IGNORECASE):
+                localStringScores[string] += 5
+            # Missed user profiles
+            if re.search(r'[\\](users|profiles|username|benutzer|Documents and Settings|Utilisateurs|Utenti|Usuários)[\\]', string, re.IGNORECASE):
+                localStringScores[string] += 3
 
             # BASE64 --------------------------------------------------------------
             try:
