@@ -18,6 +18,8 @@ import operator
 import datetime
 import time
 import scandir
+import urllib2
+from collections import Counter
 from hashlib import sha1
 from collections import OrderedDict
 try:
@@ -119,7 +121,7 @@ def parseMalDir(dir, notRecursive=False, generateInfo=False, onlyRelevantExtensi
 def parseGoodDir(dir, notRecursive=False, onlyRelevantExtensions=True):
 
     # Prepare dictionary
-    all_strings = []
+    all_strings = Counter()
 
     for filePath in getFiles(dir, notRecursive):
         # Get Extension
@@ -141,10 +143,10 @@ def parseGoodDir(dir, notRecursive=False, onlyRelevantExtensions=True):
         # Extract strings from file
         ( strings, sha1sum ) = extractStrings(filePath, generateInfo=False)
         # Append to all strings
-        all_strings += strings
+        all_strings.update(strings)
 
     # return it as a set (unique strings)
-    return set(all_strings)
+    return all_strings
 
 
 def extractStrings(filePath, generateInfo):
@@ -297,10 +299,13 @@ def filterStringSet(string_set):
 
         # Goodware string marker
         goodstring = False
+        goodcount = 0
 
         # Goodware Strings
         if string in good_strings:
             goodstring = True
+            goodcount = good_strings[string]
+            # print "%s - %s" % ( goodstring, good_strings[string] )
             if args.excludegood:
                 continue
 
@@ -313,7 +318,8 @@ def filterStringSet(string_set):
 
         # Good string valuation (after the UTF modification)
         if goodstring:
-            localStringScores[string] = -10
+            # Reduce the score by the number of occurence in goodware files
+            localStringScores[string] = ( goodcount * -1 ) + 5
         else:
             localStringScores[string] = 0
 
@@ -352,6 +358,9 @@ def filterStringSet(string_set):
                 localStringScores[string] -= 5
             if "   " in string:
                 localStringScores[string] -= 5
+            # Packer Strings
+            if re.search(r'(WinRAR\\SFX)', string):
+                localStringScores[string] -= 4
 
             # Certain strings add-ons ----------------------------------------------
             # Extensions - Drive
@@ -443,6 +452,12 @@ def filterStringSet(string_set):
                 localStringScores[string] += 5
             # Missed user profiles
             if re.search(r'[\\](users|profiles|username|benutzer|Documents and Settings|Utilisateurs|Utenti|Usuários)[\\]', string, re.IGNORECASE):
+                localStringScores[string] += 3
+            # Strings: Words ending with numbers
+            if re.search(r'^[A-Z][a-z]+[0-9]+$', string, re.IGNORECASE):
+                localStringScores[string] += 2
+            # Program Path - not Programs or Windows
+            if re.search(r'^[Cc]:\\\\[^PW]', string):
                 localStringScores[string] += 3
 
             # BASE64 --------------------------------------------------------------
@@ -628,7 +643,8 @@ def createRules(file_strings, super_rules, file_info_mal):
             rule += "\t\thash = \"%s\"\n" % file_info_mal[filePath]["md5"]
             rule += "\tstrings:\n"
 
-            # Get the strings
+            # Get the strings -----------------------------------------
+            # Rule String generation
             rule_strings = getRuleStrings(file_strings[filePath])
             rule += rule_strings
 
@@ -773,7 +789,7 @@ def getRuleStrings(elements):
         goodware_comment = ""
 
         if string in good_strings:
-            goodware_comment = " /* Goodware String */"
+            goodware_comment = " /* Goodware String - occured %s times */" % ( good_strings[string] )
 
         if string in stringScores:
             if args.score:
@@ -790,7 +806,7 @@ def getRuleStrings(elements):
             pestudio_comment = " /* PEStudio Blacklist: %s */" % pestudioMarker[string]
 
         if string in reversedStrings:
-            reversedComment = " /* reversed string '%s' */" % reversedStrings[string]
+            reversedComment = " /* reversed goodware string '%s' */" % reversedStrings[string]
 
         # Checking string length
         is_fullword = True
@@ -913,7 +929,7 @@ def isBase64(s):
 
 
 def save(object, filename, bin = 1):
-    file = gzip.GzipFile(filename, 'wb')
+    file = (filename, 'wb')
     file.write(pickle.dumps(object, bin))
     file.close()
 
@@ -940,7 +956,7 @@ def printWelcome():
     print "  "
     print "  by Florian Roth"
     print "  May 2015"
-    print "  Version 0.12.1"
+    print "  Version 0.13.0"
     print " "
     print "###############################################################################"
 
@@ -951,7 +967,7 @@ if __name__ == '__main__':
     # Parse Arguments
     parser = argparse.ArgumentParser(description='yarGen')
     parser.add_argument('-m', help='Path to scan for malware')
-    parser.add_argument('-g', help='Path to scan for goodware (dont use the database shipped with yara-brg)')
+    parser.add_argument('-g', help='Path to scan for goodware (dont use the database shipped with yaraGen)')
     parser.add_argument('-u', action='store_true', default=False, help='Update local goodware database (use with -g)')
     parser.add_argument('-c', action='store_true', default=False, help='Create new local goodware database (use with -g)')
     parser.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yargen_rules.yar')
@@ -981,6 +997,10 @@ if __name__ == '__main__':
     # Print Welcome
     printWelcome()
 
+    if not os.path.isfile("good-strings.db"):
+        print "Please unzip the shipped good-strings.db database. Github does not allow files larger than 100MB. I'll think about a more comfortable way in the near future."
+        sys.exit(1)
+
     # Read PEStudio string list
     pestudio_strings = {}
     pestudio_available = False
@@ -1007,13 +1027,13 @@ if __name__ == '__main__':
         if args.u:
             print "Updating local database ..."
             try:
-                good_pickle = load("good_strings.db")
+                good_pickle = load("good-strings.db")
                 print "Old database entries: %s" % len(good_pickle)
-                new_good = set()
-                new_good = good_strings | good_pickle
-                good_pickle = new_good
+                # new_good = Counter()
+                good_pickle.update(good_strings)
+                # good_pickle = new_good
                 print "New database entries: %s" % len(good_pickle)
-                save(good_pickle, "good_strings.db")
+                save(good_pickle, "good-strings.db")
 
             except Exception, e:
                 traceback.print_exc()
@@ -1022,13 +1042,14 @@ if __name__ == '__main__':
         if args.c:
             print "Creating local database ..."
             try:
-                if os.path.isfile("good_strings.db"):
-                    os.remove("good_strings.db")
+                if os.path.isfile("good-strings.db"):
+                    os.remove("good-strings.db")
 
-                good_pickle = set()
+                good_pickle = Counter()
                 good_pickle = good_strings
+                # print good_strings
 
-                save(good_pickle, "good_strings.db")
+                save(good_pickle, "good-strings.db")
 
                 print "New database with %s entries created." % len(good_pickle)
             except Exception, e:
@@ -1036,10 +1057,10 @@ if __name__ == '__main__':
 
     # Use the Database
     else:
-        print "Reading goodware strings from database 'good_strings.db' ..."
+        print "Reading goodware strings from database 'good-strings.db' (This could take some time and uses up to 2 GB of RAM) ..."
         try:
-            good_pickle = load("good_strings.db")
-            # print good_pickle.keys()
+            good_pickle = load("good-strings.db")
+            # print good_pickle
             good_strings = good_pickle
         except Exception, e:
             traceback.print_exc()
