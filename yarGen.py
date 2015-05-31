@@ -18,7 +18,6 @@ import operator
 import datetime
 import time
 import scandir
-import urllib2
 from collections import Counter
 from hashlib import sha1
 from collections import OrderedDict
