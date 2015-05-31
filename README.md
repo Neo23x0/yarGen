@@ -38,7 +38,7 @@ for a file that was already covered by super rule by using --nosimple.
 ### Memory Requirements
 
 Warning: yarGen pulls the whole goodstring database to memory and uses up to 
-1200 Megabyte of memory for a few seconds. 
+2000 Megabyte of memory for a few seconds. 
 
 ## Command Line Parameters
 
