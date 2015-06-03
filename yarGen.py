@@ -798,7 +798,7 @@ def getRuleStrings(elements):
 
         if string in stringScores:
             if args.score:
-                score_comment += " /* score: '%s' */" % stringScores[string]
+                score_comment += " /* score: '%.2f' */" % stringScores[string]
         else:
             print "NO SCORE: %s" % string
 
