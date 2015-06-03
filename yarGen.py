@@ -325,18 +325,20 @@ def filterStringSet(string_set):
         # PEStudio String Blacklist Evaluation
         if pestudio_available:
             ( pescore, type ) = getPEStudioScore(string)
-            if pescore > 0:
-                # print string
+            # print string
+            # Reset score of goodware files to 0 if blacklisted in PEStudio
+            if type != "":
                 pestudioMarker[string] = type
-                localStringScores[string] += pescore
+                localStringScores[string] = pescore
 
         if not goodstring:
 
             # Gibberish Score
             score = gib.getScore(string)
             # score = 1
-            if score > 10:
-                score = 1
+            #if score > 10:
+            #    score = 1
+            score = score / 2
             #if args.debug:
             #    print "Gibberish %s - %s" % ( str(score), string)
             localStringScores[string] += score
@@ -400,7 +402,7 @@ def filterStringSet(string_set):
                 localStringScores[string] += 3
             # All upper case
             if re.search(r'^[A-Z]{6,}$', string):
-                localStringScores[string] += 2
+                localStringScores[string] += 1.5
             # All lower case
             if re.search(r'^[a-z]{6,}$', string):
                 localStringScores[string] += 2
@@ -408,7 +410,7 @@ def filterStringSet(string_set):
             if re.search(r'^[a-z\s]{6,}$', string):
                 localStringScores[string] += 2
             # All characters
-            if re.search(r'^[A-Z][a-z]{5,}', string):
+            if re.search(r'^[A-Z][a-z]{5,}$', string):
                 localStringScores[string] += 2
             # URL
             if re.search(r'(%[a-z][:\-,;]|\\\\%s|\\\\[A-Z0-9a-z%]+\\[A-Z0-9a-z%]+)', string):
@@ -429,7 +431,7 @@ def filterStringSet(string_set):
             if re.search(r'(yyyy|hh:mm|dd/mm|mm/dd|%s:%s:)', string, re.IGNORECASE):
                 localStringScores[string] += 3
             # Placeholders
-            if re.search(r'(%s|%d|%i|%02d|%04d|%2d|%3s)', string, re.IGNORECASE):
+            if re.search(r'[^A-Za-z](%s|%d|%i|%02d|%04d|%2d|%3s)[^A-Za-z]', string, re.IGNORECASE):
                 localStringScores[string] += 3
             # String parts from file system elements
             if re.search(r'(cmd|com|pipe|tmp|temp|recycle|bin|secret|private|AppData|driver|config)', string, re.IGNORECASE):
@@ -860,7 +862,7 @@ def getPEStudioScore(string):
             if elem.text.lower() in string.lower():
                 # Exclude the "extension" black list for now
                 if type != "ext":
-                    return 13, type
+                    return 5, type
     return 0, ""
 
 
@@ -954,8 +956,8 @@ def printWelcome():
     print "  Yara Rule Generator"
     print "  "
     print "  by Florian Roth"
-    print "  May 2015"
-    print "  Version 0.13.0"
+    print "  June 2015"
+    print "  Version 0.13.1"
     print " "
     print "###############################################################################"
 

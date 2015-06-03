@@ -14,4 +14,4 @@ class GibDetector(object):
 		return gib_detect_train.avg_transition_prob(string, self.model_mat) > self.threshold
 
 	def getScore(self, string):
-		return round(gib_detect_train.avg_transition_prob(string, self.model_mat) / self.threshold, 2)
+		return round(gib_detect_train.avg_transition_prob(string, self.model_mat), 2)
