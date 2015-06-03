@@ -326,9 +326,13 @@ def filterStringSet(string_set):
         if pestudio_available:
             ( pescore, type ) = getPEStudioScore(string)
             # print string
-            # Reset score of goodware files to 0 if blacklisted in PEStudio
+            # Reset score of goodware files to 5 if blacklisted in PEStudio
             if type != "":
                 pestudioMarker[string] = type
+                # Modify the PEStudio blacklisted strings with their goodware stats count
+                if goodstring:
+                    pescore = pescore - ( goodcount / 1000.0 )
+                    # print "%s - %s - %s" % (string, pescore, goodcount)
                 localStringScores[string] = pescore
 
         if not goodstring:
