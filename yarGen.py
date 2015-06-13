@@ -29,9 +29,9 @@ except Exception, e:
     lxml_available = False
 from lib import gibDetector
 
-RELEVANT_EXTENSIONS = [ ".asp", ".vbs", ".ps", ".ps1", ".rar", ".tmp", ".bas", ".bat", ".chm", ".cmd", ".com", ".cpl",
-                         ".crt", ".dll", ".exe", ".hta", ".js", ".lnk", ".msc", ".ocx", ".pcd", ".pif", ".pot", ".reg",
-                         ".scr", ".sct", ".sys", ".vb", ".vbe", ".vbs", ".wsc", ".wsf", ".wsh", ".ct", ".t", ".input",
+RELEVANT_EXTENSIONS = [ ".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".cmd", ".com", ".cpl",
+                         ".crt", ".dll", ".exe", ".hta", ".msc", ".reg", ".html"
+                         ".scr", ".sys", ".vb", ".vbe", ".vbs", ".wsc", ".wsf", ".wsh", ".ct", ".t", ".input",
                          ".war", ".jsp", ".php", ".asp", ".aspx", ".psd1", ".psm1" ]
 
 def getFiles(dir, notRecursive):
@@ -57,62 +57,68 @@ def parseMalDir(dir, notRecursive=False, generateInfo=False, onlyRelevantExtensi
 
     for filePath in getFiles(dir, notRecursive):
 
-        # Get Extension
-        extension = os.path.splitext(filePath)[1].lower()
-        if not extension in RELEVANT_EXTENSIONS and onlyRelevantExtensions:
-            if args.debug:
-                print "EXTENSION %s - Skipping file %s" % ( extension, filePath )
-            continue
-
-        # Size Check
-        size = 0
         try:
-            size = os.stat(filePath).st_size
-            if size > ( args.fs * 1024 * 1024 ):
+
+            # Get Extension
+            extension = os.path.splitext(filePath)[1].lower()
+            if not extension in RELEVANT_EXTENSIONS and onlyRelevantExtensions:
                 if args.debug:
-                    print "File is to big - Skipping file %s (use -fs to adjust this behaviour)" % ( filePath )
+                    print "EXTENSION %s - Skipping file %s" % ( extension, filePath )
                 continue
-        except Exception, e:
-            pass
 
-        # Extract strings from file
-        ( strings, sha1sum ) = extractStrings(filePath, generateInfo)
+            # Size Check
+            size = 0
+            try:
+                size = os.stat(filePath).st_size
+                if size > ( args.fs * 1024 * 1024 ):
+                    if args.debug:
+                        print "File is to big - Skipping file %s (use -fs to adjust this behaviour)" % ( filePath )
+                    continue
+            except Exception, e:
+                pass
 
-        # Skip if MD5 already known - avoid duplicate files
-        if sha1sum in known_sha1sums:
-            #if args.debug:
-            print "Skipping strings from %s due to MD5 duplicate detection" % filePath
-            continue
+            # Extract strings from file
+            ( strings, sha1sum ) = extractStrings(filePath, generateInfo)
 
-        # Add md5 value
-        if generateInfo:
-            known_sha1sums.append(sha1sum)
-            file_info[filePath] = {}
-            file_info[filePath]["md5"] = sha1sum
+            # Skip if MD5 already known - avoid duplicate files
+            if sha1sum in known_sha1sums:
+                #if args.debug:
+                print "Skipping strings from %s due to MD5 duplicate detection" % filePath
+                continue
 
-        # Magic evaluation
-        if not args.nomagic:
-            file_info[filePath]["magic"] = getMagic(filePath)
-        else:
-            file_info[filePath]["magic"] = ""
+            # Add md5 value
+            if generateInfo:
+                known_sha1sums.append(sha1sum)
+                file_info[filePath] = {}
+                file_info[filePath]["md5"] = sha1sum
 
-        # File Size
-        file_info[filePath]["size"] = os.stat(filePath).st_size
-
-        # Add strings to statistics
-        invalid_count = 0
-        for string in strings:
-            if string in string_stats:
-                string_stats[string]["count"] += 1
-                string_stats[string]["files"].append(filePath)
+            # Magic evaluation
+            if not args.nomagic:
+                file_info[filePath]["magic"] = getMagic(filePath)
             else:
-                string_stats[string] = {}
-                string_stats[string]["count"] = 0
-                string_stats[string]["files"] = []
-                string_stats[string]["files"].append(filePath)
+                file_info[filePath]["magic"] = ""
 
-        if args.debug:
-            print "Processed " + filePath + " Size: "+ str(size) +" Strings: "+ str(len(string_stats)) + " ... "
+            # File Size
+            file_info[filePath]["size"] = os.stat(filePath).st_size
+
+            # Add strings to statistics
+            invalid_count = 0
+            for string in strings:
+                if string in string_stats:
+                    string_stats[string]["count"] += 1
+                    string_stats[string]["files"].append(filePath)
+                else:
+                    string_stats[string] = {}
+                    string_stats[string]["count"] = 0
+                    string_stats[string]["files"] = []
+                    string_stats[string]["files"].append(filePath)
+
+            if args.debug:
+                print "Processed " + filePath + " Size: "+ str(size) +" Strings: "+ str(len(string_stats)) + " ... "
+
+        except Exception, e:
+            traceback.print_exc()
+            print "ERROR reading file: %s" % filePath
 
     return string_stats, file_info
 
@@ -532,28 +538,32 @@ def generateGeneralCondition(file_info):
     magic_headers = []
     file_sizes = []
 
-    for filePath in file_info:
-        magic = file_info_mal[filePath]["magic"]
-        size = file_info_mal[filePath]["size"]
-        if not magic in magic_headers and magic != "":
-            magic_headers.append(magic)
-        if not size in file_sizes:
-            file_sizes.append(size)
+    try:
+        for filePath in file_info:
+            magic = file_info_mal[filePath]["magic"]
+            size = file_info_mal[filePath]["size"]
+            if not magic in magic_headers and magic != "":
+                magic_headers.append(magic)
+            if not size in file_sizes:
+                file_sizes.append(size)
 
-    # If different magic headers are less than 5
-    if len(magic_headers) <= 5:
-        magic_string = " or ".join(getUintString(h) for h in magic_headers)
-        if " or " in magic_string:
-            condition = "( {0} )".format(magic_string)
-        else:
-            condition = "{0}".format(magic_string)
+        # If different magic headers are less than 5
+        if len(magic_headers) <= 5:
+            magic_string = " or ".join(getUintString(h) for h in magic_headers)
+            if " or " in magic_string:
+                condition = "( {0} )".format(magic_string)
+            else:
+                condition = "{0}".format(magic_string)
 
-    # Biggest size multiplied with maxsize_multiplier
-    if not args.nofilesize:
-        if condition != "":
-            condition = "{0} and {1}".format(condition, getFileRange(max(file_sizes)))
-        else:
-            condition = "{0}".format(getFileRange(max(file_sizes)))
+        # Biggest size multiplied with maxsize_multiplier
+        if not args.nofilesize:
+            if condition != "":
+                condition = "{0} and {1}".format(condition, getFileRange(max(file_sizes)))
+            else:
+                condition = "{0}".format(getFileRange(max(file_sizes)))
+
+    except Exception, e:
+        print "ERROR while generating general condition - check the global rule and remove it if it's faulty"
 
     return condition
 
@@ -894,6 +904,8 @@ def getFileRange(size):
     try:
         # max sample size - args.fm times the original size
         max_size = size * args.fm
+        if max_size < 1024:
+            max_size = 1024
         size_string = "filesize < {0}KB".format( max_size / 1024 )
     except Exception, e:
         pass
@@ -961,7 +973,7 @@ def printWelcome():
     print "  "
     print "  by Florian Roth"
     print "  June 2015"
-    print "  Version 0.13.1"
+    print "  Version 0.13.2"
     print " "
     print "###############################################################################"
 
