@@ -39,6 +39,8 @@ def getFiles(dir, notRecursive):
     if notRecursive:
         for filename in os.listdir(dir):
             filePath = os.path.join(dir,filename)
+            if os.path.isdir(filePath):
+                continue
             yield filePath
     # Recursive
     else:
