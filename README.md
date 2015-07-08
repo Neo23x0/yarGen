@@ -4,7 +4,7 @@
 
 A Rule Generator for Yara Rules
 
-Florian Roth, May 2015
+Florian Roth, July 2015
 
 yarGen is a generator for Yara rules. The reason why I developed another Yara
 rule generator was a special use case in which I had a directory full of 
@@ -15,18 +15,18 @@ hackware samples for which I had to write Yara rules.
 The main principle is the creation of yara rules from strings found in malware
 files while removing all strings that also appear in goodware files. 
 
-Since yarGen version 0.6 ships with a goodware strings database that can be 
-used to create your rules wihtout scanning any goodware directories and thus
-making the process of rule creation much faster.
-This way I minimized the chance to trigger false positives with the newly 
-generated rules.
+Since version 0.14.0 it uses naive-bayes-classifier by Mustafa Atik and Nejdet
+Yucesoy in order to classify the string and detect useful words instead of 
+compression/encryption garbage.
 
-Since version 0.7 it supports utf16le encoded strings (wide; Unicode strings) 
-strings and uses the GibberishDetector of Rob Renaud to value strings higher
-that contain language words in contrast to totally mixed up character chains.  
-https://github.com/rrenaud/Gibberish-Detector
-
-Since version 0.12.0 yarGen does not completely remove the goodware strings from the analysis process but includes them with a very low score. The rules will be included if no better strings can be found and marked with a comment /* Goodware rule */. Force yarGen to remvoe all goodware strings with --excludegood. Also since version 0.12.0 yarGen allows to place the "strings.xml" from [PEstudio](https://winitor.com/) in the program directory in order to apply the blacklist definition during the string analysis process. You'll get better results. 
+Since version 0.12.0 yarGen does not completely remove the goodware strings from
+the analysis process but includes them with a very low score. The rules will be
+included if no better strings can be found and marked with a comment /* Goodware
+rule */. Force yarGen to remvoe all goodware strings with --excludegood. Also
+since version 0.12.0 yarGen allows to place the "strings.xml" from
+[PEstudio](https://winitor.com/) in the program directory in order to apply the
+blacklist definition during the string analysis process. You'll get better
+results.
 
 The rule generation process tries to identify similarities between the files 
 that get analyzed and then combines the strings to so called "super rules". 
@@ -38,16 +38,17 @@ for a file that was already covered by super rule by using --nosimple.
 ### Memory Requirements
 
 Warning: yarGen pulls the whole goodstring database to memory and uses up to 
-2000 Megabyte of memory for a few seconds. 
+2 GB of memory for a few seconds. 
 
 ## Command Line Parameters
 
 ```
 
 usage: yarGen.py [-h] [-m M] [-g G] [-u] [-c] [-o output_rule_file]
-                 [-p prefix] [-a author] [-r ref] [-l min-size] [-s max-size]
-                 [-nr] [-oe] [-fs size-in-MB] [--score] [--excludegood]
-                 [--nosimple] [--nomagic] [--nofilesize] [-fm FM] [--noglobal]
+                 [-p prefix] [-a author] [-r ref] [-l min-size] [-z min-score]
+                 [-s max-size] [-nr] [-oe] [-fs size-in-MB] [--score]
+                 [--inverse] [--nodirname] [--excludegood] [--nosimple]
+                 [--nomagic] [--nofilesize] [-fm FM] [--noglobal]
                  [-rc maxstrings] [--nosuper] [--debug]
 
 yarGen
@@ -56,7 +57,7 @@ optional arguments:
   -h, --help           show this help message and exit
   -m M                 Path to scan for malware
   -g G                 Path to scan for goodware (dont use the database
-                       shipped with yara-brg)
+                       shipped with yaraGen)
   -u                   Update local goodware database (use with -g)
   -c                   Create new local goodware database (use with -g)
   -o output_rule_file  Output rule file
@@ -64,14 +65,17 @@ optional arguments:
   -a author            Author Name
   -r ref               Reference
   -l min-size          Minimum string length to consider (default=6)
+  -z min-score         Minimum score to consider
   -s max-size          Maximum length to consider (default=64)
   -nr                  Do not recursively scan directories
   -oe                  Only scan executable extensions EXE, DLL, ASP, JSP,
                        PHP, BIN, INFECTED
   -fs size-in-MB       Max file size in MB to analyze (default=3)
   --score              Show the string scores as comments in the rules
+  --inverse            Show the string scores as comments in the rules
+  --nodirname          Don't use the folder name variable in inverse rules
   --excludegood        Force the exclude all goodware strings
-  --nosimple           Skip single rule creation for files included in super
+  --nosimple           Skip simple rule creation for files included in super
                        rules
   --nomagic            Don't include the magic header condition statement
   --nofilesize         Don't include the filesize condition statement
@@ -112,6 +116,19 @@ Use the shipped database of goodware strings and scan the malware directory
 below. A file named 'yargen_rules.yar' will be generated in the current 
 directory. 
 
+### Show the score of the strings as comment
+
+yarGen will by default use the top 20 strings based on their score. To see how a
+certain string in the rule scored, use the "--score" parameter.
+
+python yarGen.py --score -m X:\MAL\Case1401
+
+### Use only strings with a certain minimum score
+
+In order to use only strings for your rules that match a certain minimum score use the "-z" parameter. It is a good pratice to first create rules with "--score" and than perform a second run with a minimum score set for you sample set via "-z".  
+
+python yarGen.py --score -z 5 -m X:\MAL\Case1401
+
 ### Preset author and reference
 
 python yarGen.py -a "Florian Roth" -r "http://goo.gl/c2qgFx" -m /opt/mal/case_441 -o case441.yar
@@ -135,3 +152,25 @@ python yarGen.py -c -g C:\Windows\System32
 ### Update the goodware strings database (append new strings to the old ones)
 
 python yarGen.py -u -g "C:\Program Files"
+
+### Inverse rule creation (still beta)
+
+In order to create some inverse rules on goodware, you have to prepare a directory with subdirectories in which you include all versions of the files you want to create inverse rules for with their original name and in their original folder. If that sounds strange, let me give you an example. 
+
+E.g. you want to create inverse rules for all Windows executables in the System32 folder, you have to create a goodware archive with the following directory structure:
+
+- G:\goodware
+  - WindowsXP
+    - System32 - all files
+  - Windows2003
+    - System32 - all files
+  - Windows2008R2
+    - System32 - all files
+
+yarGen than creates rules that identify e.g. file name "cmd.exe" in path ending with "System32" and checks if the file contains certain necessary strings. If the strings don't show up, the rule will fire. This indicates a replaced system file or malware file that tries to masquerade as a system file. 
+
+python yarGen.py --inverse -m G:\goodware\
+
+You can also instruct yarGen not to include the file path but solely rely on the filename. 
+
+python yarGen.py --inverse --nodirname -m G:\goodware\
