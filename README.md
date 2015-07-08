@@ -169,8 +169,8 @@ E.g. you want to create inverse rules for all Windows executables in the System3
 
 yarGen than creates rules that identify e.g. file name "cmd.exe" in path ending with "System32" and checks if the file contains certain necessary strings. If the strings don't show up, the rule will fire. This indicates a replaced system file or malware file that tries to masquerade as a system file. 
 
-python yarGen.py --inverse -m G:\goodware\
+python yarGen.py --inverse -oe -m G:\goodware\
 
 You can also instruct yarGen not to include the file path but solely rely on the filename. 
 
-python yarGen.py --inverse --nodirname -m G:\goodware\
+python yarGen.py --inverse -oe --nodirname -m G:\goodware\
