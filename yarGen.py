@@ -425,10 +425,13 @@ def filterStringSet(string_set):
             # Packer Strings
             if re.search(r'(WinRAR\\SFX)', string):
                 localStringScores[string] -= 4
+            # US ASCII char
+            if "\x1f" in string:
+                localStringScores[string] -= 4
 
             # Certain strings add-ons ----------------------------------------------
             # Extensions - Drive
-            if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.[a-z][a-z][a-z])', string, re.IGNORECASE):
+            if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.vbs|\.tmp|\.sys)', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # System keywords
             if re.search(r'(cmd.exe|system32|users|Documents and|SystemRoot|Grant|hello|password|process|log|unc)', string, re.IGNORECASE):
@@ -451,8 +454,8 @@ def filterStringSet(string_set):
             # network keywords
             if re.search(r'(address|port|listen|remote|local|process|service|mutex|pipe|frame|key|lookup|connection)', string, re.IGNORECASE):
                 localStringScores[string] += 3
-            # Drive non-C:
-            if re.search(r'([D-Z]:\\)', string, re.IGNORECASE):
+            # Drive
+            if re.search(r'([C-Zc-z]:\\)', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # IP
             if re.search(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b', string, re.IGNORECASE): # IP Address
@@ -465,7 +468,7 @@ def filterStringSet(string_set):
                 localStringScores[string] += 3
             # All upper case
             if re.search(r'^[A-Z]{6,}$', string):
-                localStringScores[string] += 1.5
+                localStringScores[string] += 2.5
             # All lower case
             if re.search(r'^[a-z]{6,}$', string):
                 localStringScores[string] += 2
@@ -485,7 +488,7 @@ def filterStringSet(string_set):
             if re.search(r'( \-[a-z]{,2}[\s]?[0-9]?| /[a-z]+[\s]?[\w]*)', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # Directory
-            if re.search(r'(\\[A-Za-z]+\\)', string):
+            if re.search(r'([a-zA-Z]:|^|%)\\[A-Za-z]{4,30}\\', string):
                 localStringScores[string] += 4
             # Executable - not in directory
             if re.search(r'^[^\\]+\.(exe|com|scr|bat)$', string, re.IGNORECASE):
@@ -519,12 +522,27 @@ def filterStringSet(string_set):
                 localStringScores[string] += 3
             # Strings: Words ending with numbers
             if re.search(r'^[A-Z][a-z]+[0-9]+$', string, re.IGNORECASE):
-                localStringScores[string] += 2
+                localStringScores[string] += 1
             # Program Path - not Programs or Windows
             if re.search(r'^[Cc]:\\\\[^PW]', string):
                 localStringScores[string] += 3
             # Special strings
-            if re.search(r'(\\\\.\\|kernel|.dll)', string):
+            if re.search(r'(\\\\\.\\|kernel|.dll|usage|\\DosDevices\\)', string, re.IGNORECASE):
+                localStringScores[string] += 5
+            # Parameters
+            if re.search(r'( \-[a-z] | /[a-z] | \-[a-z]:[a-zA-Z]| \/[a-z]:[a-zA-Z])', string):
+                localStringScores[string] += 4
+            # File
+            if re.search(r'^[a-zA-Z0-9]{3,40}\.[a-zA-Z]{3}', string, re.IGNORECASE):
+                localStringScores[string] += 5
+            # Comment Line / Output Log
+            if re.search(r'^([\*\#]+ |\[[\*\-\+]\] |[\-=]> |\[[A-Za-z]\] )', string):
+                localStringScores[string] += 4
+            # Base64
+            if re.search(r'^(?:[A-Za-z0-9+/]{4}){30,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$', string):
+                localStringScores[string] += 5
+            # Malicious intent
+            if re.search(r'(loader|drop|infect|encrypt|exec|elevat|dump|target|victim|override|traverse|mutex)', string, re.IGNORECASE):
                 localStringScores[string] += 5
 
             # BASE64 --------------------------------------------------------------
@@ -562,8 +580,6 @@ def filterStringSet(string_set):
             # print "SCORE: %s\tUTF: %s\tSTRING: %s" % ( localStringScores[string], is_utf, string )
 
     sorted_set = sorted(localStringScores.iteritems(), key=operator.itemgetter(1), reverse=True)
-    print localStringScores
-    print sorted_set
 
     # Only the top X strings
     c = 0
@@ -571,7 +587,7 @@ def filterStringSet(string_set):
     for string in sorted_set:
 
         # Skip the one with a score lower than -z X
-        if args.z:
+        if not args.noscorefilter and not args.inverse:
             if string[1] < int(args.z):
                 continue
 
@@ -687,6 +703,8 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
             string_set = file_strings[filePath]
             file_strings[filePath] = []
             file_strings[filePath] = filterStringSet(string_set)
+            if len(file_strings[filePath]) == 0:
+                print "[W] Not enough high scoring strings to create a rule. (reduce -z param) FILE: %s" % filePath
 
         # GENERATE SIMPLE RULES -------------------------------------------
         fh.write("/* Rule Set ----------------------------------------------------------------- */\n\n")
@@ -758,7 +776,7 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
                 traceback.print_exc()
 
     # PROCESS INVERSE RULES -------------------------------------------
-    print inverse_stats.keys()
+    # print inverse_stats.keys()
     if args.inverse:
         print "[+] Generating inverse rules ..."
         inverse_rules = ""
@@ -1143,14 +1161,18 @@ def load(filename):
 
 def printWelcome():
     print "###############################################################################"
-    print "  "
-    print "  yarGen"
-    print "  Yara Rule Generator"
-    print "  "
-    print "  by Florian Roth"
-    print "  July 2015"
-    print "  Version 0.14.0"
-    print " "
+    print "                        ______"
+    print "      __  ______ ______/ ____/__  ____"
+    print "     / / / / __ `/ ___/ / __/ _ \/ __ \\"
+    print "    / /_/ / /_/ / /  / /_/ /  __/ / / /"
+    print "    \__, /\__,_/_/   \____/\___/_/ /_/"
+    print "   /____/"
+    print "   "
+    print "   Yara Rule Generator"
+    print "   by Florian Roth"
+    print "   July 2015"
+    print "   Version 0.14.1"
+    print "   "
     print "###############################################################################"
 
 
@@ -1167,9 +1189,10 @@ if __name__ == '__main__':
     parser.add_argument('-p', help='Prefix for the rule description', metavar='prefix', default='Auto-generated rule')
     parser.add_argument('-a', help='Author Name', metavar='author', default='YarGen Rule Generator')
     parser.add_argument('-r', help='Reference', metavar='ref', default='not set')
-    parser.add_argument('-l', help='Minimum string length to consider (default=6)', metavar='min-size', default=6)
-    parser.add_argument('-z', help='Minimum score to consider', metavar='min-score', default="")
+    parser.add_argument('-l', help='Minimum string length to consider (default=8)', metavar='min-size', default=8)
+    parser.add_argument('-z', help='Minimum score to consider (default=5)', metavar='min-score', default=5)
     parser.add_argument('-s', help='Maximum length to consider (default=64)', metavar='max-size', default=64)
+    parser.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering will be applied)', metavar='maxstrings', default=20)
     parser.add_argument('-nr', action='store_true', default=False, help='Do not recursively scan directories')
     # parser.add_argument('-rm', action='store_true', default=False, help='Recursive scan of malware directories')
     # parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
@@ -1178,13 +1201,13 @@ if __name__ == '__main__':
     parser.add_argument('--score', help='Show the string scores as comments in the rules', action='store_true', default=False)
     parser.add_argument('--inverse', help='Show the string scores as comments in the rules', action='store_true', default=False)
     parser.add_argument('--nodirname', help='Don\'t use the folder name variable in inverse rules', action='store_true', default=False)
+    parser.add_argument('--noscorefilter', help='Don\'t filter strings based on score (default in \'inverse\' mode)', action='store_true', default=False)
     parser.add_argument('--excludegood', help='Force the exclude all goodware strings', action='store_true', default=False)
     parser.add_argument('--nosimple', help='Skip simple rule creation for files included in super rules', action='store_true', default=False)
     parser.add_argument('--nomagic', help='Don\'t include the magic header condition statement', action='store_true', default=False)
     parser.add_argument('--nofilesize', help='Don\'t include the filesize condition statement', action='store_true', default=False)
     parser.add_argument('-fm', help='Multiplier for the maximum \'filesize\' condition (default: 5)', default=5)
     parser.add_argument('--noglobal', help='Don\'t create global rules', action='store_true', default=False)
-    parser.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering will be applied)', metavar='maxstrings', default=20)
     parser.add_argument('--nosuper', action='store_true', default=False, help='Don\'t try to create super rules that match against various files')
     parser.add_argument('--debug', action='store_true', default=False, help='Debug output')
 
@@ -1253,7 +1276,8 @@ if __name__ == '__main__':
 
     # Use the Goodware String Database
     else:
-        print "[+] Reading goodware strings from database 'good-strings.db' (This could take some time and uses up to 2 GB of RAM) ..."
+        print "[+] Reading goodware strings from database 'good-strings.db' ..."
+        print "    (This could take some time and uses up to 2 GB of RAM)"
         try:
             good_pickle = load("good-strings.db")
             # print good_pickle
