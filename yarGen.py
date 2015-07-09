@@ -19,7 +19,7 @@ import datetime
 import time
 import scandir
 from collections import Counter
-from hashlib import sha1
+from hashlib import sha256
 from naiveBayesClassifier import tokenizer
 from naiveBayesClassifier.trainer import Trainer
 from naiveBayesClassifier.classifier import Classifier
@@ -43,6 +43,8 @@ def getFiles(dir, notRecursive):
     if notRecursive:
         for filename in os.listdir(dir):
             filePath = os.path.join(dir,filename)
+            if os.path.isdir(filePath):
+                continue
             yield filePath
     # Recursive
     else:
@@ -82,19 +84,19 @@ def parseSampleDir(dir, notRecursive=False, generateInfo=False, onlyRelevantExte
                 pass
 
             # Extract strings from file
-            ( strings, sha1sum ) = extractStrings(filePath, generateInfo)
+            ( strings, sha256sum ) = extractStrings(filePath, generateInfo)
 
             # Skip if MD5 already known - avoid duplicate files
-            if sha1sum in known_sha1sums:
+            if sha256sum in known_sha1sums:
                 #if args.debug:
                 print "[-] Skipping strings from %s due to MD5 duplicate detection" % filePath
                 continue
 
             # Add md5 value
             if generateInfo:
-                known_sha1sums.append(sha1sum)
+                known_sha1sums.append(sha256sum)
                 file_info[filePath] = {}
-                file_info[filePath]["hash"] = sha1sum
+                file_info[filePath]["hash"] = sha256sum
 
             # Magic evaluation
             if not args.nomagic:
@@ -114,7 +116,7 @@ def parseSampleDir(dir, notRecursive=False, generateInfo=False, onlyRelevantExte
                 file_info[fileName]["hashes"] = []
                 file_info[fileName]["folder_names"] = []
             file_info[fileName]["count"] += 1
-            file_info[fileName]["hashes"].append(sha1sum)
+            file_info[fileName]["hashes"].append(sha256sum)
             if folderName not in file_info[fileName]["folder_names"]:
                 file_info[fileName]["folder_names"].append(folderName)
 
@@ -189,7 +191,7 @@ def extractStrings(filePath, generateInfo):
         f.close()
         # Generate md5
         if generateInfo:
-            sha1sum = sha1(data).hexdigest()
+            sha256sum = sha256(data).hexdigest()
 
         # Read strings
         strings = re.findall("[\x1f-\x7e]{6,}", data)
@@ -214,7 +216,7 @@ def extractStrings(filePath, generateInfo):
             traceback.print_exc()
         pass
 
-    return cleaned_strings, sha1sum
+    return cleaned_strings, sha256sum
 
 
 def sampleStringEvaluation(sample_string_stats, good_strings, file_info):
@@ -260,65 +262,66 @@ def sampleStringEvaluation(sample_string_stats, good_strings, file_info):
                             print "Appending %s to %s" % ( string, fileName )
                         inverse_stats[fileName].append(string)
 
-    # SUPER RULE GENERATION -------------------------------------------
+        # SUPER RULE GENERATION -------------------------------------------
 
-    super_rules = []
-    if not args.nosuper and not args.inverse:
-
-        # SUPER RULES GENERATOR	- preliminary work
-        # If a string occurs more than once in different files
-        if sample_string_stats[string]["count"] > 1:
-            if args.debug:
-                print "OVERLAP Count: %s\nString: \"%s\"%s" % ( sample_string_stats[string]["count"], string, "\nFILE: ".join(sample_string_stats[string]["files"]) )
-            # Create a combination string from the file set that matches to that string
-            combi = ":".join(sorted(sample_string_stats[string]["files"]))
-            # print "STRING: " + string
-            # print "COMBI: " + combi
-            # If combination not yet known
-            if combi not in combinations:
-                combinations[combi] = {}
-                combinations[combi]["count"] = 1
-                combinations[combi]["strings"] = []
-                combinations[combi]["strings"].append(string)
-                combinations[combi]["files"] = sample_string_stats[string]["files"]
-            else:
-                combinations[combi]["count"] += 1
-                combinations[combi]["strings"].append(string)
-            # Set the maximum combination count
-            if combinations[combi]["count"] > max_combi_count:
-                max_combi_count = combinations[combi]["count"]
-                # print "Max Combi Count set to: %s" % max_combi_count
-
-        print "[+] Generating Super Rules ... (a lot of foo magic)"
-        for combi_count in range(max_combi_count, 1, -1):
-            for combi in combinations:
-                if combi_count == combinations[combi]["count"]:
-                    #print "Count %s - Combi %s" % ( str(combinations[combi]["count"]), combi )
-                    # Filter the string set
-                    #print "BEFORE"
-                    #print len(combinations[combi]["strings"])
-                    #print combinations[combi]["strings"]
-                    string_set = combinations[combi]["strings"]
+        super_rules = []
+        if not args.nosuper and not args.inverse:
+            
+            # SUPER RULES GENERATOR	- preliminary work
+            # If a string occurs more than once in different files
+            # print sample_string_stats[string]["count"]
+            if sample_string_stats[string]["count"] > 1:
+                if args.debug:
+                    print "OVERLAP Count: %s\nString: \"%s\"%s" % ( sample_string_stats[string]["count"], string, "\nFILE: ".join(sample_string_stats[string]["files"]) )
+                # Create a combination string from the file set that matches to that string
+                combi = ":".join(sorted(sample_string_stats[string]["files"]))
+                # print "STRING: " + string
+                # print "COMBI: " + combi
+                # If combination not yet known
+                if combi not in combinations:
+                    combinations[combi] = {}
+                    combinations[combi]["count"] = 1
                     combinations[combi]["strings"] = []
-                    combinations[combi]["strings"] = filterStringSet(string_set)
-                    #print combinations[combi]["strings"]
-                    #print "AFTER"
-                    #print len(combinations[combi]["strings"])
-                    # Combi String count after filtering
-                    #print "String count after filtering: %s" % str(len(combinations[combi]["strings"]))
+                    combinations[combi]["strings"].append(string)
+                    combinations[combi]["files"] = sample_string_stats[string]["files"]
+                else:
+                    combinations[combi]["count"] += 1
+                    combinations[combi]["strings"].append(string)
+                # Set the maximum combination count
+                if combinations[combi]["count"] > max_combi_count:
+                    max_combi_count = combinations[combi]["count"]
+                    # print "Max Combi Count set to: %s" % max_combi_count
 
-                    # If the string set of the combination has a required size
-                    if len(combinations[combi]["strings"]) >= int(args.rc):
-                        # Remove the files in the combi rule from the simple set
-                        if args.nosimple:
-                            for file in combinations[combi]["files"]:
-                                if file in file_strings:
-                                    del file_strings[file]
-                        # Add it as a super rule
-                        print "[-] Adding Super Rule with %s strings." % str(len(combinations[combi]["strings"]))
-                        #if args.debug:
-                        #print "Rule Combi: %s" % combi
-                        super_rules.append(combinations[combi])
+    print "[+] Generating Super Rules ... (a lot of foo magic)"
+    for combi_count in range(max_combi_count, 1, -1):
+        for combi in combinations:
+            if combi_count == combinations[combi]["count"]:
+                #print "Count %s - Combi %s" % ( str(combinations[combi]["count"]), combi )
+                # Filter the string set
+                #print "BEFORE"
+                #print len(combinations[combi]["strings"])
+                #print combinations[combi]["strings"]
+                string_set = combinations[combi]["strings"]
+                combinations[combi]["strings"] = []
+                combinations[combi]["strings"] = filterStringSet(string_set)
+                #print combinations[combi]["strings"]
+                #print "AFTER"
+                #print len(combinations[combi]["strings"])
+                # Combi String count after filtering
+                #print "String count after filtering: %s" % str(len(combinations[combi]["strings"]))
+
+                # If the string set of the combination has a required size
+                if len(combinations[combi]["strings"]) >= int(args.rc):
+                    # Remove the files in the combi rule from the simple set
+                    if args.nosimple:
+                        for file in combinations[combi]["files"]:
+                            if file in file_strings:
+                                del file_strings[file]
+                    # Add it as a super rule
+                    print "[-] Adding Super Rule with %s strings." % str(len(combinations[combi]["strings"]))
+                    #if args.debug:
+                    #print "Rule Combi: %s" % combi
+                    super_rules.append(combinations[combi])
 
     # Return all data
     return (file_strings, combinations, super_rules, inverse_stats)
@@ -618,8 +621,11 @@ def generateGeneralCondition(file_info):
 
     try:
         for filePath in file_info:
-            magic = file_info_mal[filePath]["magic"]
-            size = file_info_mal[filePath]["size"]
+            # Short file name info used for inverse generation has no magic/size fields
+            if "magic" not in file_info[filePath]:
+                continue
+            magic = file_info[filePath]["magic"]
+            size = file_info[filePath]["size"]
             if magic not in magic_headers and magic != "":
                 magic_headers.append(magic)
             if size not in file_sizes:
@@ -641,6 +647,9 @@ def generateGeneralCondition(file_info):
                 condition = "{0}".format(getFileRange(max(file_sizes)))
 
     except Exception, e:
+        if args.debug:
+            traceback.print_exc()
+            exit(1)
         print "[E] ERROR while generating general condition - check the global rule and remove it if it's faulty"
 
     return condition
@@ -858,6 +867,7 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
     if not args.nosuper and not args.inverse:
 
         fh.write("/* Super Rules ------------------------------------------------------------- */\n\n")
+        super_rule_names = []
 
         print "[+] Generating super rules ..."
         printed_combi = {}
@@ -880,7 +890,11 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
                     rule_name += "_" + cleanedName
 
                 # Shorten rule name
-                rule_name = rule_name[:127]
+                rule_name = rule_name[:124]
+                # Add count if rule name already taken
+                if rule_name not in super_rule_names:
+                    rule_name = "%s_%s" % (rule_name, super_rule_count)
+                super_rule_names.append(rule_name)
 
                 # Create a list of files
                 file_listing = ", ".join(file_list)
@@ -906,7 +920,7 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
                 rule += "\t\tdate = \"%s\"\n" % getTimestampBasic()
                 rule += "\t\tsuper_rule = 1\n"
                 for i, filePath in enumerate(super_rule["files"]):
-                    rule += "\t\thash%s = \"%s\"\n" % (str(i)+1, file_info[filePath]["hash"])
+                    rule += "\t\thash%s = \"%s\"\n" % (str(i+1), file_info[filePath]["hash"])
 
                 rule += "\tstrings:\n"
 
@@ -990,9 +1004,9 @@ def getRuleStrings(elements):
 
         # Checking string length
         is_fullword = True
-        if len(string) > 80:
+        if len(string) > args.s:
             # cut string
-            string = string[:80].rstrip("\\")
+            string = string[:args.s].rstrip("\\")
             # not fullword anymore
             is_fullword = False
         # Show as fullword
@@ -1171,7 +1185,7 @@ def printWelcome():
     print "   Yara Rule Generator"
     print "   by Florian Roth"
     print "   July 2015"
-    print "   Version 0.14.1"
+    print "   Version 0.14.2"
     print "   "
     print "###############################################################################"
 
