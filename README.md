@@ -106,7 +106,7 @@ See the following blog post for a more detailed description on how to use yarGen
 
 ![Generator Run](./screens/yargen-running.png)
 
-![Output Rule](./screens/output-rule-0.11.png)
+![Output Rule](./screens/output-rule-0.14.1.png)
 
 As you can see in the screenshot above you'll get a rule that contains strings, which are not found in the goodware strings database. 
 
@@ -118,7 +118,7 @@ To get a more generic rule, remove string $s5, which is very specific for this c
 
 ### Use the shipped database (FAST) to create some rules
 
-python yarGen.py -m X:\MAL\Case1401
+```python yarGen.py -m X:\MAL\Case1401```
 
 Use the shipped database of goodware strings and scan the malware directory 
 "X:\MAL" recursively. Create rules for all files included in this directory and 
@@ -130,37 +130,37 @@ directory.
 yarGen will by default use the top 20 strings based on their score. To see how a
 certain string in the rule scored, use the "--score" parameter.
 
-python yarGen.py --score -m X:\MAL\Case1401
+```python yarGen.py --score -m X:\MAL\Case1401```
 
 ### Use only strings with a certain minimum score
 
 In order to use only strings for your rules that match a certain minimum score use the "-z" parameter. It is a good pratice to first create rules with "--score" and than perform a second run with a minimum score set for you sample set via "-z".  
 
-python yarGen.py --score -z 5 -m X:\MAL\Case1401
+```python yarGen.py --score -z 5 -m X:\MAL\Case1401```
 
 ### Preset author and reference
 
-python yarGen.py -a "Florian Roth" -r "http://goo.gl/c2qgFx" -m /opt/mal/case_441 -o case441.yar
+```python yarGen.py -a "Florian Roth" -r "http://goo.gl/c2qgFx" -m /opt/mal/case_441 -o case441.yar```
 
 ### Exclude strings from Goodware samples
 
-python yarGen.py --excludegood -m /opt/mal/case_441
+```python yarGen.py --excludegood -m /opt/mal/case_441```
 
 ### Supress simple rule if alreay covered by a super rules
 
-python yarGen.py --nosimple -m /opt/mal/case_441
+```python yarGen.py --nosimple -m /opt/mal/case_441```
 
 ### Show debugging output
 
-python yarGen.py --debug -m /opt/mal/case_441
+```python yarGen.py --debug -m /opt/mal/case_441```
 
 ### Create a new goodware strings database
 
-python yarGen.py -c -g C:\Windows\System32
+```python yarGen.py -c -g C:\Windows\System32```
 
 ### Update the goodware strings database (append new strings to the old ones)
 
-python yarGen.py -u -g "C:\Program Files"
+```python yarGen.py -u -g "C:\Program Files"```
 
 ### Inverse rule creation (still beta)
 
@@ -178,8 +178,8 @@ E.g. you want to create inverse rules for all Windows executables in the System3
 
 yarGen than creates rules that identify e.g. file name "cmd.exe" in path ending with "System32" and checks if the file contains certain necessary strings. If the strings don't show up, the rule will fire. This indicates a replaced system file or malware file that tries to masquerade as a system file. 
 
-python yarGen.py --inverse -oe -m G:\goodware\
+```python yarGen.py --inverse -oe -m G:\goodware\```
 
 You can also instruct yarGen not to include the file path but solely rely on the filename. 
 
-python yarGen.py --inverse -oe --nodirname -m G:\goodware\
+```python yarGen.py --inverse -oe --nodirname -m G:\goodware\```
