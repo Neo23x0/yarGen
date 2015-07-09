@@ -1191,7 +1191,7 @@ if __name__ == '__main__':
     parser.add_argument('-r', help='Reference', metavar='ref', default='not set')
     parser.add_argument('-l', help='Minimum string length to consider (default=8)', metavar='min-size', default=8)
     parser.add_argument('-z', help='Minimum score to consider (default=5)', metavar='min-score', default=5)
-    parser.add_argument('-s', help='Maximum length to consider (default=64)', metavar='max-size', default=64)
+    parser.add_argument('-s', help='Maximum length to consider (default=128)', metavar='max-size', default=128)
     parser.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering will be applied)', metavar='maxstrings', default=20)
     parser.add_argument('-nr', action='store_true', default=False, help='Do not recursively scan directories')
     # parser.add_argument('-rm', action='store_true', default=False, help='Recursive scan of malware directories')
