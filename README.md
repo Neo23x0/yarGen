@@ -33,7 +33,15 @@ that get analyzed and then combines the strings to so called "super rules".
 Up to now the super rule generation does not remove the simple rule for the
 files that have been combined in a single super rule. This means that there
 is some redundancy when super rules are created. You can supress a simple rule
-for a file that was already covered by super rule by using --nosimple. 
+for a file that was already covered by super rule by using --nosimple.
+
+### Installation
+
+1. Make sure you have at least 2GB of RAM on the machine you plan to use yarGen
+2. Clone the git repository
+3. Install all dependancies with ```sudo pip install pickle scandir lxml naiveBayesClassifier```
+4. Unzip the goodware database (e.g. ```7z x good-strings.db.zip.001```)
+5. See help with ```python yarGen.py --help```
 
 ### Memory Requirements
 
@@ -43,13 +51,12 @@ Warning: yarGen pulls the whole goodstring database to memory and uses up to
 ## Command Line Parameters
 
 ```
-
 usage: yarGen.py [-h] [-m M] [-g G] [-u] [-c] [-o output_rule_file]
                  [-p prefix] [-a author] [-r ref] [-l min-size] [-z min-score]
-                 [-s max-size] [-nr] [-oe] [-fs size-in-MB] [--score]
-                 [--inverse] [--nodirname] [--excludegood] [--nosimple]
-                 [--nomagic] [--nofilesize] [-fm FM] [--noglobal]
-                 [-rc maxstrings] [--nosuper] [--debug]
+                 [-s max-size] [-rc maxstrings] [-nr] [-oe] [-fs size-in-MB]
+                 [--score] [--inverse] [--nodirname] [--noscorefilter]
+                 [--excludegood] [--nosimple] [--nomagic] [--nofilesize]
+                 [-fm FM] [--noglobal] [--nosuper] [--debug]
 
 yarGen
 
@@ -64,9 +71,11 @@ optional arguments:
   -p prefix            Prefix for the rule description
   -a author            Author Name
   -r ref               Reference
-  -l min-size          Minimum string length to consider (default=6)
-  -z min-score         Minimum score to consider
-  -s max-size          Maximum length to consider (default=64)
+  -l min-size          Minimum string length to consider (default=8)
+  -z min-score         Minimum score to consider (default=5)
+  -s max-size          Maximum length to consider (default=128)
+  -rc maxstrings       Maximum number of strings per rule (default=20,
+                       intelligent filtering will be applied)
   -nr                  Do not recursively scan directories
   -oe                  Only scan executable extensions EXE, DLL, ASP, JSP,
                        PHP, BIN, INFECTED
@@ -74,6 +83,8 @@ optional arguments:
   --score              Show the string scores as comments in the rules
   --inverse            Show the string scores as comments in the rules
   --nodirname          Don't use the folder name variable in inverse rules
+  --noscorefilter      Don't filter strings based on score (default in
+                       'inverse' mode)
   --excludegood        Force the exclude all goodware strings
   --nosimple           Skip simple rule creation for files included in super
                        rules
@@ -82,8 +93,6 @@ optional arguments:
   -fm FM               Multiplier for the maximum 'filesize' condition
                        (default: 5)
   --noglobal           Don't create global rules
-  -rc maxstrings       Maximum number of strings per rule (default=20,
-                       intelligent filtering will be applied)
   --nosuper            Don't try to create super rules that match against
                        various files
   --debug              Debug output
