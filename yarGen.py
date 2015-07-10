@@ -266,7 +266,7 @@ def sampleStringEvaluation(sample_string_stats, good_strings, file_info):
 
         super_rules = []
         if not args.nosuper and not args.inverse:
-            
+
             # SUPER RULES GENERATOR	- preliminary work
             # If a string occurs more than once in different files
             # print sample_string_stats[string]["count"]
@@ -541,12 +541,21 @@ def filterStringSet(string_set):
             # Comment Line / Output Log
             if re.search(r'^([\*\#]+ |\[[\*\-\+]\] |[\-=]> |\[[A-Za-z]\] )', string):
                 localStringScores[string] += 4
+            # Output typo / special expression
+            if re.search(r'(!.$|!!!$| :)$| ;)$|fucked|[\w]\.\.\.\.$)', string):
+                localStringScores[string] += 4
             # Base64
             if re.search(r'^(?:[A-Za-z0-9+/]{4}){30,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$', string):
-                localStringScores[string] += 5
+                localStringScores[string] += 4
             # Malicious intent
-            if re.search(r'(loader|drop|infect|encrypt|exec|elevat|dump|target|victim|override|traverse|mutex)', string, re.IGNORECASE):
+            if re.search(r'(loader|cmdline|ntlmhas|lmhash|drop|infect|encrypt|exec|elevat|dump|target|victim|override|traverse|mutex|pawnde|exploited|shellcode|injected|spoofed)', string, re.IGNORECASE):
                 localStringScores[string] += 5
+            # Privileges
+            if re.search(r'(administrator|highest|system|debug|dbg|admin|adm|root) privilege', string, re.IGNORECASE):
+                localStringScores[string] +=
+            # System file/process names
+            if re.search(r'(LSASS|SAM|lsass.exe|cmd.exe|LSASRV.DLL)', string):
+                localStringScores[string] += 4
 
             # BASE64 --------------------------------------------------------------
             try:
