@@ -542,7 +542,7 @@ def filterStringSet(string_set):
             if re.search(r'^([\*\#]+ |\[[\*\-\+]\] |[\-=]> |\[[A-Za-z]\] )', string):
                 localStringScores[string] += 4
             # Output typo / special expression
-            if re.search(r'(!.$|!!!$| :)$| ;)$|fucked|[\w]\.\.\.\.$)', string):
+            if re.search(r'(!.$|!!!$| :\)$| ;\)$|fucked|[\w]\.\.\.\.$)', string):
                 localStringScores[string] += 4
             # Base64
             if re.search(r'^(?:[A-Za-z0-9+/]{4}){30,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$', string):
