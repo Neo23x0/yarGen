@@ -182,7 +182,7 @@ def extractStrings(filePath, generateInfo):
     # String list
     strings = []
     cleaned_strings	= []
-    sha1sum = ""
+    sha256sum = ""
     # Read file data
     try:
         f = open(filePath, 'rb')
@@ -552,7 +552,7 @@ def filterStringSet(string_set):
                 localStringScores[string] += 5
             # Privileges
             if re.search(r'(administrator|highest|system|debug|dbg|admin|adm|root) privilege', string, re.IGNORECASE):
-                localStringScores[string] +=
+                localStringScores[string] += 4
             # System file/process names
             if re.search(r'(LSASS|SAM|lsass.exe|cmd.exe|LSASRV.DLL)', string):
                 localStringScores[string] += 4
