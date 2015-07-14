@@ -227,6 +227,7 @@ def sampleStringEvaluation(sample_string_stats, good_strings, file_info):
     combinations = {}
     inverse_stats = {}
     max_combi_count = 0
+    super_rules = []
 
     # Iterate through strings found in malware files
     for string in sample_string_stats:
@@ -264,7 +265,6 @@ def sampleStringEvaluation(sample_string_stats, good_strings, file_info):
 
         # SUPER RULE GENERATION -------------------------------------------
 
-        super_rules = []
         if not args.nosuper and not args.inverse:
 
             # SUPER RULES GENERATOR	- preliminary work
@@ -556,6 +556,9 @@ def filterStringSet(string_set):
             # System file/process names
             if re.search(r'(LSASS|SAM|lsass.exe|cmd.exe|LSASRV.DLL)', string):
                 localStringScores[string] += 4
+            # System file/process names
+            if re.search(r'(\.exe|\.dll|\.sys)$', string, re.IGNORECASE):
+                localStringScores[string] += 4
 
             # BASE64 --------------------------------------------------------------
             try:
@@ -649,7 +652,7 @@ def generateGeneralCondition(file_info):
                 condition = "{0}".format(magic_string)
 
         # Biggest size multiplied with maxsize_multiplier
-        if not args.nofilesize:
+        if not args.nofilesize and len(file_sizes) > 0:
             if condition != "":
                 condition = "{0} and {1}".format(condition, getFileRange(max(file_sizes)))
             else:
@@ -1194,7 +1197,7 @@ def printWelcome():
     print "   Yara Rule Generator"
     print "   by Florian Roth"
     print "   July 2015"
-    print "   Version 0.14.2"
+    print "   Version 0.14.3"
     print "   "
     print "###############################################################################"
 
@@ -1220,7 +1223,7 @@ if __name__ == '__main__':
     # parser.add_argument('-rm', action='store_true', default=False, help='Recursive scan of malware directories')
     # parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
     parser.add_argument('-oe', action='store_true', default=False, help='Only scan executable extensions EXE, DLL, ASP, JSP, PHP, BIN, INFECTED')
-    parser.add_argument('-fs', help='Max file size in MB to analyze (default=3)', metavar='size-in-MB', default=3)
+    parser.add_argument('-fs', help='Max file size in MB to analyze (default=10)', metavar='size-in-MB', default=10)
     parser.add_argument('--score', help='Show the string scores as comments in the rules', action='store_true', default=False)
     parser.add_argument('--inverse', help='Show the string scores as comments in the rules', action='store_true', default=False)
     parser.add_argument('--nodirname', help='Don\'t use the folder name variable in inverse rules', action='store_true', default=False)
