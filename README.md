@@ -51,51 +51,67 @@ Warning: yarGen pulls the whole goodstring database to memory and uses up to
 ## Command Line Parameters
 
 ```
-usage: yarGen.py [-h] [-m M] [-g G] [-u] [-c] [-o output_rule_file]
-                 [-p prefix] [-a author] [-r ref] [-l min-size] [-z min-score]
-                 [-s max-size] [-rc maxstrings] [-nr] [-oe] [-fs size-in-MB]
-                 [--score] [--inverse] [--nodirname] [--noscorefilter]
-                 [--excludegood] [--nosimple] [--nomagic] [--nofilesize]
-                 [-fm FM] [--noglobal] [--nosuper] [--debug]
+usage: yarGen.py [-h] [-m M] [-l min-size] [-z min-score] [-s max-size]
+                 [-rc maxstrings] [--excludegood] [-o output_rule_file]
+                 [-a author] [-r ref] [-p prefix] [--score] [--nosimple]
+                 [--nomagic] [--nofilesize] [-fm FM] [--noglobal] [--nosuper]
+                 [-g G] [-u] [-c] [--nr] [--oe] [-fs size-in-MB] [--debug]
+                 [--noop] [-n opcode-num] [--inverse] [--nodirname]
+                 [--noscorefilter]
 
 yarGen
 
 optional arguments:
   -h, --help           show this help message and exit
+
+Rule Creation:
   -m M                 Path to scan for malware
-  -g G                 Path to scan for goodware (dont use the database
-                       shipped with yaraGen)
-  -u                   Update local goodware database (use with -g)
-  -c                   Create new local goodware database (use with -g)
-  -o output_rule_file  Output rule file
-  -p prefix            Prefix for the rule description
-  -a author            Author Name
-  -r ref               Reference
   -l min-size          Minimum string length to consider (default=8)
   -z min-score         Minimum score to consider (default=5)
   -s max-size          Maximum length to consider (default=128)
   -rc maxstrings       Maximum number of strings per rule (default=20,
                        intelligent filtering will be applied)
-  -nr                  Do not recursively scan directories
-  -oe                  Only scan executable extensions EXE, DLL, ASP, JSP,
-                       PHP, BIN, INFECTED
-  -fs size-in-MB       Max file size in MB to analyze (default=3)
-  --score              Show the string scores as comments in the rules
-  --inverse            Show the string scores as comments in the rules
-  --nodirname          Don't use the folder name variable in inverse rules
-  --noscorefilter      Don't filter strings based on score (default in
-                       'inverse' mode)
   --excludegood        Force the exclude all goodware strings
+
+Rule Output:
+  -o output_rule_file  Output rule file
+  -a author            Author Name
+  -r ref               Reference
+  -p prefix            Prefix for the rule description
+  --score              Show the string scores as comments in the rules
   --nosimple           Skip simple rule creation for files included in super
                        rules
   --nomagic            Don't include the magic header condition statement
   --nofilesize         Don't include the filesize condition statement
   -fm FM               Multiplier for the maximum 'filesize' condition
-                       (default: 5)
+                       (default: 3)
   --noglobal           Don't create global rules
   --nosuper            Don't try to create super rules that match against
                        various files
+
+Database Operations:
+  -g G                 Path to scan for goodware (dont use the database
+                       shipped with yaraGen)
+  -u                   Update local goodware database (use with -g)
+  -c                   Create new local goodware database (use with -g)
+
+General Options:
+  --nr                 Do not recursively scan directories
+  --oe                 Only scan executable extensions EXE, DLL, ASP, JSP,
+                       PHP, BIN, INFECTED
+  -fs size-in-MB       Max file size in MB to analyze (default=10)
   --debug              Debug output
+
+OpCode Feature:
+  --noop               Do not use the OpCode string feature
+  -n opcode-num        Number of opcodes to add if not enough high scoring
+                       string could be found (default=3)
+
+Inverse Mode:
+  --inverse            Show the string scores as comments in the rules
+  --nodirname          Don't use the folder name variable in inverse rules
+  --noscorefilter      Don't filter strings based on score (default in
+                       'inverse' mode)
 ```
 
 ## Best Practice
