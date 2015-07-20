@@ -12,12 +12,13 @@ import sys
 import argparse
 import re
 import traceback
-import pickle
-import gzip
 import operator
 import datetime
 import time
 import scandir
+import pefile
+import pickle
+import gzip
 from collections import Counter
 from hashlib import sha256
 from naiveBayesClassifier import tokenizer
@@ -31,14 +32,15 @@ except Exception, e:
     print "[E] lxml not found - disabling PeStudio string check functionality"
     lxml_available = False
 
-from lib import gibDetector
+# Yargen Modules
+# from yargendb import *
 
 RELEVANT_EXTENSIONS = [ ".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".cmd", ".com", ".cpl",
-                         ".crt", ".dll", ".exe", ".hta", ".msc", ".reg", ".html", ".htm", ".txt", ".jpg", ".c",
-                         ".scr", ".sys", ".vb", ".vbe", ".vbs", ".wsc", ".wsf", ".wsh", ".ct", ".t", ".input",
-                         ".war", ".jsp", ".php", ".asp", ".aspx", ".psd1", ".psm1" ]
+                         ".crt", ".dll", ".exe", ".msc",".scr", ".sys", ".vb", ".vbe", ".vbs", ".wsc",
+                        ".wsf", ".wsh", ".input", ".war", ".jsp", ".php", ".asp", ".aspx", ".psd1", ".psm1" ]
 
-def getFiles(dir, notRecursive):
+
+def get_files(dir, notRecursive):
     # Not Recursive
     if notRecursive:
         for filename in os.listdir(dir):
@@ -54,16 +56,19 @@ def getFiles(dir, notRecursive):
                 yield filePath
 
 
-def parseSampleDir(dir, notRecursive=False, generateInfo=False, onlyRelevantExtensions=False):
+def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantExtensions=False):
 
     # Prepare dictionary
     string_stats = {}
+    opcode_stats = {}
     file_info = {}
     known_sha1sums = []
 
-    for filePath in getFiles(dir, notRecursive):
+    for filePath in get_files(dir, notRecursive):
 
         try:
+
+            print "[+] Processing %s ..." % filePath
 
             # Get Extension
             extension = os.path.splitext(filePath)[1].lower()
@@ -84,12 +89,17 @@ def parseSampleDir(dir, notRecursive=False, generateInfo=False, onlyRelevantExte
                 pass
 
             # Extract strings from file
-            ( strings, sha256sum ) = extractStrings(filePath, generateInfo)
+            ( strings, sha256sum ) = extract_strings(filePath, generateInfo)
+            
+            # Extract opcodes from file
+            opcodes = []
+            if use_opcodes:
+                opcodes = extract_opcodes(filePath)
 
             # Skip if MD5 already known - avoid duplicate files
             if sha256sum in known_sha1sums:
                 #if args.debug:
-                print "[-] Skipping strings from %s due to MD5 duplicate detection" % filePath
+                print "[-] Skipping strings/opcodes from %s due to MD5 duplicate detection" % filePath
                 continue
 
             # Add md5 value
@@ -100,7 +110,7 @@ def parseSampleDir(dir, notRecursive=False, generateInfo=False, onlyRelevantExte
 
             # Magic evaluation
             if not args.nomagic:
-                file_info[filePath]["magic"] = getMagic(filePath)
+                file_info[filePath]["magic"] = get_magic(filePath)
             else:
                 file_info[filePath]["magic"] = ""
 
@@ -121,7 +131,6 @@ def parseSampleDir(dir, notRecursive=False, generateInfo=False, onlyRelevantExte
                 file_info[fileName]["folder_names"].append(folderName)
 
             # Add strings to statistics
-            invalid_count = 0
             for string in strings:
                 # String is not already known
                 if string not in string_stats:
@@ -136,23 +145,41 @@ def parseSampleDir(dir, notRecursive=False, generateInfo=False, onlyRelevantExte
                     string_stats[string]["files_basename"][fileName] = 0
                 string_stats[string]["files_basename"][fileName] += 1
                 string_stats[string]["files"].append(filePath)
+                
+            # Add opcods to statistics
+            for opcode in opcodes:
+                # String is not already known
+                if opcode not in opcode_stats:
+                    opcode_stats[opcode] = {}
+                    opcode_stats[opcode]["count"] = 0
+                    opcode_stats[opcode]["files"] = []
+                    opcode_stats[opcode]["files_basename"] = {}
+                # opcode count
+                opcode_stats[opcode]["count"] += 1
+                # Add file information
+                if fileName not in opcode_stats[opcode]["files_basename"]:
+                    opcode_stats[opcode]["files_basename"][fileName] = 0
+                opcode_stats[opcode]["files_basename"][fileName] += 1
+                opcode_stats[opcode]["files"].append(filePath)
 
             if args.debug:
-                print "[+] Processed " + filePath + " Size: "+ str(size) +" Strings: "+ str(len(string_stats)) + " ... "
+                print "[+] Processed " + filePath + " Size: "+ str(size) + " Strings: " + str(len(string_stats)) + \
+                    " OpCodes: "+str(len(opcode_stats))+" ... "
 
         except Exception, e:
             traceback.print_exc()
             print "[E] ERROR reading file: %s" % filePath
 
-    return string_stats, file_info
+    return string_stats, opcode_stats, file_info
 
 
-def parseGoodDir(dir, notRecursive=False, onlyRelevantExtensions=True):
+def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
 
     # Prepare dictionary
     all_strings = Counter()
+    all_opcodes = Counter()
 
-    for filePath in getFiles(dir, notRecursive):
+    for filePath in get_files(dir, notRecursive):
         # Get Extension
         extension = os.path.splitext(filePath)[1].lower()
         if extension not in RELEVANT_EXTENSIONS and onlyRelevantExtensions:
@@ -170,15 +197,21 @@ def parseGoodDir(dir, notRecursive=False, onlyRelevantExtensions=True):
             pass
 
         # Extract strings from file
-        ( strings, sha1sum ) = extractStrings(filePath, generateInfo=False)
+        ( strings, sha1sum ) = extract_strings(filePath, generateInfo=False)
         # Append to all strings
         all_strings.update(strings)
 
+        # Extract Opcodes from file
+        if use_opcodes:
+            opcodes = extract_opcodes(filePath)
+            # Append to all opcodes
+            all_opcodes.update(opcodes)
+
     # return it as a set (unique strings)
-    return all_strings
+    return all_strings, all_opcodes
 
 
-def extractStrings(filePath, generateInfo):
+def extract_strings(filePath, generateInfo):
     # String list
     strings = []
     cleaned_strings	= []
@@ -186,7 +219,7 @@ def extractStrings(filePath, generateInfo):
     # Read file data
     try:
         f = open(filePath, 'rb')
-        print "[-] Processing: %s" % filePath
+        print "[-] Extracting Strings: %s" % filePath
         data = f.read()
         f.close()
         # Generate md5
@@ -219,29 +252,72 @@ def extractStrings(filePath, generateInfo):
     return cleaned_strings, sha256sum
 
 
-def sampleStringEvaluation(sample_string_stats, good_strings, file_info):
+def extract_opcodes(filePath):
+    # String list
+    opcodes = []
 
-    # Generate Stats --------------------------------------------------
+    # Read file data
+    try:
+        print "[-] Extracting OpCodes: %s" % filePath
+
+        pe = pefile.PE(filePath)
+
+        for section in pe.sections:
+            if section.Name.rstrip("\x00") == '.text':
+                text = section.get_data()
+                # Split text into subs
+                text_parts = re.split("[\x00]{3,}", text)
+                # Now truncate and encode opcodes
+                for text_part in text_parts:
+                    if text_part == '' or len(text_part) < 8:
+                        continue
+                    opcodes.append(text_part[:16].encode('hex'))
+
+    except Exception,e:
+        if args.debug:
+            traceback.print_exc()
+        pass
+
+    return opcodes
+
+
+def sample_string_evaluation(string_stats, opcode_stats, file_info):
+
+    # Generate Stats -----------------------------------------------------------
     print "[+] Generating statistical data ..."
     file_strings = {}
+    file_opcodes = {}
     combinations = {}
     inverse_stats = {}
     max_combi_count = 0
     super_rules = []
 
+    # OPCODE EVALUATION --------------------------------------------------------
+    for opcode in opcode_stats:
+        # If string occurs not too often in sample files
+        if opcode_stats[opcode]["count"] < 10:
+            # If string list in file dictionary not yet exists
+            for filePath in opcode_stats[opcode]["files"]:
+                if filePath in file_opcodes:
+                    # Append string
+                    file_opcodes[filePath].append(opcode)
+                else:
+                    # Create list and than add the first string to the file
+                    file_opcodes[filePath] = []
+                    file_opcodes[filePath].append(opcode)
+
+    # STRING EVALUATION -------------------------------------------------------
+
     # Iterate through strings found in malware files
-    for string in sample_string_stats:
+    for string in string_stats:
 
         # String file basename stats - used in inverse rule generation
         file_basename_stats = {}
 
         # If string occurs not too often in sample files
-        if sample_string_stats[string]["count"] < 10:
-            if args.debug:
-                # print "String: " +string +" Found in: "+ ", ".join(mal_string_stats[string]["files"])
-                pass
+        if string_stats[string]["count"] < 10:
             # If string list in file dictionary not yet exists
-            for filePath in sample_string_stats[string]["files"]:
+            for filePath in string_stats[string]["files"]:
                 if filePath in file_strings:
                     # Append string
                     file_strings[filePath].append(string)
@@ -252,8 +328,8 @@ def sampleStringEvaluation(sample_string_stats, good_strings, file_info):
 
                 # INVERSE RULE GENERATION -------------------------------------
 
-                for fileName in sample_string_stats[string]["files_basename"]:
-                    string_occurance_count = sample_string_stats[string]["files_basename"][fileName]
+                for fileName in string_stats[string]["files_basename"]:
+                    string_occurance_count = string_stats[string]["files_basename"][fileName]
                     total_count_basename = file_info[fileName]["count"]
                     # print "string_occurance_count %s - total_count_basename %s" % ( string_occurance_count, total_count_basename )
                     if string_occurance_count == total_count_basename:
@@ -263,18 +339,18 @@ def sampleStringEvaluation(sample_string_stats, good_strings, file_info):
                             print "Appending %s to %s" % ( string, fileName )
                         inverse_stats[fileName].append(string)
 
-        # SUPER RULE GENERATION -------------------------------------------
+        # SUPER RULE GENERATION -----------------------------------------------
 
         if not args.nosuper and not args.inverse:
 
             # SUPER RULES GENERATOR	- preliminary work
             # If a string occurs more than once in different files
             # print sample_string_stats[string]["count"]
-            if sample_string_stats[string]["count"] > 1:
+            if string_stats[string]["count"] > 1:
                 if args.debug:
-                    print "OVERLAP Count: %s\nString: \"%s\"%s" % ( sample_string_stats[string]["count"], string, "\nFILE: ".join(sample_string_stats[string]["files"]) )
+                    print "OVERLAP Count: %s\nString: \"%s\"%s" % ( string_stats[string]["count"], string, "\nFILE: ".join(string_stats[string]["files"]) )
                 # Create a combination string from the file set that matches to that string
-                combi = ":".join(sorted(sample_string_stats[string]["files"]))
+                combi = ":".join(sorted(string_stats[string]["files"]))
                 # print "STRING: " + string
                 # print "COMBI: " + combi
                 # If combination not yet known
@@ -283,7 +359,7 @@ def sampleStringEvaluation(sample_string_stats, good_strings, file_info):
                     combinations[combi]["count"] = 1
                     combinations[combi]["strings"] = []
                     combinations[combi]["strings"].append(string)
-                    combinations[combi]["files"] = sample_string_stats[string]["files"]
+                    combinations[combi]["files"] = string_stats[string]["files"]
                 else:
                     combinations[combi]["count"] += 1
                     combinations[combi]["strings"].append(string)
@@ -303,7 +379,7 @@ def sampleStringEvaluation(sample_string_stats, good_strings, file_info):
                 #print combinations[combi]["strings"]
                 string_set = combinations[combi]["strings"]
                 combinations[combi]["strings"] = []
-                combinations[combi]["strings"] = filterStringSet(string_set)
+                combinations[combi]["strings"] = filter_string_set(string_set)
                 #print combinations[combi]["strings"]
                 #print "AFTER"
                 #print len(combinations[combi]["strings"])
@@ -324,10 +400,29 @@ def sampleStringEvaluation(sample_string_stats, good_strings, file_info):
                     super_rules.append(combinations[combi])
 
     # Return all data
-    return (file_strings, combinations, super_rules, inverse_stats)
+    return (file_strings, file_opcodes, combinations, super_rules, inverse_stats)
 
 
-def filterStringSet(string_set):
+def filter_opcode_set(opcode_set):
+
+    # Useful set
+    useful_set = []
+
+    for opcode in opcode_set:
+        if opcode in good_opcodes_db:
+            continue
+
+        # Else add to useful set
+        useful_set.append(get_opcode_string(opcode))
+
+        # OpCode max count reached
+        if len(useful_set) >= args.n:
+            break
+
+    return useful_set
+
+
+def filter_string_set(string_set):
 
     # This is the only set we have - even if it's a weak one
     useful_set = []
@@ -351,9 +446,9 @@ def filterStringSet(string_set):
         goodcount = 0
 
         # Goodware Strings
-        if string in good_strings:
+        if string in good_strings_db:
             goodstring = True
-            goodcount = good_strings[string]
+            goodcount = good_strings_db[string]
             # print "%s - %s" % ( goodstring, good_strings[string] )
             if args.excludegood:
                 continue
@@ -374,7 +469,7 @@ def filterStringSet(string_set):
 
         # PEStudio String Blacklist Evaluation
         if pestudio_available:
-            ( pescore, type ) = getPEStudioScore(string)
+            ( pescore, type ) = get_pestudio_score(string)
             # print string
             # Reset score of goodware files to 5 if blacklisted in PEStudio
             if type != "":
@@ -437,7 +532,7 @@ def filterStringSet(string_set):
             if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.vbs|\.tmp|\.sys)', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # System keywords
-            if re.search(r'(cmd.exe|system32|users|Documents and|SystemRoot|Grant|hello|password|process|log|unc)', string, re.IGNORECASE):
+            if re.search(r'(cmd.exe|system32|users|Documents and|SystemRoot|Grant|hello|password|process|log)', string, re.IGNORECASE):
                 localStringScores[string] += 5
             # Protocol Keywords
             if re.search(r'(ftp|irc|smtp|command|GET|POST|Agent|tor2web|HEAD)', string, re.IGNORECASE):
@@ -483,7 +578,7 @@ def filterStringSet(string_set):
                 localStringScores[string] += 2
             # URL
             if re.search(r'(%[a-z][:\-,;]|\\\\%s|\\\\[A-Z0-9a-z%]+\\[A-Z0-9a-z%]+)', string):
-                localStringScores[string] += 3
+                localStringScores[string] += 2.5
             # certificates
             if re.search(r'(thawte|trustcenter|signing|class|crl|CA|certificate|assembly)', string, re.IGNORECASE):
                 localStringScores[string] -= 4
@@ -537,12 +632,12 @@ def filterStringSet(string_set):
                 localStringScores[string] += 4
             # File
             if re.search(r'^[a-zA-Z0-9]{3,40}\.[a-zA-Z]{3}', string, re.IGNORECASE):
-                localStringScores[string] += 5
+                localStringScores[string] += 3
             # Comment Line / Output Log
             if re.search(r'^([\*\#]+ |\[[\*\-\+]\] |[\-=]> |\[[A-Za-z]\] )', string):
                 localStringScores[string] += 4
             # Output typo / special expression
-            if re.search(r'(!.$|!!!$| :\)$| ;\)$|fucked|[\w]\.\.\.\.$)', string):
+            if re.search(r'(!\.$|!!!$| :\)$| ;\)$|fucked|[\w]\.\.\.\.$)', string):
                 localStringScores[string] += 4
             # Base64
             if re.search(r'^(?:[A-Za-z0-9+/]{4}){30,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$', string):
@@ -559,16 +654,22 @@ def filterStringSet(string_set):
             # System file/process names
             if re.search(r'(\.exe|\.dll|\.sys)$', string, re.IGNORECASE):
                 localStringScores[string] += 4
+            # Indicators that string is valid
+            if re.search(r'(^\\\\)', string, re.IGNORECASE):
+                localStringScores[string] += 1
+            # Compiler output directories
+            if re.search(r'(\\Release\\|\\Debug\\|\\bin|\\sbin)', string, re.IGNORECASE):
+                localStringScores[string] += 2
 
             # BASE64 --------------------------------------------------------------
             try:
                 if len(string) > 8:
                     # Try different ways - fuzz string
                     for m_string in ( string, string[1:], string[1:] + "=", string + "=", string + "==" ):
-                        if isBase64(m_string):
+                        if is_base_64(m_string):
                             decoded_string = m_string.decode('base64')
                             # print decoded_string
-                            if isAsciiString(decoded_string, padding_allowed=True):
+                            if is_ascii_string(decoded_string, padding_allowed=True):
                                 # print "match"
                                 localStringScores[string] += 6
                                 base64strings[string] = decoded_string
@@ -576,7 +677,7 @@ def filterStringSet(string_set):
                 pass
 
             # Reversed String -----------------------------------------------------
-            if string[::-1] in good_strings:
+            if string[::-1] in good_strings_db:
                 localStringScores[string] += 10
                 reversedStrings[string] = string[::-1]
 
@@ -623,7 +724,7 @@ def filterStringSet(string_set):
     return result_set
 
 
-def generateGeneralCondition(file_info):
+def generate_general_condition(file_info):
 
     condition = ""
 
@@ -645,7 +746,7 @@ def generateGeneralCondition(file_info):
 
         # If different magic headers are less than 5
         if len(magic_headers) <= 5:
-            magic_string = " or ".join(getUintString(h) for h in magic_headers)
+            magic_string = " or ".join(get_uint_string(h) for h in magic_headers)
             if " or " in magic_string:
                 condition = "( {0} )".format(magic_string)
             else:
@@ -654,9 +755,9 @@ def generateGeneralCondition(file_info):
         # Biggest size multiplied with maxsize_multiplier
         if not args.nofilesize and len(file_sizes) > 0:
             if condition != "":
-                condition = "{0} and {1}".format(condition, getFileRange(max(file_sizes)))
+                condition = "{0} and {1}".format(condition, get_file_range(max(file_sizes)))
             else:
-                condition = "{0}".format(getFileRange(max(file_sizes)))
+                condition = "{0}".format(get_file_range(max(file_sizes)))
 
     except Exception, e:
         if args.debug:
@@ -667,7 +768,7 @@ def generateGeneralCondition(file_info):
     return condition
 
 
-def createRules(file_strings, super_rules, file_info, inverse_stats):
+def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_stats):
 
     # Write to file ---------------------------------------------------
     if args.o:
@@ -680,7 +781,7 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
     general_info = "/*\n"
     general_info += "\tYara Rule Set\n"
     general_info += "\tAuthor: {0}\n".format(args.a)
-    general_info += "\tDate: {0}\n".format(getTimestampBasic())
+    general_info += "\tDate: {0}\n".format(get_timestamp_basic())
     general_info += "\tIdentifier: {0}\n".format(os.path.basename(args.m))
     general_info += "*/\n\n"
 
@@ -689,7 +790,7 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
     # GLOBAL RULES ----------------------------------------------------
     if not args.noglobal:
 
-        condition = generateGeneralCondition(file_info)
+        condition = generate_general_condition(file_info)
 
         # Global Rule
         if condition != "":
@@ -707,6 +808,7 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
     # General vars
     rules = ""
     printed_rules = {}
+    opcodes_to_add = []
     rule_count = 0
     inverse_rule_count = 0
     super_rule_count = 0
@@ -723,14 +825,29 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
             # Replace the original string set with the filtered one
             string_set = file_strings[filePath]
             file_strings[filePath] = []
-            file_strings[filePath] = filterStringSet(string_set)
-            if len(file_strings[filePath]) == 0:
-                print "[W] Not enough high scoring strings to create a rule. (reduce -z param) FILE: %s" % filePath
+            file_strings[filePath] = filter_string_set(string_set)
+
+            print "[-] Filtering opcode set for %s ..." % filePath
+
+            # Replace the original string set with the filtered one
+            if filePath not in file_opcodes:
+                file_opcodes[filePath] = []
+            opcode_set = file_opcodes[filePath]
+            file_opcodes[filePath] = []
+            file_opcodes[filePath] = filter_opcode_set(opcode_set)
 
         # GENERATE SIMPLE RULES -------------------------------------------
         fh.write("/* Rule Set ----------------------------------------------------------------- */\n\n")
 
         for filePath in file_strings:
+
+            # Skip if there is nothing to do
+            if len(file_strings[filePath]) == 0 and len(file_opcodes[filePath]) == 0:
+                print "[W] Not enough high scoring strings and opcodes to create a rule. " \
+                      "(Try -z 0 to reduce the min score) FILE: %s" % filePath
+                continue
+
+            # Create Rule
             try:
                 rule = ""
                 (path, file) = os.path.split(filePath)
@@ -761,25 +878,28 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
                 rule += "\t\tdescription = \"%s - file %s\"\n" % ( args.p, file )
                 rule += "\t\tauthor = \"%s\"\n" % args.a
                 rule += "\t\treference = \"%s\"\n" % args.r
-                rule += "\t\tdate = \"%s\"\n" % getTimestampBasic()
+                rule += "\t\tdate = \"%s\"\n" % get_timestamp_basic()
                 rule += "\t\thash = \"%s\"\n" % file_info[filePath]["hash"]
                 rule += "\tstrings:\n"
 
                 # Get the strings -----------------------------------------
                 # Rule String generation
-                rule_strings = getRuleStrings(file_strings[filePath])
+                (rule_strings, opcodes_included, string_rule_count) = get_rule_strings(file_strings[filePath], file_opcodes[filePath])
                 rule += rule_strings
 
                 # Condition -----------------------------------------------
-                condition = "all of them"
+                if opcodes_included and string_rule_count > 2:
+                    condition = "all of ($s*) and 1 of ($op*)"
+                else:
+                    condition = "all of them"
 
                 # Filesize
                 if not args.nofilesize:
-                    condition = "{0} and {1}".format(getFileRange(file_info[filePath]["size"]), condition)
+                    condition = "{0} and {1}".format(get_file_range(file_info[filePath]["size"]), condition)
 
                 # Magic
                 if file_info[filePath]["magic"] != "":
-                    uint_string = getUintString(file_info[filePath]["magic"])
+                    uint_string = get_uint_string(file_info[filePath]["magic"])
                     condition = "{0} and {1}".format(uint_string, condition)
 
                 rule += "\tcondition:\n"
@@ -810,7 +930,7 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
             # Replace the original string set with the filtered one
             string_set = inverse_stats[fileName]
             inverse_stats[fileName] = []
-            inverse_stats[fileName] = filterStringSet(string_set)
+            inverse_stats[fileName] = filter_string_set(string_set)
 
         # GENERATE INVERSE RULES -------------------------------------------
         fh.write("/* Inverse Rules ------------------------------------------------------------- */\n\n")
@@ -842,7 +962,7 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
                 rule += "\t\tdescription = \"%s for anomaly detection - file %s\"\n" % ( args.p, fileName )
                 rule += "\t\tauthor = \"%s\"\n" % args.a
                 rule += "\t\treference = \"%s\"\n" % args.r
-                rule += "\t\tdate = \"%s\"\n" % getTimestampBasic()
+                rule += "\t\tdate = \"%s\"\n" % get_timestamp_basic()
                 for i, hash in enumerate(file_info[fileName]["hashes"]):
                     rule += "\t\thash%s = \"%s\"\n" % (str(i+1), hash)
 
@@ -850,7 +970,7 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
 
                 # Get the strings -----------------------------------------
                 # Rule String generation
-                rule_strings = getRuleStrings(inverse_stats[fileName])
+                (rule_strings, opcodes_included, string_rule_count) = get_rule_strings(inverse_stats[fileName], file_opcodes[filePath])
                 rule += rule_strings
 
                 # Condition -----------------------------------------------
@@ -929,7 +1049,7 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
                 rule += "\t\tdescription = \"%s - from files %s\"\n" % ( args.p, file_listing )
                 rule += "\t\tauthor = \"%s\"\n" % args.a
                 rule += "\t\treference = \"%s\"\n" % args.r
-                rule += "\t\tdate = \"%s\"\n" % getTimestampBasic()
+                rule += "\t\tdate = \"%s\"\n" % get_timestamp_basic()
                 rule += "\t\tsuper_rule = 1\n"
                 for i, filePath in enumerate(super_rule["files"]):
                     rule += "\t\thash%s = \"%s\"\n" % (str(i+1), file_info[filePath]["hash"])
@@ -937,17 +1057,21 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
                 rule += "\tstrings:\n"
 
                 # Adding the strings
-                rule_strings = getRuleStrings(super_rule["strings"])
+                (rule_strings, opcodes_included, string_rule_count) = get_rule_strings(super_rule["strings"], file_opcodes[filePath])
                 rule += rule_strings
 
                 # Condition -------------------------------------------
                 # Default
-                condition = "all of them"
+                # Condition -----------------------------------------------
+                if opcodes_included and string_rule_count > 2:
+                    condition = "all of ($s*) and 1 of ($op*)"
+                else:
+                    condition = "all of them"
                 # Evaluate the general characteristics
                 file_info_super = {}
                 for filePath in super_rule["files"]:
                     file_info_super[filePath] = file_info[filePath]
-                condition_extra = generateGeneralCondition(file_info_super)
+                condition_extra = generate_general_condition(file_info_super)
                 if condition_extra != "":
                     condition = "{0} and {1}".format(condition_extra, condition)
 
@@ -979,12 +1103,13 @@ def createRules(file_strings, super_rules, file_info, inverse_stats):
     return ( rule_count, inverse_rule_count, super_rule_count )
 
 
-def getRuleStrings(elements):
+def get_rule_strings(string_elements, opcode_elements):
 
     rule_strings = ""
+    string_rule_count = 0
 
     # Adding the strings --------------------------------------
-    for i, string in enumerate(elements):
+    for i, string in enumerate(string_elements):
 
         # Collect the data
         enc = " ascii"
@@ -995,8 +1120,8 @@ def getRuleStrings(elements):
         score_comment = ""
         goodware_comment = ""
 
-        if string in good_strings:
-            goodware_comment = " /* Goodware String - occured %s times */" % ( good_strings[string] )
+        if string in good_strings_db:
+            goodware_comment = " /* Goodware String - occured %s times */" % ( good_strings_db[string] )
 
         if string in stringScores:
             if args.score:
@@ -1033,10 +1158,22 @@ def getRuleStrings(elements):
         if i > int(args.rc):
             break
 
-    return rule_strings
+        string_rule_count += 1
+
+    # If too few strings - add opcodes
+    # Adding the strings --------------------------------------
+    opcodes_included = False
+    if string_rule_count < args.rc:
+        if len(opcode_elements) > 0:
+            rule_strings += "\n"
+            for i, opcode in enumerate(opcode_elements):
+                rule_strings += "\t\t$op%s = { %s } /* Opcode */\n" % (str(i), opcode)
+                opcodes_included = True
+
+    return rule_strings, opcodes_included, string_rule_count
 
 
-def initializePEStudioStrings():
+def initialize_pestudio_strings():
     pestudio_strings = {}
 
     tree = etree.parse('strings.xml')
@@ -1060,18 +1197,10 @@ def initializePEStudioStrings():
     return pestudio_strings
 
 
-def initializeBayesFilter(good_strings):
+def initialize_bayes_filter():
 
     # BayesTrainer
     stringTrainer = Trainer(tokenizer)
-
-    # Train with goodware strings
-    #print "[-] Training filter with good strings from good string db that occur more than 10 times"
-    #for string in good_strings:
-    #    number_of_occurrences = good_strings[string]
-    #    if number_of_occurrences > 10 and len(string) > 10:
-    #        # print string
-    #        stringTrainer.train(string, "string")
 
     # Read the sample files and train the algorithm
     print "[-] Training filter with good strings from ./lib/good.txt"
@@ -1089,7 +1218,7 @@ def initializeBayesFilter(good_strings):
     return stringTrainer
 
 
-def getPEStudioScore(string):
+def get_pestudio_score(string):
     for type in pestudio_strings:
         for elem in pestudio_strings[type]:
             # Full match
@@ -1100,7 +1229,11 @@ def getPEStudioScore(string):
     return 0, ""
 
 
-def getMagic(filePath):
+def get_opcode_string(opcode):
+    return ' '.join(opcode[i:i+2] for i in range(0, len(opcode), 2))
+
+
+def get_magic(filePath):
     magic = ""
     try:
         with open(filePath, 'rb') as f:
@@ -1111,7 +1244,7 @@ def getMagic(filePath):
         return magic
 
 
-def getUintString(magic):
+def get_uint_string(magic):
     if len(magic) == 2:
         return "uint16(0) == 0x{1}{0}".format(magic[0].encode('hex'), magic[1].encode('hex'))
     if len(magic) == 4:
@@ -1119,7 +1252,7 @@ def getUintString(magic):
     return ""
 
 
-def getFileRange(size):
+def get_file_range(size):
     size_string = ""
     try:
         # max sample size - args.fm times the original size
@@ -1133,14 +1266,14 @@ def getFileRange(size):
         return size_string
 
 
-def getTimestampBasic(date_obj=None):
+def get_timestamp_basic(date_obj=None):
     if not date_obj:
         date_obj = datetime.datetime.now()
     date_str = date_obj.strftime("%Y-%m-%d")
     return date_str
 
 
-def isAsciiChar(b, padding_allowed=False):
+def is_ascii_char(b, padding_allowed=False):
     if padding_allowed:
         if ( ord(b)<127 and ord(b)>31 ) or ord(b) == 0 :
             return 1
@@ -1150,7 +1283,7 @@ def isAsciiChar(b, padding_allowed=False):
     return 0
 
 
-def isAsciiString(string, padding_allowed=False):
+def is_ascii_string(string, padding_allowed=False):
     for b in string:
         if padding_allowed:
             if not ( ( ord(b)<127 and ord(b)>31 ) or ord(b) == 0 ):
@@ -1161,13 +1294,12 @@ def isAsciiString(string, padding_allowed=False):
     return 1
 
 
-def isBase64(s):
+def is_base_64(s):
     return (len(s) % 4 == 0) and re.match('^[A-Za-z0-9+/]+[=]{0,2}$', s)
 
-
-def save(object, filename, bin = 1):
-    file = open(filename, 'wb')
-    file.write(pickle.dumps(object, bin))
+def save(object, filename, protocol = 0):
+    file = gzip.GzipFile(filename, 'wb')
+    file.write(pickle.dumps(object, protocol))
     file.close()
 
 
@@ -1185,7 +1317,7 @@ def load(filename):
     return object
 
 
-def printWelcome():
+def print_welcome():
     print "###############################################################################"
     print "                        ______"
     print "      __  ______ ______/ ____/__  ____"
@@ -1197,88 +1329,116 @@ def printWelcome():
     print "   Yara Rule Generator"
     print "   by Florian Roth"
     print "   July 2015"
-    print "   Version 0.14.3"
+    print "   Version 0.15.0 beta"
     print "   "
     print "###############################################################################"
 
 
 # MAIN ################################################################
 if __name__ == '__main__':
-
     # Parse Arguments
     parser = argparse.ArgumentParser(description='yarGen')
-    parser.add_argument('-m', help='Path to scan for malware')
-    parser.add_argument('-g', help='Path to scan for goodware (dont use the database shipped with yaraGen)')
-    parser.add_argument('-u', action='store_true', default=False, help='Update local goodware database (use with -g)')
-    parser.add_argument('-c', action='store_true', default=False, help='Create new local goodware database (use with -g)')
-    parser.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yargen_rules.yar')
-    parser.add_argument('-p', help='Prefix for the rule description', metavar='prefix', default='Auto-generated rule')
-    parser.add_argument('-a', help='Author Name', metavar='author', default='YarGen Rule Generator')
-    parser.add_argument('-r', help='Reference', metavar='ref', default='not set')
-    parser.add_argument('-l', help='Minimum string length to consider (default=8)', metavar='min-size', default=8)
-    parser.add_argument('-z', help='Minimum score to consider (default=5)', metavar='min-score', default=5)
-    parser.add_argument('-s', help='Maximum length to consider (default=128)', metavar='max-size', default=128)
-    parser.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering will be applied)', metavar='maxstrings', default=20)
-    parser.add_argument('-nr', action='store_true', default=False, help='Do not recursively scan directories')
-    # parser.add_argument('-rm', action='store_true', default=False, help='Recursive scan of malware directories')
-    # parser.add_argument('-rg', action='store_true', default=False, help='Recursive scan of goodware directories')
-    parser.add_argument('-oe', action='store_true', default=False, help='Only scan executable extensions EXE, DLL, ASP, JSP, PHP, BIN, INFECTED')
-    parser.add_argument('-fs', help='Max file size in MB to analyze (default=10)', metavar='size-in-MB', default=10)
-    parser.add_argument('--score', help='Show the string scores as comments in the rules', action='store_true', default=False)
-    parser.add_argument('--inverse', help='Show the string scores as comments in the rules', action='store_true', default=False)
-    parser.add_argument('--nodirname', help='Don\'t use the folder name variable in inverse rules', action='store_true', default=False)
-    parser.add_argument('--noscorefilter', help='Don\'t filter strings based on score (default in \'inverse\' mode)', action='store_true', default=False)
-    parser.add_argument('--excludegood', help='Force the exclude all goodware strings', action='store_true', default=False)
-    parser.add_argument('--nosimple', help='Skip simple rule creation for files included in super rules', action='store_true', default=False)
-    parser.add_argument('--nomagic', help='Don\'t include the magic header condition statement', action='store_true', default=False)
-    parser.add_argument('--nofilesize', help='Don\'t include the filesize condition statement', action='store_true', default=False)
-    parser.add_argument('-fm', help='Multiplier for the maximum \'filesize\' condition (default: 5)', default=5)
-    parser.add_argument('--noglobal', help='Don\'t create global rules', action='store_true', default=False)
-    parser.add_argument('--nosuper', action='store_true', default=False, help='Don\'t try to create super rules that match against various files')
-    parser.add_argument('--debug', action='store_true', default=False, help='Debug output')
+
+    group_creation = parser.add_argument_group('Rule Creation')
+    group_creation.add_argument('-m', help='Path to scan for malware')
+    group_creation.add_argument('-l', help='Minimum string length to consider (default=8)', metavar='min-size', default=8)
+    group_creation.add_argument('-z', help='Minimum score to consider (default=5)', metavar='min-score', default=5)
+    group_creation.add_argument('-s', help='Maximum length to consider (default=128)', metavar='max-size', default=128)
+    group_creation.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering will be applied)', metavar='maxstrings', default=20)
+    group_creation.add_argument('--excludegood', help='Force the exclude all goodware strings', action='store_true', default=False)
+
+    group_output = parser.add_argument_group('Rule Output')
+    group_output.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yargen_rules.yar')
+    group_output.add_argument('-a', help='Author Name', metavar='author', default='YarGen Rule Generator')
+    group_output.add_argument('-r', help='Reference', metavar='ref', default='not set')
+    group_output.add_argument('-p', help='Prefix for the rule description', metavar='prefix', default='Auto-generated rule')    
+    group_output.add_argument('--score', help='Show the string scores as comments in the rules', action='store_true', default=False)
+    group_output.add_argument('--nosimple', help='Skip simple rule creation for files included in super rules', action='store_true', default=False)
+    group_output.add_argument('--nomagic', help='Don\'t include the magic header condition statement', action='store_true', default=False)
+    group_output.add_argument('--nofilesize', help='Don\'t include the filesize condition statement', action='store_true', default=False)
+    group_output.add_argument('-fm', help='Multiplier for the maximum \'filesize\' condition (default: 3)', default=3)
+    group_output.add_argument('--noglobal', help='Don\'t create global rules', action='store_true', default=False)
+    group_output.add_argument('--nosuper', action='store_true', default=False, help='Don\'t try to create super rules that match against various files')
+    
+    group_db = parser.add_argument_group('Database Operations')
+    group_db.add_argument('-g', help='Path to scan for goodware (dont use the database shipped with yaraGen)')
+    group_db.add_argument('-u', action='store_true', default=False, help='Update local goodware database (use with -g)')
+    group_db.add_argument('-c', action='store_true', default=False, help='Create new local goodware database (use with -g)')
+
+    group_general = parser.add_argument_group('General Options')    
+    group_general.add_argument('--nr', action='store_true', default=False, help='Do not recursively scan directories')
+    group_general.add_argument('--oe', action='store_true', default=False, help='Only scan executable extensions EXE, DLL, ASP, JSP, PHP, BIN, INFECTED')
+    group_general.add_argument('-fs', help='Max file size in MB to analyze (default=10)', metavar='size-in-MB', default=10)
+    group_general.add_argument('--debug', action='store_true', default=False, help='Debug output')
+
+    group_opcode= parser.add_argument_group('OpCode Feature')     
+    group_opcode.add_argument('--noop', action='store_true', default=False, help='Do not use the OpCode string feature')
+    group_opcode.add_argument('-n', help='Number of opcodes to add if not enough high scoring string could be found (default=3)', metavar='opcode-num', default=3)
+
+    group_inverse = parser.add_argument_group('Inverse Mode')
+    group_inverse.add_argument('--inverse', help='Show the string scores as comments in the rules', action='store_true', default=False)
+    group_inverse.add_argument('--nodirname', help='Don\'t use the folder name variable in inverse rules', action='store_true', default=False)
+    group_inverse.add_argument('--noscorefilter', help='Don\'t filter strings based on score (default in \'inverse\' mode)', action='store_true', default=False)
 
     args = parser.parse_args()
 
     # Print Welcome
-    printWelcome()
+    print_welcome()
 
-    if not os.path.isfile("good-strings.db"):
-        print "[E] Please unzip the shipped good-strings.db database. Github does not allow files larger than 100MB. I'll think about a more comfortable way in the near future."
+    # Opcodes evaluation or not
+    use_opcodes = True
+    if args.noop:
+        use_opcodes = False
+    if not os.path.isfile("good-opcodes.db") and use_opcodes:
+        print "[E] Please unzip the shipped good-opcodes.db database if you want to use opcodes in your rules."
+        print "[-] Deactivating opcode generation ..."
+        use_opcodes = False
+
+    if not os.path.isfile("good-strings.db") and not args.c:
+        print "[E] Please unzip the shipped good-strings.db database."
         sys.exit(1)
+
+    # Initialize DBs
+    # db = YargenDB("good-strings.db", "good-opcodes.db")
 
     # Read PEStudio string list
     pestudio_strings = {}
     pestudio_available = False
     if os.path.exists("strings.xml") and lxml_available:
         print "[+] Processing PEStudio strings ..."
-        pestudio_strings = initializePEStudioStrings()
+        pestudio_strings = initialize_pestudio_strings()
         pestudio_available = True
     else:
         if lxml_available:
             print "\nTo improve the analysis process please download the awesome PEStudio tool by marc @ochsenmeier from http://winitor.com and place the file 'strings.xml' in the yarGen program directory.\n"
             time.sleep(5)
 
-    # Ignore File Type on Malware Scan
-    onlyRelevantExtensions = False
-    if args.oe:
-        onlyRelevantExtensions = True
-
     # Scan goodware files
     if args.g:
         print "[+] Processing goodware files ..."
-        good_strings = parseGoodDir(args.g, args.nr, True)
+        good_strings_db, good_opcodes_db = parse_good_dir(args.g, args.nr, True)
 
         # Update existing Pickle
         if args.u:
-            print "[+] Updating local database ..."
             try:
+                print "[+] Updating database ..."
+
+                #db.update_string_db(good_strings_db)
+                #db.update_opcode_db(good_opcodes_db)
+
+                # Strings -----------------------------------------------------
                 good_pickle = load("good-strings.db")
-                print "Old database entries: %s" % len(good_pickle)
-                # new_good = Counter()
-                good_pickle.update(good_strings)
-                # good_pickle = new_good
-                print "New database entries: %s" % len(good_pickle)
+                print "Old string database entries: %s" % len(good_pickle)
+                good_pickle.update(good_strings_db)
+                print "New string database entries: %s" % len(good_pickle)
                 save(good_pickle, "good-strings.db")
+
+                # Opcodes -----------------------------------------------------
+                good_opcode_pickle = load("good-opcodes.db")
+                print "Old opcode database entries: %s" % len(good_opcode_pickle)
+                good_opcode_pickle.update(good_opcodes_db)
+                print "New opcode database entries: %s" % len(good_opcode_pickle)
+                save(good_opcode_pickle, "good-opcodes.db")
 
             except Exception, e:
                 traceback.print_exc()
@@ -1287,36 +1447,61 @@ if __name__ == '__main__':
         if args.c:
             print "[+] Creating local database ..."
             try:
+
                 if os.path.isfile("good-strings.db"):
-                    os.remove("good-strings.db")
+                   os.remove("good-strings.db")
+                if os.path.isfile("good-opcodes.db"):
+                   os.remove("good-opcodes.db")
 
+                # Strings
                 good_pickle = Counter()
-                good_pickle = good_strings
-                # print good_strings
+                good_pickle = good_strings_db
+                # Opcodes
+                good_op_pickle = Counter()
+                good_op_pickle = good_opcodes_db
 
+                # Save
                 save(good_pickle, "good-strings.db")
+                save(good_op_pickle, "good-opcodes.db")
 
-                print "New database with %s entries created." % len(good_pickle)
+                print "New database with %s string and %s opcode entries created." % \
+                      ( len(good_strings_db), len(good_opcodes_db) )
             except Exception, e:
                 traceback.print_exc()
 
     # Use the Goodware String Database
     else:
-        print "[+] Reading goodware strings from database 'good-strings.db' ..."
-        print "    (This could take some time and uses up to 2 GB of RAM)"
+        if use_opcodes:
+            print "[+] Reading goodware strings from database 'good-strings.db' and 'good-opcodes.db' ..."
+            print "    (This could take some time and uses up to 4 GB of RAM)"
+        else:
+            print "[+] Reading goodware strings from database 'good-strings.db' ..."
+            print "    (This could take some time and uses up to 2.5 GB of RAM)"
+
+        good_strings_db = Counter()
+        good_opcodes_db = Counter()
+
         try:
             good_pickle = load("good-strings.db")
-            # print good_pickle
-            good_strings = good_pickle
+            good_strings_db = good_pickle
         except Exception, e:
             traceback.print_exc()
 
-    # Initialize Bayes Trainer (we will use the goodware string database for this)
-    print "[+] Initializing Bayes Filter ..."
-    stringTrainer = initializeBayesFilter(good_strings)
+        try:
+            if use_opcodes:
+                good_op_pickle = load("good-opcodes.db")
+                good_opcodes_db = good_op_pickle
+        except Exception, e:
+            use_opcodes = False
+            traceback.print_exc()
 
     # If malware directory given
     if args.m:
+
+        # Initialize Bayes Trainer (we will use the goodware string database for this)
+        print "[+] Initializing Bayes Filter ..."
+        stringTrainer = initialize_bayes_filter()
+
         # Scan malware files
         print "[+] Processing malware files ..."
 
@@ -1327,13 +1512,16 @@ if __name__ == '__main__':
         stringScores = {}
 
         # Extract all information
-        sample_string_stats, file_info = parseSampleDir(args.m, args.nr, True, onlyRelevantExtensions)
+        ( sample_string_stats, sample_opcode_stats, file_info ) = \
+            parse_sample_dir(args.m, args.nr, generateInfo=True, onlyRelevantExtensions=args.oe)
 
         # Evaluate Strings
-        (file_strings, combinations, super_rules, inverse_stats) = sampleStringEvaluation(sample_string_stats, good_strings, file_info)
+        (file_strings, file_opcodes, combinations, super_rules, inverse_stats) = \
+            sample_string_evaluation(sample_string_stats, sample_opcode_stats, file_info)
 
         # Create Rule Files
-        (rule_count, inverse_rule_count, super_rule_count) = createRules(file_strings, super_rules, file_info, inverse_stats)
+        (rule_count, inverse_rule_count, super_rule_count) = \
+            generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_stats)
 
         if args.inverse:
             print "[=] Generated %s INVERSE rules." % str(inverse_rule_count)
