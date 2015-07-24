@@ -15,6 +15,14 @@ hackware samples for which I had to write Yara rules.
 The main principle is the creation of yara rules from strings found in malware
 files while removing all strings that also appear in goodware files. 
 
+Since version 0.15.0 yarGen supports opcode string elements extracted from the
+.text sections of PE files. During database creation it splits the .text 
+sections with the regex [\x00]{3,} and takes the first 16 bytes of each part 
+to build an opcode database from goodware PE files. During rule creation on
+sample files it compares the goodware opcodes with the opcodes extracted from
+the malware samples and removes all opcodes that also appear in the goodware
+database. (there is no further magic in it yet - no XOR loop detection etc.)
+
 Since version 0.14.0 it uses naive-bayes-classifier by Mustafa Atik and Nejdet
 Yucesoy in order to classify the string and detect useful words instead of 
 compression/encryption garbage.
@@ -37,16 +45,20 @@ for a file that was already covered by super rule by using --nosimple.
 
 ### Installation
 
-1. Make sure you have at least 2GB of RAM on the machine you plan to use yarGen
+1. Make sure you have at least 2.5GB of RAM on the machine you plan to use yarGen (4GB if opcodes should be included in rule generation, deactivate via --noop)
 2. Clone the git repository
-3. Install all dependancies with ```sudo pip install pickle scandir lxml naiveBayesClassifier```
-4. Unzip the goodware database (e.g. ```7z x good-strings.db.zip.001```)
-5. See help with ```python yarGen.py --help```
+3. Install all dependancies with ```sudo pip install pickle scandir lxml naiveBayesClassifier pefile```
+4. Unzip the goodware string database (e.g. ```7z x good-strings.db.zip.001```)
+5. Unzip the goodware opcode database (e.g. ```7z x good-opcodes.db.zip.001```)
+6. See help with ```python yarGen.py --help```
 
 ### Memory Requirements
 
 Warning: yarGen pulls the whole goodstring database to memory and uses up to 
-2 GB of memory for a few seconds. 
+2.5 GB of memory for a few seconds - 4 GB if opcode evaluation is used. 
+
+I already tried to migrate the database to sqlite but the numerous string 
+comparisons and lookups made the analysis very slow.  
 
 ## Command Line Parameters
 
@@ -140,6 +152,12 @@ Use the shipped database of goodware strings and scan the malware directory
 "X:\MAL" recursively. Create rules for all files included in this directory and 
 below. A file named 'yargen_rules.yar' will be generated in the current 
 directory. 
+
+### Use the shipped database (FAST) to create some rules
+
+```python yarGen.py --noop -m X:\MAL\Case1401```
+
+Deactivate the opcode analysis. (memory consumption 2.5GB instead of 4GB)
 
 ### Show the score of the strings as comment
 
