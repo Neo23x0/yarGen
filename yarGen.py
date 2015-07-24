@@ -932,6 +932,10 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
             inverse_stats[fileName] = []
             inverse_stats[fileName] = filter_string_set(string_set)
 
+            # Preset if empty
+            if fileName not in file_opcodes:
+                file_opcodes[fileName] = {}
+
         # GENERATE INVERSE RULES -------------------------------------------
         fh.write("/* Inverse Rules ------------------------------------------------------------- */\n\n")
 
@@ -970,7 +974,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 # Get the strings -----------------------------------------
                 # Rule String generation
-                (rule_strings, opcodes_included, string_rule_count) = get_rule_strings(inverse_stats[fileName], file_opcodes[filePath])
+                (rule_strings, opcodes_included, string_rule_count) = get_rule_strings(inverse_stats[fileName], file_opcodes[fileName])
                 rule += rule_strings
 
                 # Condition -----------------------------------------------
