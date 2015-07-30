@@ -613,7 +613,7 @@ def filter_string_set(string_set):
             if re.search(r'%[A-Z_]+%', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # RATs / Malware
-            if re.search(r'(spy|logger|dark|cryptor|RAT\b|eye|comet|evil|xtreme|poison)', string, re.IGNORECASE):
+            if re.search(r'(spy|logger|dark|cryptor|RAT\b|eye|comet|evil|xtreme|poison|meterpreter|metasploit)', string, re.IGNORECASE):
                 localStringScores[string] += 5
             # Missed user profiles
             if re.search(r'[\\](users|profiles|username|benutzer|Documents and Settings|Utilisateurs|Utenti|Usuários)[\\]', string, re.IGNORECASE):
@@ -660,6 +660,10 @@ def filter_string_set(string_set):
             # Compiler output directories
             if re.search(r'(\\Release\\|\\Debug\\|\\bin|\\sbin)', string, re.IGNORECASE):
                 localStringScores[string] += 2
+            # Special - Malware related strings
+            if re.search(r'(Management Support Team1|/c rundll32|DTOPTOOLZ Co.|net start|Exec|taskkill)', string):
+                localStringScores[string] += 4
+
 
             # BASE64 --------------------------------------------------------------
             try:
