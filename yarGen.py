@@ -37,7 +37,7 @@ except Exception, e:
 
 RELEVANT_EXTENSIONS = [ ".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".cmd", ".com", ".cpl",
                          ".crt", ".dll", ".exe", ".msc",".scr", ".sys", ".vb", ".vbe", ".vbs", ".wsc",
-                        ".wsf", ".wsh", ".input", ".war", ".jsp", ".php", ".asp", ".aspx", ".psd1", ".psm1" ]
+                        ".wsf", ".wsh", ".input", ".war", ".jsp", ".php", ".asp", ".aspx", ".psd1", ".psm1", ".py" ]
 
 
 def get_files(dir, notRecursive):
@@ -643,7 +643,7 @@ def filter_string_set(string_set):
             if re.search(r'^(?:[A-Za-z0-9+/]{4}){30,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$', string):
                 localStringScores[string] += 4
             # Malicious intent
-            if re.search(r'(loader|cmdline|ntlmhas|lmhash|drop|infect|encrypt|exec|elevat|dump|target|victim|override|traverse|mutex|pawnde|exploited|shellcode|injected|spoofed)', string, re.IGNORECASE):
+            if re.search(r'(loader|cmdline|ntlmhash|lmhash|drop|infect|encrypt|exec|elevat|dump|target|victim|override|traverse|mutex|pawnde|exploited|shellcode|injected|spoofed)', string, re.IGNORECASE):
                 localStringScores[string] += 5
             # Privileges
             if re.search(r'(administrator|highest|system|debug|dbg|admin|adm|root) privilege', string, re.IGNORECASE):
@@ -1142,7 +1142,7 @@ def get_rule_strings(string_elements, opcode_elements):
             enc = " wide"
         if string in base64strings:
             base64comment = " /* base64 encoded string '%s' */" % base64strings[string]
-        if string in pestudioMarker:
+        if string in pestudioMarker and args.score:
             pestudio_comment = " /* PEStudio Blacklist: %s */" % pestudioMarker[string]
         if string in reversedStrings:
             reversedComment = " /* reversed goodware string '%s' */" % reversedStrings[string]
@@ -1424,7 +1424,7 @@ if __name__ == '__main__':
     # Scan goodware files
     if args.g:
         print "[+] Processing goodware files ..."
-        good_strings_db, good_opcodes_db = parse_good_dir(args.g, args.nr, True)
+        good_strings_db, good_opcodes_db = parse_good_dir(args.g, args.nr, args.oe)
 
         # Update existing Pickle
         if args.u:
