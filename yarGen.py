@@ -311,9 +311,6 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
     # Iterate through strings found in malware files
     for string in string_stats:
 
-        # String file basename stats - used in inverse rule generation
-        file_basename_stats = {}
-
         # If string occurs not too often in sample files
         if string_stats[string]["count"] < 10:
             # If string list in file dictionary not yet exists
@@ -329,10 +326,10 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                 # INVERSE RULE GENERATION -------------------------------------
 
                 for fileName in string_stats[string]["files_basename"]:
-                    string_occurance_count = string_stats[string]["files_basename"][fileName]
+                    string_occurrance_count = string_stats[string]["files_basename"][fileName]
                     total_count_basename = file_info[fileName]["count"]
                     # print "string_occurance_count %s - total_count_basename %s" % ( string_occurance_count, total_count_basename )
-                    if string_occurance_count == total_count_basename:
+                    if string_occurrance_count == total_count_basename:
                         if fileName not in inverse_stats:
                             inverse_stats[fileName] = []
                         if args.debug:
@@ -352,7 +349,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                 # Create a combination string from the file set that matches to that string
                 combi = ":".join(sorted(string_stats[string]["files"]))
                 # print "STRING: " + string
-                # print "COMBI: " + combi
+                print "COMBI: " + combi
                 # If combination not yet known
                 if combi not in combinations:
                     combinations[combi] = {}
@@ -559,8 +556,8 @@ def filter_string_set(string_set):
             if re.search(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b', string, re.IGNORECASE): # IP Address
                 localStringScores[string] += 5
             # Copyright Owner
-            if re.search(r'( by | coded | c0d3d |cr3w\b)', string, re.IGNORECASE):
-                localStringScores[string] += 2
+            if re.search(r'(coded | c0d3d |cr3w\b|Coded by |codedby)', string, re.IGNORECASE):
+                localStringScores[string] += 7
             # Extension generic
             if re.search(r'\.[a-zA-Z]{3}\b', string):
                 localStringScores[string] += 3
@@ -913,100 +910,15 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 # print rule
                 # Add to rules string
                 rules += rule
-                # Try to write rule to file
-                if args.o:
-                    fh.write(rule)
+
                 rule_count += 1
-            except Exception, e:
-                traceback.print_exc()
-
-    # PROCESS INVERSE RULES -------------------------------------------
-    # print inverse_stats.keys()
-    if args.inverse:
-        print "[+] Generating inverse rules ..."
-        inverse_rules = ""
-        # Apply intelligent filters ---------------------------------------
-        print "[+] Applying intelligent filters to string findings ..."
-        for fileName in inverse_stats:
-
-            print "[-] Filtering string set for %s ..." % fileName
-
-            # Replace the original string set with the filtered one
-            string_set = inverse_stats[fileName]
-            inverse_stats[fileName] = []
-            inverse_stats[fileName] = filter_string_set(string_set)
-
-            # Preset if empty
-            if fileName not in file_opcodes:
-                file_opcodes[fileName] = {}
-
-        # GENERATE INVERSE RULES -------------------------------------------
-        fh.write("/* Inverse Rules ------------------------------------------------------------- */\n\n")
-
-        for fileName in inverse_stats:
-            try:
-                rule = ""
-                # Create a clean new name
-                cleanedName = fileName.replace(".", "_")
-                # Add ANOMALY
-                cleanedName += "_ANOMALY"
-                # File name starts with a number
-                if re.search(r'^[0-9]', cleanedName):
-                    cleanedName = "sig_" + cleanedName
-                # clean name from all characters that would cause errors
-                cleanedName = re.sub('[^\w]', r'_', cleanedName)
-                # Check if already printed
-                if cleanedName in printed_rules:
-                    printed_rules[cleanedName] += 1
-                    cleanedName = cleanedName + "_" + str(printed_rules[cleanedName])
-                else:
-                    printed_rules[cleanedName] = 1
-
-                # Print rule title ----------------------------------------
-                rule += "rule %s {\n" % cleanedName
-
-                # Meta data -----------------------------------------------
-                rule += "\tmeta:\n"
-                rule += "\t\tdescription = \"%s for anomaly detection - file %s\"\n" % ( args.p, fileName )
-                rule += "\t\tauthor = \"%s\"\n" % args.a
-                rule += "\t\treference = \"%s\"\n" % args.r
-                rule += "\t\tdate = \"%s\"\n" % get_timestamp_basic()
-                for i, hash in enumerate(file_info[fileName]["hashes"]):
-                    rule += "\t\thash%s = \"%s\"\n" % (str(i+1), hash)
-
-                rule += "\tstrings:\n"
-
-                # Get the strings -----------------------------------------
-                # Rule String generation
-                (rule_strings, opcodes_included, string_rule_count) = get_rule_strings(inverse_stats[fileName], file_opcodes[fileName])
-                rule += rule_strings
-
-                # Condition -----------------------------------------------
-                folderNames = ""
-                if not args.nodirname:
-                    folderNames += "and ( filepath matches /"
-                    folderNames += "$/ or filepath matches /".join(file_info[fileName]["folder_names"])
-                    folderNames += "$/ )"
-                condition = "filename == \"%s\" %s and not ( all of them )" % (fileName, folderNames)
-
-                rule += "\tcondition:\n"
-                rule += "\t\t%s\n" % condition
-                rule += "}\n\n"
-
-                # print rule
-                # Add to rules string
-                inverse_rules += rule
-                # Try to write rule to file
-                if args.o:
-                    fh.write(inverse_rules)
-                inverse_rule_count += 1
             except Exception, e:
                 traceback.print_exc()
 
     # GENERATE SUPER RULES --------------------------------------------
     if not args.nosuper and not args.inverse:
 
-        fh.write("/* Super Rules ------------------------------------------------------------- */\n\n")
+        rules += "/* Super Rules ------------------------------------------------------------- */\n\n"
         super_rule_names = []
 
         print "[+] Generating super rules ..."
@@ -1090,12 +1002,105 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 # print rule
                 # Add to rules string
                 rules += rule
-                # Try to write rule to file
-                if args.o:
-                    fh.write(rule)
+
                 super_rule_count += 1
             except Exception, e:
                 traceback.print_exc()
+
+        try:
+            # Try to write simple and super rules to file
+            if args.o:
+                fh.write(rules)
+        except Exception, e:
+            traceback.print_exc()
+
+    # PROCESS INVERSE RULES -------------------------------------------
+    # print inverse_stats.keys()
+    if args.inverse:
+        print "[+] Generating inverse rules ..."
+        inverse_rules = ""
+        # Apply intelligent filters ---------------------------------------
+        print "[+] Applying intelligent filters to string findings ..."
+        for fileName in inverse_stats:
+
+            print "[-] Filtering string set for %s ..." % fileName
+
+            # Replace the original string set with the filtered one
+            string_set = inverse_stats[fileName]
+            inverse_stats[fileName] = []
+            inverse_stats[fileName] = filter_string_set(string_set)
+
+            # Preset if empty
+            if fileName not in file_opcodes:
+                file_opcodes[fileName] = {}
+
+        # GENERATE INVERSE RULES -------------------------------------------
+        fh.write("/* Inverse Rules ------------------------------------------------------------- */\n\n")
+
+        for fileName in inverse_stats:
+            try:
+                rule = ""
+                # Create a clean new name
+                cleanedName = fileName.replace(".", "_")
+                # Add ANOMALY
+                cleanedName += "_ANOMALY"
+                # File name starts with a number
+                if re.search(r'^[0-9]', cleanedName):
+                    cleanedName = "sig_" + cleanedName
+                # clean name from all characters that would cause errors
+                cleanedName = re.sub('[^\w]', r'_', cleanedName)
+                # Check if already printed
+                if cleanedName in printed_rules:
+                    printed_rules[cleanedName] += 1
+                    cleanedName = cleanedName + "_" + str(printed_rules[cleanedName])
+                else:
+                    printed_rules[cleanedName] = 1
+
+                # Print rule title ----------------------------------------
+                rule += "rule %s {\n" % cleanedName
+
+                # Meta data -----------------------------------------------
+                rule += "\tmeta:\n"
+                rule += "\t\tdescription = \"%s for anomaly detection - file %s\"\n" % ( args.p, fileName )
+                rule += "\t\tauthor = \"%s\"\n" % args.a
+                rule += "\t\treference = \"%s\"\n" % args.r
+                rule += "\t\tdate = \"%s\"\n" % get_timestamp_basic()
+                for i, hash in enumerate(file_info[fileName]["hashes"]):
+                    rule += "\t\thash%s = \"%s\"\n" % (str(i+1), hash)
+
+                rule += "\tstrings:\n"
+
+                # Get the strings -----------------------------------------
+                # Rule String generation
+                (rule_strings, opcodes_included, string_rule_count) = get_rule_strings(inverse_stats[fileName], file_opcodes[fileName])
+                rule += rule_strings
+
+                # Condition -----------------------------------------------
+                folderNames = ""
+                if not args.nodirname:
+                    folderNames += "and ( filepath matches /"
+                    folderNames += "$/ or filepath matches /".join(file_info[fileName]["folder_names"])
+                    folderNames += "$/ )"
+                condition = "filename == \"%s\" %s and not ( all of them )" % (fileName, folderNames)
+
+                rule += "\tcondition:\n"
+                rule += "\t\t%s\n" % condition
+                rule += "}\n\n"
+
+                # print rule
+                # Add to rules string
+                inverse_rules += rule
+
+            except Exception, e:
+                traceback.print_exc()
+
+        try:
+            # Try to write rule to file
+            if args.o:
+                fh.write(inverse_rules)
+            inverse_rule_count += 1
+        except Exception, e:
+            traceback.print_exc()
 
     # Close the rules file --------------------------------------------
     if args.o:
