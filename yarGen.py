@@ -535,7 +535,7 @@ def filter_string_set(string_set):
             if re.search(r'(ftp|irc|smtp|command|GET|POST|Agent|tor2web|HEAD)', string, re.IGNORECASE):
                 localStringScores[string] += 5
             # Connection keywords
-            if re.search(r'(error|http|closed|fail|version)', string, re.IGNORECASE):
+            if re.search(r'(error|http|closed|fail|version|proxy)', string, re.IGNORECASE):
                 localStringScores[string] += 3
             # Browser User Agents
             if re.search(r'(Mozilla|MSIE|Windows NT|Macintosh|Gecko|Opera|User\-Agent)', string, re.IGNORECASE):
@@ -544,7 +544,7 @@ def filter_string_set(string_set):
             if re.search(r'(TEMP|Temporary|Appdata|Recycler)', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # malicious keywords - hacktools
-            if re.search(r'(scan|sniff|poison|fake|spoof|sweep|dump|flood|inject|forward|scan|vulnerable|credentials|creds|coded|p0c|Content|host)', string, re.IGNORECASE):
+            if re.search(r'(scan|sniff|poison|intercept|fake|spoof|sweep|dump|flood|inject|forward|scan|vulnerable|credentials|creds|coded|p0c|Content|host)', string, re.IGNORECASE):
                 localStringScores[string] += 5
             # network keywords
             if re.search(r'(address|port|listen|remote|local|process|service|mutex|pipe|frame|key|lookup|connection)', string, re.IGNORECASE):
