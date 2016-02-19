@@ -47,7 +47,7 @@ for a file that was already covered by super rule by using --nosimple.
 
 1. Make sure you have at least 2.5GB of RAM on the machine you plan to use yarGen (4GB if opcodes should be included in rule generation, deactivate via --noop)
 2. Clone the git repository
-3. Install all dependancies with ```sudo pip install scandir lxml naiveBayesClassifier pefile```
+3. Install all dependancies with ```sudo pip install scandir lxml naiveBayesClassifier pefile``` (@twpDone reported that in case of errors try ```sudo pip install pefile``` and ```sudo pip3 install scandir lxml naiveBayesClassifier```)
 4. Unzip the goodware string database (e.g. ```7z x good-strings.db.zip.001```)
 5. Unzip the goodware opcode database (e.g. ```7z x good-opcodes.db.zip.001```)
 6. See help with ```python yarGen.py --help```
