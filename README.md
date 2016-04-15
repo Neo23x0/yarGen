@@ -1,31 +1,17 @@
 # yarGen
 
-[![Join the chat at https://gitter.im/Neo23x0/yarGen](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Neo23x0/yarGen?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 A Rule Generator for Yara Rules
 
-Florian Roth, July 2015
+Florian Roth, April 2016
 
-yarGen is a generator for Yara rules. The reason why I developed another Yara
-rule generator was a special use case in which I had a directory full of 
-hackware samples for which I had to write Yara rules. 
+yarGen is a generator for [YARA](https://github.com/plusvic/yara/) rules
 
 ### What does yarGen do?
 
 The main principle is the creation of yara rules from strings found in malware
-files while removing all strings that also appear in goodware files. 
-
-Since version 0.15.0 yarGen supports opcode string elements extracted from the
-.text sections of PE files. During database creation it splits the .text 
-sections with the regex [\x00]{3,} and takes the first 16 bytes of each part 
-to build an opcode database from goodware PE files. During rule creation on
-sample files it compares the goodware opcodes with the opcodes extracted from
-the malware samples and removes all opcodes that also appear in the goodware
-database. (there is no further magic in it yet - no XOR loop detection etc.)
-
-Since version 0.14.0 it uses naive-bayes-classifier by Mustafa Atik and Nejdet
-Yucesoy in order to classify the string and detect useful words instead of 
-compression/encryption garbage.
+files while removing all strings that also appear in goodware files. Therefore 
+yarGen includes a big goodware strings and opcode database as ZIP archives that 
+have to be extracted before the first use. 
 
 Since version 0.12.0 yarGen does not completely remove the goodware strings from
 the analysis process but includes them with a very low score. The rules will be
@@ -36,8 +22,35 @@ since version 0.12.0 yarGen allows to place the "strings.xml" from
 blacklist definition during the string analysis process. You'll get better
 results.
 
-The rule generation process tries to identify similarities between the files 
-that get analyzed and then combines the strings to so called "super rules". 
+Since version 0.14.0 it uses naive-bayes-classifier by Mustafa Atik and Nejdet
+Yucesoy in order to classify the string and detect useful words instead of 
+compression/encryption garbage.
+
+Since version 0.15.0 yarGen supports opcode elements extracted from the
+.text sections of PE files. During database creation it splits the .text 
+sections with the regex [\x00]{3,} and takes the first 16 bytes of each part 
+to build an opcode database from goodware PE files. During rule creation on
+sample files it compares the goodware opcodes with the opcodes extracted from
+the malware samples and removes all opcodes that also appear in the goodware
+database. (there is no further magic in it yet - no XOR loop detection etc.)
+The option to activate opcode integration is '--opcodes'. 
+
+Since version 0.16.0 yarGen supports the Binarly. Binarly is a "binary search 
+engine" that can search arbitrary byte patterns through the contents of tens 
+of millions of samples, instantly. It allows you to quickly get answers to 
+questions like “What other files contain this code/string?” or “Can this 
+code/string be found in clean applications or malware samples?”. This means 
+that you can use Binarly to quickly verify the quality of your YARA strings.
+Furthermore, Binarly has a YARA file search functionality, which you can 
+use to scan their entire collection (currently at 7.5+ Million PE files, 3.5M 
+clean - over 6TB) with your rule in a less than a minute.
+For yarGen I integrated their [public API](https://github.com/binarlyhq/binarly-sdk).
+In order to be able to use it you just need an API key that you can get for 
+free if you contact them at contact@binar.ly. The option to activate binarly
+lookups is '--binarly'.
+
+The rule generation process als tries to identify similarities between the 
+files that get analyzed and then combines the strings to so called "super rules".
 Up to now the super rule generation does not remove the simple rule for the
 files that have been combined in a single super rule. This means that there
 is some redundancy when super rules are created. You can supress a simple rule
@@ -45,31 +58,39 @@ for a file that was already covered by super rule by using --nosimple.
 
 ### Installation
 
-1. Make sure you have at least 2.5GB of RAM on the machine you plan to use yarGen (4GB if opcodes should be included in rule generation, deactivate via --noop)
+1. Make sure you have at least 3GB of RAM on the machine you plan to use yarGen (5GB if opcodes should be included in rule generation, use with --opcodes)
 2. Clone the git repository
 3. Install all dependancies with ```sudo pip install scandir lxml naiveBayesClassifier pefile``` (@twpDone reported that in case of errors try ```sudo pip install pefile``` and ```sudo pip3 install scandir lxml naiveBayesClassifier```)
-4. Unzip the goodware string database (e.g. ```7z x good-strings.db.zip.001```)
-5. Unzip the goodware opcode database (e.g. ```7z x good-opcodes.db.zip.001```)
-6. See help with ```python yarGen.py --help```
+4. Clone and install [Binarly-SDK](https://github.com/binarlyhq/binarly-sdk/) and install it with ```python ./setup.py install```
+5. Unzip the goodware string database (e.g. ```7z x good-strings.db.zip.001```)
+6. Unzip the goodware opcode database (e.g. ```7z x good-opcodes.db.zip.001```)
+7. See help with ```python yarGen.py --help```
 
 ### Memory Requirements
 
 Warning: yarGen pulls the whole goodstring database to memory and uses up to 
-2.5 GB of memory for a few seconds - 4 GB if opcode evaluation is used. 
+3 GB of memory for a few seconds - 5 GB if opcode evaluation is used. 
 
 I already tried to migrate the database to sqlite but the numerous string 
-comparisons and lookups made the analysis very slow.  
+comparisons and lookups made the analysis very slow.
+
+## Binarly
+
+In order to use the Binarly lookup, you need an API key placed in a file named 
+```apikey.txt``` in the ```./config``` subfolder. 
+
+Request an Binarly API key by mail to: contact@binar.ly  
 
 ## Command Line Parameters
 
 ```
-usage: yarGen.py [-h] [-m M] [-l min-size] [-z min-score] [-s max-size]
-                 [-rc maxstrings] [--excludegood] [-o output_rule_file]
-                 [-a author] [-r ref] [-p prefix] [--score] [--nosimple]
-                 [--nomagic] [--nofilesize] [-fm FM] [--noglobal] [--nosuper]
-                 [-g G] [-u] [-c] [--nr] [--oe] [-fs size-in-MB] [--debug]
-                 [--noop] [-n opcode-num] [--inverse] [--nodirname]
-                 [--noscorefilter]
+usage: yarGen.py [-h] [-m M] [-l min-size] [-z min-score] [-x high-scoring]
+                 [-s max-size] [-rc maxstrings] [--excludegood]
+                 [-o output_rule_file] [-a author] [-r ref] [-p prefix]
+                 [--score] [--nosimple] [--nomagic] [--nofilesize] [-fm FM]
+                 [--globalrule] [--nosuper] [-g G] [-u] [-c] [--nr] [--oe]
+                 [-fs size-in-MB] [--debug] [--opcodes] [-n opcode-num]
+                 [--binarly]
 
 yarGen
 
@@ -80,6 +101,8 @@ Rule Creation:
   -m M                 Path to scan for malware
   -l min-size          Minimum string length to consider (default=8)
   -z min-score         Minimum score to consider (default=5)
+  -x high-scoring      Score required to set string as 'highly specific
+                       string' (default: 30, +10 with binarly)
   -s max-size          Maximum length to consider (default=128)
   -rc maxstrings       Maximum number of strings per rule (default=20,
                        intelligent filtering will be applied)
@@ -95,9 +118,9 @@ Rule Output:
                        rules
   --nomagic            Don't include the magic header condition statement
   --nofilesize         Don't include the filesize condition statement
-  -fm FM               Multiplier for the maximum 'filesize' condition
+  -fm FM               Multiplier for the maximum 'filesize' condition value
                        (default: 3)
-  --noglobal           Don't create global rules
+  --globalrule         Create global rules (improved rule set speed)
   --nosuper            Don't try to create super rules that match against
                        various files
 
@@ -114,21 +137,21 @@ General Options:
   -fs size-in-MB       Max file size in MB to analyze (default=10)
   --debug              Debug output
 
-OpCode Feature:
-  --noop               Do not use the OpCode string feature
+Other Features:
+  --opcodes            Do use the OpCode feature (use this if not enough high
+                       scoring strings can be found)
   -n opcode-num        Number of opcodes to add if not enough high scoring
                        string could be found (default=3)
-
-Inverse Mode:
-  --inverse            Show the string scores as comments in the rules
-  --nodirname          Don't use the folder name variable in inverse rules
-  --noscorefilter      Don't filter strings based on score (default in
-                       'inverse' mode)
+  --binarly            Use binarly to lookup string statistics
 ```
 
 ## Best Practice
 
-See the following blog post for a more detailed description on how to use yarGen for YARA rule creation: [How to Write Simple but Sound Yara Rules](https://www.bsk-consulting.de/2015/02/16/write-simple-sound-yara-rules/)
+See the following blog posts for a more detailed description on how to use yarGen for YARA rule creation: 
+
+[How to Write Simple but Sound Yara Rules - Part 1](https://www.bsk-consulting.de/2015/02/16/write-simple-sound-yara-rules/)
+[How to Write Simple but Sound Yara Rules - Part 2](https://www.bsk-consulting.de/2015/10/17/how-to-write-simple-but-sound-yara-rules-part-2/)
+[How to Write Simple but Sound Yara Rules - Part 3]()
   
 ## Screenshots
 
@@ -152,12 +175,6 @@ Use the shipped database of goodware strings and scan the malware directory
 "X:\MAL" recursively. Create rules for all files included in this directory and 
 below. A file named 'yargen_rules.yar' will be generated in the current 
 directory. 
-
-### Use the shipped database (FAST) to create some rules
-
-```python yarGen.py --noop -m X:\MAL\Case1401```
-
-Deactivate the opcode analysis. (memory consumption 2.5GB instead of 4GB)
 
 ### Show the score of the strings as comment
 
@@ -196,24 +213,6 @@ In order to use only strings for your rules that match a certain minimum score u
 
 ```python yarGen.py -u -g "C:\Program Files"```
 
-### Inverse rule creation (still beta)
+### My Best Pratice Command Line
 
-In order to create some inverse rules on goodware, you have to prepare a directory with subdirectories in which you include all versions of the files you want to create inverse rules for with their original name and in their original folder. If that sounds strange, let me give you an example. 
-
-E.g. you want to create inverse rules for all Windows executables in the System32 folder, you have to create a goodware archive with the following directory structure:
-
-- G:\goodware
-  - WindowsXP
-    - System32 - all files
-  - Windows2003
-    - System32 - all files
-  - Windows2008R2
-    - System32 - all files
-
-yarGen than creates rules that identify e.g. file name "cmd.exe" in path ending with "System32" and checks if the file contains certain necessary strings. If the strings don't show up, the rule will fire. This indicates a replaced system file or malware file that tries to masquerade as a system file. 
-
-```python yarGen.py --inverse -oe -m G:\goodware\```
-
-You can also instruct yarGen not to include the file path but solely rely on the filename. 
-
-```python yarGen.py --inverse -oe --nodirname -m G:\goodware\```
+```python yarGen.py --debug --score --binarly -z 3 /opt/mal/APTx/samples```
