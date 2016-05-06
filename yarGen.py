@@ -996,8 +996,12 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 rule += "\tstrings:\n"
 
                 # Adding the strings
+                if file_opcodes.get(filePath) is None:
+                    tmp_file_opcodes = {}
+                else:
+                    tmp_file_opcodes = file_opcodes.get(filePath)
                 (rule_strings, opcodes_included, string_rule_count, high_scoring_strings) = \
-                    get_rule_strings(super_rule["strings"], file_opcodes[filePath])
+                    get_rule_strings(super_rule["strings"], tmp_file_opcodes)
                 rule += rule_strings
 
                 # Condition -----------------------------------------------
