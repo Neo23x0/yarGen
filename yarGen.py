@@ -36,7 +36,8 @@ except Exception, e:
 RELEVANT_EXTENSIONS = [ ".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".cmd", ".com", ".cpl",
                          ".crt", ".dll", ".exe", ".msc",".scr", ".sys", ".vb", ".vbe", ".vbs", ".wsc",
                         ".wsf", ".wsh", ".input", ".war", ".jsp", ".php", ".asp", ".aspx", ".psd1", ".psm1", ".py" ]
-
+def get_abs_path(filename):
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)),filename)
 
 def get_files(dir, notRecursive):
     # Not Recursive
@@ -1252,7 +1253,7 @@ def get_rule_strings(string_elements, opcode_elements):
 def initialize_pestudio_strings():
     pestudio_strings = {}
 
-    tree = etree.parse('strings.xml')
+    tree = etree.parse(get_abs_path('strings.xml'))
 
     pestudio_strings["strings"] = tree.findall(".//string")
     pestudio_strings["av"] = tree.findall(".//av")
@@ -1280,7 +1281,7 @@ def initialize_bayes_filter():
 
     # Read the sample files and train the algorithm
     print "[-] Training filter with good strings from ./lib/good.txt"
-    with open("./lib/good.txt", "r") as fh_goodstrings:
+    with open(get_abs_path("./lib/good.txt"), "r") as fh_goodstrings:
         for line in fh_goodstrings:
             # print line.rstrip("\n")
             stringTrainer.train(line.rstrip("\n"), "string")
@@ -1566,19 +1567,19 @@ if __name__ == '__main__':
     use_opcodes = False
     if args.opcodes:
         use_opcodes = True
-    if not os.path.isfile("good-opcodes.db") and use_opcodes:
+    if not os.path.isfile(get_abs_path("good-opcodes.db")) and use_opcodes:
         print "[E] Please unzip the shipped good-opcodes.db database if you want to use opcodes in your rules."
         print "[-] Deactivating opcode generation ..."
         use_opcodes = False
 
-    if not os.path.isfile("good-strings.db") and not args.c:
+    if not os.path.isfile(get_abs_path("good-strings.db")) and not args.c:
         print "[E] Please unzip the shipped good-strings.db database."
         sys.exit(1)
 
     # Read PEStudio string list
     pestudio_strings = {}
     pestudio_available = False
-    if os.path.exists("strings.xml") and lxml_available:
+    if os.path.isfile(get_abs_path("strings.xml")) and lxml_available:
         print "[+] Processing PEStudio strings ..."
         pestudio_strings = initialize_pestudio_strings()
         pestudio_available = True
@@ -1624,14 +1625,14 @@ if __name__ == '__main__':
                 print "[+] Updating database ..."
 
                 # Strings -----------------------------------------------------
-                good_pickle = load("good-strings.db")
+                good_pickle = load(get_abs_path("good-strings.db"))
                 print "Old string database entries: %s" % len(good_pickle)
                 good_pickle.update(good_strings_db)
                 print "New string database entries: %s" % len(good_pickle)
                 save(good_pickle, "good-strings.db")
 
                 # Opcodes -----------------------------------------------------
-                good_opcode_pickle = load("good-opcodes.db")
+                good_opcode_pickle = load(get_abs_path("good-opcodes.db"))
                 print "Old opcode database entries: %s" % len(good_opcode_pickle)
                 good_opcode_pickle.update(good_opcodes_db)
                 print "New opcode database entries: %s" % len(good_opcode_pickle)
@@ -1679,14 +1680,14 @@ if __name__ == '__main__':
         good_opcodes_db = Counter()
 
         try:
-            good_pickle = load("good-strings.db")
+            good_pickle = load(get_abs_path("good-strings.db"))
             good_strings_db = good_pickle
         except Exception, e:
             traceback.print_exc()
 
         try:
             if use_opcodes:
-                good_op_pickle = load("good-opcodes.db")
+                good_op_pickle = load(get_abs_path("good-opcodes.db"))
                 good_opcodes_db = good_op_pickle
         except Exception, e:
             use_opcodes = False
