@@ -644,7 +644,7 @@ def filter_string_set(string_set):
                 localStringScores[string] += 4
 
             # Binarly Lookup
-            if binarly_active and localStringScores[string] > 5:
+            if binarly_active and localStringScores[string] > 0:
                 string_type = "ascii"
                 if string in utfstrings:
                     string_type = "wide"
@@ -907,7 +907,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 elif not low_scoring_strings > 0 and high_scoring_strings > 0:
                     cond_combined = "{0}".format(cond_hs)
                 if opcodes_included:
-                    cond_op = "and 1 of ($op*)"
+                    cond_op = " and 1 of ($op*)"
                 # Condition
                 condition = "( {0} ){1}".format(cond_combined, cond_op)
 
@@ -1029,7 +1029,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 elif not low_scoring_strings > 0 and high_scoring_strings > 0:
                     cond_combined = "{0}".format(cond_hs)
                 if opcodes_included:
-                    cond_op = "and 1 of ($op*)"
+                    cond_op = " and 1 of ($op*)"
                 # Condition
                 condition = "( {0} ){1}".format(cond_combined, cond_op)
 
@@ -1504,8 +1504,8 @@ def print_welcome():
     print "   "
     print "   Yara Rule Generator"
     print "   by Florian Roth"
-    print "   April 2016"
-    print "   Version 0.16.0 beta"
+    print "   August 2016"
+    print "   Version 0.16.1"
     print "   "
     print "###############################################################################"
 
@@ -1599,7 +1599,7 @@ if __name__ == '__main__':
             api_key = init_binarly_apikey("./config/apikey.txt")
             if api_key != "":
                 # Create binarly object
-                binarly = BinarlyAPI(api_key)
+                binarly = BinarlyAPI(api_key, proxy=None, server="www.binar.ly", use_http=True)
                 if args.debug:
                     # Debug string lookup
                     print "[D] Debug Binarly string lookup"
