@@ -260,9 +260,19 @@ def extract_opcodes(filePath):
         print "[-] Extracting OpCodes: %s" % filePath
 
         pe = pefile.PE(filePath)
+        name = ""
+        ep = pe.OPTIONAL_HEADER.AddressOfEntryPoint
+        pos = 0
+        for sec in pe.sections:
+            if (ep >= sec.VirtualAddress) and \
+                    (ep < (sec.VirtualAddress + sec.Misc_VirtualSize)):
+                name = sec.Name.replace('\x00', '')
+                break
+            else:
+                pos += 1
 
         for section in pe.sections:
-            if section.Name.rstrip("\x00") == '.text':
+            if section.Name.rstrip("\x00") == name:
                 text = section.get_data()
                 # Split text into subs
                 text_parts = re.split("[\x00]{3,}", text)
@@ -272,7 +282,7 @@ def extract_opcodes(filePath):
                         continue
                     opcodes.append(text_part[:16].encode('hex'))
 
-    except Exception,e:
+    except Exception, e:
         if args.debug:
             traceback.print_exc()
         pass
@@ -1537,7 +1547,7 @@ def print_welcome():
     print "   "
     print "   Yara Rule Generator"
     print "   by Florian Roth"
-    print "   October 2016"
+    print "   November 2016"
     print "   Version 0.16.2"
     print "   "
     print "###############################################################################"
