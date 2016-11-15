@@ -327,7 +327,8 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                 for fileName in string_stats[string]["files_basename"]:
                     string_occurrance_count = string_stats[string]["files_basename"][fileName]
                     total_count_basename = file_info[fileName]["count"]
-                    # print "string_occurance_count %s - total_count_basename %s" % ( string_occurance_count, total_count_basename )
+                    # print "string_occurance_count %s - total_count_basename %s" % ( string_occurance_count,
+                    # total_count_basename )
                     if string_occurrance_count == total_count_basename:
                         if fileName not in inverse_stats:
                             inverse_stats[fileName] = []
@@ -344,7 +345,8 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
             # print sample_string_stats[string]["count"]
             if string_stats[string]["count"] > 1:
                 if args.debug:
-                    print "OVERLAP Count: %s\nString: \"%s\"%s" % ( string_stats[string]["count"], string, "\nFILE: ".join(string_stats[string]["files"]) )
+                    print "OVERLAP Count: %s\nString: \"%s\"%s" % (string_stats[string]["count"], string,
+                                                                   "\nFILE: ".join(string_stats[string]["files"]))
                 # Create a combination string from the file set that matches to that string
                 combi = ":".join(sorted(string_stats[string]["files"]))
                 # print "STRING: " + string
@@ -508,10 +510,12 @@ def filter_string_set(string_set):
 
             # Certain strings add-ons ----------------------------------------------
             # Extensions - Drive
-            if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.vbs|\.tmp|\.sys)', string, re.IGNORECASE):
+            if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.vbs|'
+                         r'\.tmp|\.sys)', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # System keywords
-            if re.search(r'(cmd.exe|system32|users|Documents and|SystemRoot|Grant|hello|password|process|log)', string, re.IGNORECASE):
+            if re.search(r'(cmd.exe|system32|users|Documents and|SystemRoot|Grant|hello|password|process|log)',
+                         string, re.IGNORECASE):
                 localStringScores[string] += 5
             # Protocol Keywords
             if re.search(r'(ftp|irc|smtp|command|GET|POST|Agent|tor2web|HEAD)', string, re.IGNORECASE):
@@ -526,16 +530,19 @@ def filter_string_set(string_set):
             if re.search(r'(TEMP|Temporary|Appdata|Recycler)', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # malicious keywords - hacktools
-            if re.search(r'(scan|sniff|poison|intercept|fake|spoof|sweep|dump|flood|inject|forward|scan|vulnerable|credentials|creds|coded|p0c|Content|host)', string, re.IGNORECASE):
+            if re.search(r'(scan|sniff|poison|intercept|fake|spoof|sweep|dump|flood|inject|forward|scan|vulnerable|'
+                         r'credentials|creds|coded|p0c|Content|host)', string, re.IGNORECASE):
                 localStringScores[string] += 5
             # network keywords
-            if re.search(r'(address|port|listen|remote|local|process|service|mutex|pipe|frame|key|lookup|connection)', string, re.IGNORECASE):
+            if re.search(r'(address|port|listen|remote|local|process|service|mutex|pipe|frame|key|lookup|connection)',
+                         string, re.IGNORECASE):
                 localStringScores[string] += 3
             # Drive
             if re.search(r'([C-Zc-z]:\\)', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # IP
-            if re.search(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b', string, re.IGNORECASE): # IP Address
+            if re.search(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b',
+                         string, re.IGNORECASE): # IP Address
                 localStringScores[string] += 5
             # Copyright Owner
             if re.search(r'(coded | c0d3d |cr3w\b|Coded by |codedby)', string, re.IGNORECASE):
@@ -568,7 +575,7 @@ def filter_string_set(string_set):
             if re.search(r'([a-zA-Z]:|^|%)\\[A-Za-z]{4,30}\\', string):
                 localStringScores[string] += 4
             # Executable - not in directory
-            if re.search(r'^[^\\]+\.(exe|com|scr|bat)$', string, re.IGNORECASE):
+            if re.search(r'^[^\\]+\.(exe|com|scr|bat|sys)$', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # Date placeholders
             if re.search(r'(yyyy|hh:mm|dd/mm|mm/dd|%s:%s:)', string, re.IGNORECASE):
@@ -577,13 +584,16 @@ def filter_string_set(string_set):
             if re.search(r'[^A-Za-z](%s|%d|%i|%02d|%04d|%2d|%3s)[^A-Za-z]', string, re.IGNORECASE):
                 localStringScores[string] += 3
             # String parts from file system elements
-            if re.search(r'(cmd|com|pipe|tmp|temp|recycle|bin|secret|private|AppData|driver|config)', string, re.IGNORECASE):
+            if re.search(r'(cmd|com|pipe|tmp|temp|recycle|bin|secret|private|AppData|driver|config)', string,
+                         re.IGNORECASE):
                 localStringScores[string] += 3
             # Programming
-            if re.search(r'(execute|run|system|shell|root|cimv2|login|exec|stdin|read|process|netuse|script|share)', string, re.IGNORECASE):
+            if re.search(r'(execute|run|system|shell|root|cimv2|login|exec|stdin|read|process|netuse|script|share)',
+                         string, re.IGNORECASE):
                 localStringScores[string] += 3
             # Credentials
-            if re.search(r'(user|pass|login|logon|token|cookie|creds|hash|ticket|NTLM|LMHASH|kerberos|spnego|session|identif|account|login|auth|privilege)', string, re.IGNORECASE):
+            if re.search(r'(user|pass|login|logon|token|cookie|creds|hash|ticket|NTLM|LMHASH|kerberos|spnego|session|'
+                         r'identif|account|login|auth|privilege)', string, re.IGNORECASE):
                 localStringScores[string] += 3
             # Malware
             if re.search(r'(\.[a-z]/[^/]+\.txt|)', string, re.IGNORECASE):
@@ -592,13 +602,18 @@ def filter_string_set(string_set):
             if re.search(r'%[A-Z_]+%', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # RATs / Malware
-            if re.search(r'(spy|logger|dark|cryptor|RAT\b|eye|comet|evil|xtreme|poison|meterpreter|metasploit)', string, re.IGNORECASE):
+            if re.search(r'(spy|logger|dark|cryptor|RAT\b|eye|comet|evil|xtreme|poison|meterpreter|metasploit)',
+                         string, re.IGNORECASE):
                 localStringScores[string] += 5
             # Missed user profiles
-            if re.search(r'[\\](users|profiles|username|benutzer|Documents and Settings|Utilisateurs|Utenti|Usuários)[\\]', string, re.IGNORECASE):
+            if re.search(r'[\\](users|profiles|username|benutzer|Documents and Settings|Utilisateurs|Utenti|'
+                         r'Usuários)[\\]', string, re.IGNORECASE):
                 localStringScores[string] += 3
             # Strings: Words ending with numbers
             if re.search(r'^[A-Z][a-z]+[0-9]+$', string, re.IGNORECASE):
+                localStringScores[string] += 1
+            # Spying
+            if re.search(r'(implant)', string, re.IGNORECASE):
                 localStringScores[string] += 1
             # Program Path - not Programs or Windows
             if re.search(r'^[Cc]:\\\\[^PW]', string):
@@ -622,7 +637,10 @@ def filter_string_set(string_set):
             if re.search(r'^(?:[A-Za-z0-9+/]{4}){30,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$', string):
                 localStringScores[string] += 4
             # Malicious intent
-            if re.search(r'(loader|cmdline|ntlmhash|lmhash|drop|infect|encrypt|exec|elevat|dump|target|victim|override|traverse|mutex|pawnde|exploited|shellcode|injected|spoofed)', string, re.IGNORECASE):
+            if re.search(r'(loader|cmdline|ntlmhash|lmhash|infect|encrypt|exec|elevat|dump|target|victim|override|'
+                         r'traverse|mutex|pawnde|exploited|shellcode|injected|spoofed|dllinjec|exeinj|reflective|'
+                         r'payload|inject|back conn)',
+                         string, re.IGNORECASE):
                 localStringScores[string] += 5
             # Privileges
             if re.search(r'(administrator|highest|system|debug|dbg|admin|adm|root) privilege', string, re.IGNORECASE):
@@ -642,6 +660,21 @@ def filter_string_set(string_set):
             # Special - Malware related strings
             if re.search(r'(Management Support Team1|/c rundll32|DTOPTOOLZ Co.|net start|Exec|taskkill)', string):
                 localStringScores[string] += 4
+            # Powershell
+            if re.search(r'(-exec bypass|IEX |Invoke-Expression|Net.Webclient)', string):
+                localStringScores[string] += 4
+            # Signing Certificates
+            if re.search(r'( Inc | Co.|  Ltd.,| LLC| Limited)', string):
+                localStringScores[string] += 2
+            # Privilege escalation
+            if re.search(r'(sysprep|cryptbase|secur32)', string, re.IGNORECASE):
+                localStringScores[string] += 2
+            # Webshells
+            if re.search(r'(isset\($post\[|isset\($get\[)', string, re.IGNORECASE):
+                localStringScores[string] += 2
+            # Suspicious words
+            if re.search(r'(impersonate|drop|upload|download|execute|shell|\bcmd\b|decode|rot13|decrypt)', string, re.IGNORECASE):
+                localStringScores[string] += 2
 
             # Binarly Lookup
             if binarly_active and localStringScores[string] > 0:
@@ -770,10 +803,10 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
     # General Info
     general_info = "/*\n"
-    general_info += "\tYara Rule Set\n"
-    general_info += "\tAuthor: {0}\n".format(args.a)
-    general_info += "\tDate: {0}\n".format(get_timestamp_basic())
-    general_info += "\tIdentifier: {0}\n".format(os.path.basename(args.m))
+    general_info += "   Yara Rule Set\n"
+    general_info += "   Author: {0}\n".format(args.a)
+    general_info += "   Date: {0}\n".format(get_timestamp_basic())
+    general_info += "   Identifier: {0}\n".format(os.path.basename(args.m))
     general_info += "*/\n\n"
 
     fh.write(general_info)
@@ -788,8 +821,8 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
             global_rule = "/* Global Rule -------------------------------------------------------------- */\n"
             global_rule += "/* Will be evaluated first, speeds up scanning process, remove at will */\n\n"
             global_rule += "global private rule gen_characteristics {\n"
-            global_rule += "\tcondition:\n"
-            global_rule += "\t\t{0}\n".format(condition)
+            global_rule += "   condition:\n"
+            global_rule += "      {0}\n".format(condition)
             global_rule += "}\n\n"
 
             # Write rule
@@ -869,13 +902,13 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 rule += "rule %s {\n" % cleanedName
 
                 # Meta data -----------------------------------------------
-                rule += "\tmeta:\n"
-                rule += "\t\tdescription = \"%s - file %s\"\n" % ( args.p, file )
-                rule += "\t\tauthor = \"%s\"\n" % args.a
-                rule += "\t\treference = \"%s\"\n" % args.r
-                rule += "\t\tdate = \"%s\"\n" % get_timestamp_basic()
-                rule += "\t\thash1 = \"%s\"\n" % file_info[filePath]["hash"]
-                rule += "\tstrings:\n"
+                rule += "   meta:\n"
+                rule += "      description = \"%s - file %s\"\n" % ( args.p, file )
+                rule += "      author = \"%s\"\n" % args.a
+                rule += "      reference = \"%s\"\n" % args.r
+                rule += "      date = \"%s\"\n" % get_timestamp_basic()
+                rule += "      hash1 = \"%s\"\n" % file_info[filePath]["hash"]
+                rule += "   strings:\n"
 
                 # Get the strings -----------------------------------------
                 # Rule String generation
@@ -923,8 +956,8 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 # In memory detection base condition
                 condition = "( {0} ) or ( all of them )".format(condition)
 
-                rule += "\tcondition:\n"
-                rule += "\t\t%s\n" % condition
+                rule += "   condition:\n"
+                rule += "      %s\n" % condition
                 rule += "}\n\n"
 
                 # print rule
@@ -985,16 +1018,16 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 # Print rule title
                 rule += "rule %s {\n" % rule_name
-                rule += "\tmeta:\n"
-                rule += "\t\tdescription = \"%s - from files %s\"\n" % ( args.p, file_listing )
-                rule += "\t\tauthor = \"%s\"\n" % args.a
-                rule += "\t\treference = \"%s\"\n" % args.r
-                rule += "\t\tdate = \"%s\"\n" % get_timestamp_basic()
-                rule += "\t\tsuper_rule = 1\n"
+                rule += "   meta:\n"
+                rule += "      description = \"%s - from files %s\"\n" % ( args.p, file_listing )
+                rule += "      author = \"%s\"\n" % args.a
+                rule += "      reference = \"%s\"\n" % args.r
+                rule += "      date = \"%s\"\n" % get_timestamp_basic()
+                rule += "      super_rule = 1\n"
                 for i, filePath in enumerate(super_rule["files"]):
-                    rule += "\t\thash%s = \"%s\"\n" % (str(i+1), file_info[filePath]["hash"])
+                    rule += "      hash%s = \"%s\"\n" % (str(i+1), file_info[filePath]["hash"])
 
-                rule += "\tstrings:\n"
+                rule += "   strings:\n"
 
                 # Adding the strings
                 if file_opcodes.get(filePath) is None:
@@ -1044,8 +1077,8 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 # In memory detection base condition
                 condition = "( {0} ) or ( all of them )".format(condition)
 
-                rule += "\tcondition:\n"
-                rule += "\t\t{0}\n".format(condition)
+                rule += "   condition:\n"
+                rule += "      {0}\n".format(condition)
                 rule += "}\n"
 
                 # print rule
@@ -1109,15 +1142,15 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 rule += "rule %s {\n" % cleanedName
 
                 # Meta data -----------------------------------------------
-                rule += "\tmeta:\n"
-                rule += "\t\tdescription = \"%s for anomaly detection - file %s\"\n" % ( args.p, fileName )
-                rule += "\t\tauthor = \"%s\"\n" % args.a
-                rule += "\t\treference = \"%s\"\n" % args.r
-                rule += "\t\tdate = \"%s\"\n" % get_timestamp_basic()
+                rule += "   meta:\n"
+                rule += "      description = \"%s for anomaly detection - file %s\"\n" % ( args.p, fileName )
+                rule += "      author = \"%s\"\n" % args.a
+                rule += "      reference = \"%s\"\n" % args.r
+                rule += "      date = \"%s\"\n" % get_timestamp_basic()
                 for i, hash in enumerate(file_info[fileName]["hashes"]):
-                    rule += "\t\thash%s = \"%s\"\n" % (str(i+1), hash)
+                    rule += "      hash%s = \"%s\"\n" % (str(i+1), hash)
 
-                rule += "\tstrings:\n"
+                rule += "   strings:\n"
 
                 # Get the strings -----------------------------------------
                 # Rule String generation
@@ -1133,8 +1166,8 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                     folderNames += "$/ )"
                 condition = "filename == \"%s\" %s and not ( all of them )" % (fileName, folderNames)
 
-                rule += "\tcondition:\n"
-                rule += "\t\t%s\n" % condition
+                rule += "   condition:\n"
+                rule += "      %s\n" % condition
                 rule += "}\n\n"
 
                 # print rule
@@ -1226,9 +1259,9 @@ def get_rule_strings(string_elements, opcode_elements):
         # No compose the rule line
         if float(stringScores[initial_string]) > score_highly_specific:
             high_scoring_strings += 1
-            rule_strings += "\t\t$x%s = \"%s\"%s%s%s%s%s%s%s\n" % (str(i+1), string, fullword, enc, base64comment, reversedComment, pestudio_comment, score_comment, goodware_comment )
+            rule_strings += "      $x%s = \"%s\"%s%s%s%s%s%s%s\n" % (str(i+1), string, fullword, enc, base64comment, reversedComment, pestudio_comment, score_comment, goodware_comment )
         else:
-            rule_strings += "\t\t$s%s = \"%s\"%s%s%s%s%s%s%s\n" % (str(i+1), string, fullword, enc, base64comment, reversedComment, pestudio_comment, score_comment, goodware_comment )
+            rule_strings += "      $s%s = \"%s\"%s%s%s%s%s%s%s\n" % (str(i+1), string, fullword, enc, base64comment, reversedComment, pestudio_comment, score_comment, goodware_comment )
 
         # If too many string definitions found - cut it at the
         # count defined via command line param -rc
@@ -1244,7 +1277,7 @@ def get_rule_strings(string_elements, opcode_elements):
         if len(opcode_elements) > 0:
             rule_strings += "\n"
             for i, opcode in enumerate(opcode_elements):
-                rule_strings += "\t\t$op%s = { %s } /* Opcode */\n" % (str(i), opcode)
+                rule_strings += "      $op%s = { %s } /* Opcode */\n" % (str(i), opcode)
                 opcodes_included = True
 
     return rule_strings, opcodes_included, string_rule_count, high_scoring_strings
@@ -1504,8 +1537,8 @@ def print_welcome():
     print "   "
     print "   Yara Rule Generator"
     print "   by Florian Roth"
-    print "   August 2016"
-    print "   Version 0.16.1"
+    print "   October 2016"
+    print "   Version 0.16.2"
     print "   "
     print "###############################################################################"
 
