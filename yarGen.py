@@ -360,7 +360,8 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                 # Create a combination string from the file set that matches to that string
                 combi = ":".join(sorted(string_stats[string]["files"]))
                 # print "STRING: " + string
-                print "COMBI: " + combi
+                if args.debug:
+                    print "COMBI: " + combi
                 # If combination not yet known
                 if combi not in combinations:
                     combinations[combi] = {}
@@ -539,11 +540,11 @@ def filter_string_set(string_set):
             # Temp and Recycler
             if re.search(r'(TEMP|Temporary|Appdata|Recycler)', string, re.IGNORECASE):
                 localStringScores[string] += 4
-            # malicious keywords - hacktools
+            # Malicious keywords - hacktools
             if re.search(r'(scan|sniff|poison|intercept|fake|spoof|sweep|dump|flood|inject|forward|scan|vulnerable|'
                          r'credentials|creds|coded|p0c|Content|host)', string, re.IGNORECASE):
                 localStringScores[string] += 5
-            # network keywords
+            # Network keywords
             if re.search(r'(address|port|listen|remote|local|process|service|mutex|pipe|frame|key|lookup|connection)',
                          string, re.IGNORECASE):
                 localStringScores[string] += 3
@@ -861,11 +862,11 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
             file_strings[filePath] = []
             file_strings[filePath] = filter_string_set(string_set)
 
-            print "[-] Filtering opcode set for %s ..." % filePath
-
             # Replace the original string set with the filtered one
             if filePath not in file_opcodes:
                 file_opcodes[filePath] = []
+            else:
+                print "[-] Filtering opcode set for %s ..." % filePath
             opcode_set = file_opcodes[filePath]
             file_opcodes[filePath] = []
             file_opcodes[filePath] = filter_opcode_set(opcode_set)
@@ -1375,6 +1376,8 @@ def get_binarly_score(string, string_type, paranoid=False):
         result = binarly.search(ascii_pattern(string.decode('string-escape')), limit=0, exact=paranoid)
     else:
         result = binarly.search(wide_pattern(string.decode('string-escape')), limit=0, exact=paranoid)
+
+    print result
 
     # increment binarly request counter
     binarly_count += 1
