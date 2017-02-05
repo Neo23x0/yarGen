@@ -1345,6 +1345,39 @@ def get_pestudio_score(string):
     return 0, ""
 
 
+def get_binarly_data(string, string_type, paranoid=False):
+    """
+    Performs a binarly lookup and return the info
+    :param string: string to lookup
+    :param string_type: ascii or wide
+    :param paranoid: use paranoid/exact lookup in Binarly service
+    :return: total, malware, pua, clean, suspicious
+    """
+    r_count, r_mal, r_pus, r_clean, r_susp = 0, 0, 0, 0, 0
+
+    # New API SDKv1 Search
+    if string_type != "wide":
+        result = binarly.search(ascii_pattern(string.decode('string-escape')), limit=0, exact=paranoid)
+    else:
+        result = binarly.search(wide_pattern(string.decode('string-escape')), limit=0, exact=paranoid)
+
+    # Results
+    try:
+        if result['stats']['total_count'] > 0:
+            # Counts
+            r_count     = float(result['stats']['total_count'])
+            r_mal       = float(result['stats']['malware_count'])
+            r_pus       = float(result['stats']['pua_count'])
+            r_clean     = float(result['stats']['clean_count'])
+            r_susp      = float(result['stats']['suspicious_count'])
+
+    except Exception, e:
+        if args.debug:
+            traceback.print_exc()
+
+    return r_count, r_mal, r_pus, r_clean, r_susp
+
+
 def get_binarly_score(string, string_type, paranoid=False):
     """
     Performs a binarly lookup and generates a score from the results
