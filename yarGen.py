@@ -647,6 +647,10 @@ def filter_string_set(string_set):
             # Base64
             if re.search(r'^(?:[A-Za-z0-9+/]{4}){30,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$', string):
                 localStringScores[string] += 4
+            # Base64 Executables
+            if re.search(r'(TVqQAAMAAAAEAAAA//8AALgAAAA|TVpQAAIAAAAEAA8A//8AALgAAAA|TVqAAAEAAAAEABAAAAAAAAAAAAA|'
+                         r'TVoAAAAAAAAAAAAAAAAAAAAAAAA|TVpTAQEAAAAEAAAA//8AALgAAAA)', string):
+                localStringScores[string] += 5
             # Malicious intent
             if re.search(r'(loader|cmdline|ntlmhash|lmhash|infect|encrypt|exec|elevat|dump|target|victim|override|'
                          r'traverse|mutex|pawnde|exploited|shellcode|injected|spoofed|dllinjec|exeinj|reflective|'
@@ -672,7 +676,8 @@ def filter_string_set(string_set):
             if re.search(r'(Management Support Team1|/c rundll32|DTOPTOOLZ Co.|net start|Exec|taskkill)', string):
                 localStringScores[string] += 4
             # Powershell
-            if re.search(r'(-exec bypass|IEX |Invoke-Expression|Net.Webclient)', string):
+            if re.search(r'(-exec bypass|IEX |Invoke-Expression|Net.Webclient|Invoke[A-Z]|Net.WebClient|-w hidden |'
+                         r'-encodedcommand| -nop |MemoryLoadLibrary|FromBase64String)', string):
                 localStringScores[string] += 4
             # Signing Certificates
             if re.search(r'( Inc | Co.|  Ltd.,| LLC| Limited)', string):
@@ -681,10 +686,29 @@ def filter_string_set(string_set):
             if re.search(r'(sysprep|cryptbase|secur32)', string, re.IGNORECASE):
                 localStringScores[string] += 2
             # Webshells
+            if re.search(r'(isset\($post\[|isset\($get\[|eval\(Request)', string, re.IGNORECASE):
+                localStringScores[string] += 2
+            # Suspicious words 1
+            if re.search(r'(impersonate|drop|upload|download|execute|shell|\bcmd\b|decode|rot13|decrypt)', string, re.IGNORECASE):
+                localStringScores[string] += 2
+            # Suspicious words 1
+            if re.search(r'([+] |[-] |[*] |injecting|exploit|dumped|dumping|scanning|scanned|elevation|'
+                         r'elevated|payload|vulnerable|payload|reverse connect|bind shell|reverse shell| dump | '
+                         r'back connect |privesc|privilege escalat|debug privilege| inject |interactive shell|'
+                         r'shell commands| spawning |] target |] Transmi|] Connect|] connect|] Dump|] command |'
+                         r'] token|] Token |] Firing | hashes | etc/passwd| SAM | NTML|unsupported target|'
+                         r'race condition|Token system |LoaderConfig| add user |ile upload |ile download |'
+                         r'Attaching to |ser has been successfully added|target system |LSA Secrets|DefaultPassword|'
+                         r'Password: |loading dll|.Execute\(|Shellcode)', string, re.IGNORECASE):
+                localStringScores[string] += 4
+            # Usage
             if re.search(r'(isset\($post\[|isset\($get\[)', string, re.IGNORECASE):
                 localStringScores[string] += 2
-            # Suspicious words
-            if re.search(r'(impersonate|drop|upload|download|execute|shell|\bcmd\b|decode|rot13|decrypt)', string, re.IGNORECASE):
+            # Hash
+            if re.search(r'([a-f0-9]{32}|[a-f0-9]{40}|[a-f0-9]{64})', string, re.IGNORECASE):
+                localStringScores[string] += 2
+            # Persistence
+            if re.search(r'(sc.exe |schtasks|at \\\\|at [0-9]{2}:[0-9]{2})', string, re.IGNORECASE):
                 localStringScores[string] += 2
 
             # Binarly Lookup
@@ -1236,12 +1260,13 @@ def get_rule_strings(string_elements, opcode_elements):
             if args.score:
                 binarly_score = " "
                 if args.binarly:
-                    cache_key = "%sascii" % string
+                    string_type = "ascii"
+                    string_lookup = string
                     if string[:8] == "UTF16LE:":
-                        cache_key = "%swide" % string[8:]
-                    # print cache_key
-                    if cache_key in binarly_cache:
-                        binarly_score = " (binarly: %s) " % binarly_cache[cache_key]
+                        string_type = "wide"
+                        # print "removed UTF16LE from %s" % string
+                        string_lookup = string[8:]
+                    binarly_score = " (binarly: t: %s m: %s p: %s c: %s s: %s) " % get_binarly_data(string_lookup, string_type)
                 score_comment += " /* score: '%.2f'%s*/" % (stringScores[string], binarly_score)
         else:
             print "NO SCORE: %s" % string
@@ -1585,8 +1610,8 @@ def print_welcome():
     print "   "
     print "   Yara Rule Generator"
     print "   by Florian Roth"
-    print "   November 2016"
-    print "   Version 0.16.2"
+    print "   February 2017"
+    print "   Version 0.16.3"
     print "   "
     print "###############################################################################"
 
