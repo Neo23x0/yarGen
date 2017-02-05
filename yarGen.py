@@ -280,7 +280,7 @@ def extract_opcodes(filePath):
                 for text_part in text_parts:
                     if text_part == '' or len(text_part) < 8:
                         continue
-                    opcodes.append(text_part[:16].encode('hex'))
+                    opcodes.append(text_part[:24].encode('hex'))
 
     except Exception, e:
         if args.debug:
@@ -951,7 +951,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 elif not low_scoring_strings > 0 and high_scoring_strings > 0:
                     cond_combined = "{0}".format(cond_hs)
                 if opcodes_included:
-                    cond_op = " and 1 of ($op*)"
+                    cond_op = " and all of ($op*)"
                 # Condition
                 condition = "( {0} ){1}".format(cond_combined, cond_op)
 
@@ -1073,7 +1073,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 elif not low_scoring_strings > 0 and high_scoring_strings > 0:
                     cond_combined = "{0}".format(cond_hs)
                 if opcodes_included:
-                    cond_op = " and 1 of ($op*)"
+                    cond_op = " and all of ($op*)"
                 # Condition
                 condition = "( {0} ){1}".format(cond_combined, cond_op)
 
@@ -1284,12 +1284,14 @@ def get_rule_strings(string_elements, opcode_elements):
     # If too few strings - add opcodes
     # Adding the strings --------------------------------------
     opcodes_included = False
-    if string_rule_count < args.rc:
-        if len(opcode_elements) > 0:
-            rule_strings += "\n"
-            for i, opcode in enumerate(opcode_elements):
-                rule_strings += "      $op%s = { %s } /* Opcode */\n" % (str(i), opcode)
-                opcodes_included = True
+    if len(opcode_elements) > 0:
+        rule_strings += "\n"
+        rule_strings += "      /* Recommendation - verify the opcodes on Binarly : http://www.binar.ly/ */\n"
+        for i, opcode in enumerate(opcode_elements):
+            rule_strings += "      $op%s = { %s } /* Opcode */\n" % (str(i), opcode)
+            opcodes_included = True
+    else:
+        print "[-] Not enough unique opcodes found to include them"
 
     return rule_strings, opcodes_included, string_rule_count, high_scoring_strings
 
