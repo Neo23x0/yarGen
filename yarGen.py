@@ -19,6 +19,7 @@ import scandir
 import pefile
 import pickle
 import gzip
+import urllib
 from collections import Counter
 from hashlib import sha256
 from naiveBayesClassifier import tokenizer
@@ -32,9 +33,16 @@ except Exception, e:
     print "[E] lxml not found - disabling PeStudio string check functionality"
     lxml_available = False
 
-RELEVANT_EXTENSIONS = [ ".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".cmd", ".com", ".cpl",
-                         ".crt", ".dll", ".exe", ".msc",".scr", ".sys", ".vb", ".vbe", ".vbs", ".wsc",
-                        ".wsf", ".wsh", ".input", ".war", ".jsp", ".php", ".asp", ".aspx", ".psd1", ".psm1", ".py" ]
+RELEVANT_EXTENSIONS = [".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".cmd", ".com", ".cpl",
+                       ".crt", ".dll", ".exe", ".msc", ".scr", ".sys", ".vb", ".vbe", ".vbs", ".wsc",
+                       ".wsf", ".wsh", ".input", ".war", ".jsp", ".php", ".asp", ".aspx", ".psd1", ".psm1", ".py"]
+
+REPO_URLS = {
+    'good-strings.db': 'https://www.bsk-consulting.de/download/good-strings.db',
+    'good-opcodes.db': 'https://www.bsk-consulting.de/download/good-opcodes.db'}
+
+PE_STRINGS_FILE = "./3rdparty/strings.xml"
+
 def get_abs_path(filename):
     return os.path.join(os.path.dirname(os.path.abspath(__file__)),filename)
 
@@ -1323,7 +1331,7 @@ def get_rule_strings(string_elements, opcode_elements):
 def initialize_pestudio_strings():
     pestudio_strings = {}
 
-    tree = etree.parse(get_abs_path('strings.xml'))
+    tree = etree.parse(get_abs_path(PE_STRINGS_FILE))
 
     pestudio_strings["strings"] = tree.findall(".//string")
     pestudio_strings["av"] = tree.findall(".//av")
@@ -1597,6 +1605,33 @@ def init_binarly_apikey(api_key_file):
 
     return api_key
 
+def update_databases():
+
+    # Preparations
+    try:
+        dbDir = './dbs/'
+        if not os.path.exists(dbDir):
+            os.makedirs(dbDir)
+    except Exception, e:
+        if args.debug:
+            traceback.print_exc()
+        print "Error while creating the database directory ./dbs"
+        sys.exit(1)
+
+    # Downloading current repository
+    try:
+        for filename, repo_url in REPO_URLS.iteritems():
+            print "Downloading %s from %s ..." % (filename, repo_url)
+            fileDownloader = urllib.URLopener()
+            fileDownloader.retrieve(repo_url, "./dbs/%s" % filename)
+    except Exception, e:
+        if args.debug:
+            traceback.print_exc()
+        print "Error while downloading the database file - check your Internet connection"
+        print "Alterntive download link: https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28"
+        print "Download the files and place them into the ./dbs/ folder"
+        sys.exit(1)
+
 
 def print_welcome():
     print "###############################################################################"
@@ -1655,9 +1690,12 @@ if __name__ == '__main__':
                                                                                     'that match against various files')
     
     group_db = parser.add_argument_group('Database Operations')
+    group_db.add_argument('--update', action='store_true', default=False, help='Update the local strings and opcodes '
+                                                                               'dbs from the online repository '
+                                                                               '(Google Drive)')
     group_db.add_argument('-g', help='Path to scan for goodware (dont use the database shipped with yaraGen)')
-    group_db.add_argument('-u', action='store_true', default=False, help='Update local standard goodware database '
-                                                                         '(use with -g)')
+    group_db.add_argument('-u', action='store_true', default=False, help='Update local standard goodware database with '
+                                                                         'a new analysis result (used with -g)')
     group_db.add_argument('-c', action='store_true', default=False, help='Create new local goodware database '
                                                                          '(use with -g and optionally -i "identifier")')
     group_db.add_argument('-i', default="", help='Specify an identifier for the newly created databases '
@@ -1690,30 +1728,40 @@ if __name__ == '__main__':
     # Print Welcome
     print_welcome()
 
+    # Update
+    if args.update:
+        update_databases()
+        print "[+] Updated databases - you can now start creating YARA rules"
+        sys.exit(0)
+
     # Opcodes evaluation or not
     use_opcodes = False
     if args.opcodes:
         use_opcodes = True
-    if not os.path.isfile(get_abs_path("good-opcodes.db")) and use_opcodes:
-        print "[E] Please unzip the shipped good-opcodes.db database if you want to use opcodes in your rules."
+    if not os.path.isfile(get_abs_path("./dbs/good-opcodes.db")) and use_opcodes:
+        print "[E] Please download good-opcodes.db database via (--update) or get it from here " \
+              "https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28 if you want to use opcodes in your " \
+              "rules."
         print "[-] Deactivating opcode generation ..."
         use_opcodes = False
 
-    if not os.path.isfile(get_abs_path("good-strings.db")) and not args.c:
-        print "[E] Please unzip the shipped good-strings.db database."
+    if not os.path.isfile(get_abs_path("./dbs/good-strings.db")) and not args.c:
+        print "[E] Please download the strings and opcodes databases (via --update or " \
+              "URL https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28 )"
         sys.exit(1)
 
     # Read PEStudio string list
     pestudio_strings = {}
     pestudio_available = False
-    if os.path.isfile(get_abs_path("strings.xml")) and lxml_available:
+
+    if os.path.isfile(get_abs_path(PE_STRINGS_FILE)) and lxml_available:
         print "[+] Processing PEStudio strings ..."
         pestudio_strings = initialize_pestudio_strings()
         pestudio_available = True
     else:
         if lxml_available:
             print "\nTo improve the analysis process please download the awesome PEStudio tool by marc @ochsenmeier " \
-                  "from http://winitor.com and place the file 'strings.xml' in the yarGen program directory.\n"
+                  "from http://winitor.com and place the file 'strings.xml' in the ./3rdparty directory.\n"
             time.sleep(5)
 
     # Use binarly lookup
@@ -1756,8 +1804,8 @@ if __name__ == '__main__':
                 db_identifier = ""
                 if args.n != "":
                     db_identifier = "-%s" % args.i
-                strings_db = "good-strings%s.db" % db_identifier
-                opcodes_db = "good-opcodes%s.db" % db_identifier
+                strings_db = "./dbs/good-strings%s.db" % db_identifier
+                opcodes_db = "./dbs/good-opcodes%s.db" % db_identifier
 
                 # Strings -----------------------------------------------------
                 print "[+] Updating %s ..." % strings_db
@@ -1785,8 +1833,8 @@ if __name__ == '__main__':
             db_identifier = ""
             if args.n != "":
                 db_identifier = "-%s" % args.i
-            strings_db = "good-strings%s.db" % db_identifier
-            opcodes_db = "good-opcodes%s.db" % db_identifier
+            strings_db = "./dbs/good-strings%s.db" % db_identifier
+            opcodes_db = "./dbs/good-opcodes%s.db" % db_identifier
             # Creating the databases
             print "[+] Using '%s' as filename for newly created strings database" % strings_db
             print "[+] Using '%s' as filename for newly created opcodes database" % opcodes_db
@@ -1832,14 +1880,15 @@ if __name__ == '__main__':
         strings_num = 0
 
         # Initialize all databases
-        for file in os.listdir("./"):
+        for file in os.listdir("./dbs/"):
             if not file.endswith(".db"):
                 continue
+            filePath = os.path.join("./dbs/", file)
             # String databases
             if file.startswith("good-strings"):
                 try:
-                    print "[+] Processing %s ..." % file
-                    good_pickle = load(get_abs_path(file))
+                    print "[+] Processing %s ..." % filePath
+                    good_pickle = load(get_abs_path(filePath))
                     good_strings_db.update(good_pickle)
                     print "[+] Total: %s / Added %d entries" % (len(good_strings_db), len(good_strings_db) - strings_num)
                     strings_num = len(good_strings_db)
@@ -1849,8 +1898,8 @@ if __name__ == '__main__':
             if file.startswith("good-opcodes"):
                 try:
                     if use_opcodes:
-                        print "[+] Processing %s ..." % file
-                        good_op_pickle = load(get_abs_path(file))
+                        print "[+] Processing %s ..." % filePath
+                        good_op_pickle = load(get_abs_path(filePath))
                         good_opcodes_db.update(good_op_pickle)
                         print "[+] Total: %s / Added %d entries" % (len(good_opcodes_db), len(good_opcodes_db) - opcodes_num)
                         opcodes_num = len(good_opcodes_db)
