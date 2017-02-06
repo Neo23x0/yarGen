@@ -1,12 +1,20 @@
 # yarGen
 
-A Rule Generator for Yara Rules
-
-Florian Roth, February 2017
-
-yarGen is a generator for [YARA](https://github.com/plusvic/yara/) rules
+                         ______
+       __  ______ ______/ ____/__  ____
+      / / / / __ `/ ___/ / __/ _ \/ __ \
+     / /_/ / /_/ / /  / /_/ /  __/ / / /
+     \__, /\__,_/_/   \____/\___/_/ /_/
+    /____/
+ 
+    Yara Rule Generator
+    by Florian Roth
+    February 2017
+    Version 0.17.0
 
 ### What does yarGen do?
+
+yarGen is a generator for [YARA](https://github.com/plusvic/yara/) rules
 
 The main principle is the creation of yara rules from strings found in malware
 files while removing all strings that also appear in goodware files. Therefore 
