@@ -19,7 +19,6 @@ import scandir
 import pefile
 import pickle
 import gzip
-from cStringIO import StringIO
 from collections import Counter
 from hashlib import sha256
 from naiveBayesClassifier import tokenizer
@@ -1611,7 +1610,7 @@ def print_welcome():
     print "   Yara Rule Generator"
     print "   by Florian Roth"
     print "   February 2017"
-    print "   Version 0.16.3"
+    print "   Version 0.17.0"
     print "   "
     print "###############################################################################"
 
@@ -1623,41 +1622,63 @@ if __name__ == '__main__':
 
     group_creation = parser.add_argument_group('Rule Creation')
     group_creation.add_argument('-m', help='Path to scan for malware')
-    group_creation.add_argument('-l', help='Minimum string length to consider (default=8)', metavar='min-size', default=8)
+    group_creation.add_argument('-l', help='Minimum string length to consider (default=8)', metavar='min-size',
+                                default=8)
     group_creation.add_argument('-z', help='Minimum score to consider (default=5)', metavar='min-score', default=5)
-    group_creation.add_argument('-x', help='Score required to set string as \'highly specific string\' (default: 30, +10 with binarly)', metavar='high-scoring', default=30)
+    group_creation.add_argument('-x', help='Score required to set string as \'highly specific string\' (default: 30, '
+                                           '+10 with binarly)', metavar='high-scoring', default=30)
     group_creation.add_argument('-s', help='Maximum length to consider (default=128)', metavar='max-size', default=128)
-    group_creation.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering will be applied)', metavar='maxstrings', default=20)
-    group_creation.add_argument('--excludegood', help='Force the exclude all goodware strings', action='store_true', default=False)
+    group_creation.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering '
+                                            'will be applied)', metavar='maxstrings', default=20)
+    group_creation.add_argument('--excludegood', help='Force the exclude all goodware strings', action='store_true',
+                                default=False)
 
     group_output = parser.add_argument_group('Rule Output')
     group_output.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yargen_rules.yar')
     group_output.add_argument('-a', help='Author Name', metavar='author', default='YarGen Rule Generator')
     group_output.add_argument('-r', help='Reference', metavar='ref', default='not set')
-    group_output.add_argument('-p', help='Prefix for the rule description', metavar='prefix', default='Auto-generated rule')    
-    group_output.add_argument('--score', help='Show the string scores as comments in the rules', action='store_true', default=False)
-    group_output.add_argument('--nosimple', help='Skip simple rule creation for files included in super rules', action='store_true', default=False)
-    group_output.add_argument('--nomagic', help='Don\'t include the magic header condition statement', action='store_true', default=False)
-    group_output.add_argument('--nofilesize', help='Don\'t include the filesize condition statement', action='store_true', default=False)
-    group_output.add_argument('-fm', help='Multiplier for the maximum \'filesize\' condition value (default: 3)', default=3)
-    group_output.add_argument('--globalrule', help='Create global rules (improved rule set speed)', action='store_true', default=False)
-    group_output.add_argument('--nosuper', action='store_true', default=False, help='Don\'t try to create super rules that match against various files')
+    group_output.add_argument('-p', help='Prefix for the rule description', metavar='prefix',
+                              default='Auto-generated rule')
+    group_output.add_argument('--score', help='Show the string scores as comments in the rules', action='store_true',
+                              default=False)
+    group_output.add_argument('--nosimple', help='Skip simple rule creation for files included in super rules',
+                              action='store_true', default=False)
+    group_output.add_argument('--nomagic', help='Don\'t include the magic header condition statement',
+                              action='store_true', default=False)
+    group_output.add_argument('--nofilesize', help='Don\'t include the filesize condition statement',
+                              action='store_true', default=False)
+    group_output.add_argument('-fm', help='Multiplier for the maximum \'filesize\' condition value (default: 3)',
+                              default=3)
+    group_output.add_argument('--globalrule', help='Create global rules (improved rule set speed)',
+                              action='store_true', default=False)
+    group_output.add_argument('--nosuper', action='store_true', default=False, help='Don\'t try to create super rules '
+                                                                                    'that match against various files')
     
     group_db = parser.add_argument_group('Database Operations')
     group_db.add_argument('-g', help='Path to scan for goodware (dont use the database shipped with yaraGen)')
-    group_db.add_argument('-u', action='store_true', default=False, help='Update local goodware database (use with -g)')
-    group_db.add_argument('-c', action='store_true', default=False, help='Create new local goodware database (use with -g)')
+    group_db.add_argument('-u', action='store_true', default=False, help='Update local standard goodware database '
+                                                                         '(use with -g)')
+    group_db.add_argument('-c', action='store_true', default=False, help='Create new local goodware database '
+                                                                         '(use with -g and optionally -i "identifier")')
+    group_db.add_argument('-i', default="", help='Specify an identifier for the newly created databases '
+                                                 '(good-strings-identifier.db, good-opcodes-identifier.db)')
 
     group_general = parser.add_argument_group('General Options')    
     group_general.add_argument('--nr', action='store_true', default=False, help='Do not recursively scan directories')
-    group_general.add_argument('--oe', action='store_true', default=False, help='Only scan executable extensions EXE, DLL, ASP, JSP, PHP, BIN, INFECTED')
-    group_general.add_argument('-fs', help='Max file size in MB to analyze (default=10)', metavar='size-in-MB', default=10)
+    group_general.add_argument('--oe', action='store_true', default=False, help='Only scan executable extensions EXE, '
+                                                                                'DLL, ASP, JSP, PHP, BIN, INFECTED')
+    group_general.add_argument('-fs', help='Max file size in MB to analyze (default=10)', metavar='size-in-MB',
+                               default=10)
     group_general.add_argument('--debug', action='store_true', default=False, help='Debug output')
 
     group_opcode= parser.add_argument_group('Other Features')
-    group_opcode.add_argument('--opcodes', action='store_true', default=False, help='Do use the OpCode feature (use this if not enough high scoring strings can be found)')
-    group_opcode.add_argument('-n', help='Number of opcodes to add if not enough high scoring string could be found (default=3)', metavar='opcode-num', default=3)
-    group_opcode.add_argument('--binarly', action='store_true', default=False, help='Use binarly to lookup string statistics')
+    group_opcode.add_argument('--opcodes', action='store_true', default=False, help='Do use the OpCode feature '
+                                                                                    '(use this if not enough high '
+                                                                                    'scoring strings can be found)')
+    group_opcode.add_argument('-n', help='Number of opcodes to add if not enough high scoring string could be found '
+                                         '(default=3)', metavar='opcode-num', default=3)
+    group_opcode.add_argument('--binarly', action='store_true', default=False, help='Use binarly to lookup string '
+                                                                                    'statistics')
 
     group_inverse = parser.add_argument_group('Inverse Mode (unstable)')
     group_inverse.add_argument('--inverse', help=argparse.SUPPRESS, action='store_true', default=False)
@@ -1691,7 +1712,8 @@ if __name__ == '__main__':
         pestudio_available = True
     else:
         if lxml_available:
-            print "\nTo improve the analysis process please download the awesome PEStudio tool by marc @ochsenmeier from http://winitor.com and place the file 'strings.xml' in the yarGen program directory.\n"
+            print "\nTo improve the analysis process please download the awesome PEStudio tool by marc @ochsenmeier " \
+                  "from http://winitor.com and place the file 'strings.xml' in the yarGen program directory.\n"
             time.sleep(5)
 
     # Use binarly lookup
@@ -1728,21 +1750,30 @@ if __name__ == '__main__':
         # Update existing Pickle
         if args.u:
             try:
-                print "[+] Updating database ..."
+                print "[+] Updating databases ..."
+
+                # Evaluate the database identifiers
+                db_identifier = ""
+                if args.n != "":
+                    db_identifier = "-%s" % args.i
+                strings_db = "good-strings%s.db" % db_identifier
+                opcodes_db = "good-opcodes%s.db" % db_identifier
 
                 # Strings -----------------------------------------------------
-                good_pickle = load(get_abs_path("good-strings.db"))
+                print "[+] Updating %s ..." % strings_db
+                good_pickle = load(get_abs_path(strings_db))
                 print "Old string database entries: %s" % len(good_pickle)
                 good_pickle.update(good_strings_db)
                 print "New string database entries: %s" % len(good_pickle)
-                save(good_pickle, "good-strings.db")
+                save(good_pickle, strings_db)
 
                 # Opcodes -----------------------------------------------------
-                good_opcode_pickle = load(get_abs_path("good-opcodes.db"))
+                print "[+] Updating %s ..." % opcodes_db
+                good_opcode_pickle = load(get_abs_path(opcodes_db))
                 print "Old opcode database entries: %s" % len(good_opcode_pickle)
                 good_opcode_pickle.update(good_opcodes_db)
                 print "New opcode database entries: %s" % len(good_opcode_pickle)
-                save(good_opcode_pickle, "good-opcodes.db")
+                save(good_opcode_pickle, opcodes_db)
 
             except Exception, e:
                 traceback.print_exc()
@@ -1750,12 +1781,23 @@ if __name__ == '__main__':
         # Create new Pickle
         if args.c:
             print "[+] Creating local database ..."
+            # Evaluate the database identifiers
+            db_identifier = ""
+            if args.n != "":
+                db_identifier = "-%s" % args.i
+            strings_db = "good-strings%s.db" % db_identifier
+            opcodes_db = "good-opcodes%s.db" % db_identifier
+            # Creating the databases
+            print "[+] Using '%s' as filename for newly created strings database" % strings_db
+            print "[+] Using '%s' as filename for newly created opcodes database" % opcodes_db
             try:
 
-                if os.path.isfile("good-strings.db"):
-                   os.remove("good-strings.db")
-                if os.path.isfile("good-opcodes.db"):
-                   os.remove("good-opcodes.db")
+                if os.path.isfile(strings_db):
+                    raw_input("File %s alread exists. Press enter to proceed or CTRL+C to exit." % strings_db)
+                    os.remove(strings_db)
+                if os.path.isfile(opcodes_db):
+                    raw_input("File %s alread exists. Press enter to proceed or CTRL+C to exit." % opcodes_db)
+                    os.remove(opcodes_db)
 
                 # Strings
                 good_pickle = Counter()
@@ -1765,11 +1807,12 @@ if __name__ == '__main__':
                 good_op_pickle = good_opcodes_db
 
                 # Save
-                save(good_pickle, "good-strings.db")
-                save(good_op_pickle, "good-opcodes.db")
+                save(good_pickle, strings_db)
+                save(good_op_pickle, opcodes_db)
 
-                print "New database with %s string and %s opcode entries created." % \
-                      ( len(good_strings_db), len(good_opcodes_db) )
+                print "New database with %s string and %s opcode entries created. (remember to use --opcodes to " \
+                      "extract opcodes from the samples and create the opcode databases)" % \
+                      (len(good_strings_db), len(good_opcodes_db))
             except Exception, e:
                 traceback.print_exc()
 
@@ -1777,27 +1820,43 @@ if __name__ == '__main__':
     else:
         if use_opcodes:
             print "[+] Reading goodware strings from database 'good-strings.db' and 'good-opcodes.db' ..."
-            print "    (This could take some time and uses up to 4 GB of RAM)"
+            print "    (This could take some time and uses at least 6 GB of RAM)"
         else:
             print "[+] Reading goodware strings from database 'good-strings.db' ..."
-            print "    (This could take some time and uses up to 2.5 GB of RAM)"
+            print "    (This could take some time and uses at least 3 GB of RAM)"
 
         good_strings_db = Counter()
         good_opcodes_db = Counter()
 
-        try:
-            good_pickle = load(get_abs_path("good-strings.db"))
-            good_strings_db = good_pickle
-        except Exception, e:
-            traceback.print_exc()
+        opcodes_num = 0
+        strings_num = 0
 
-        try:
-            if use_opcodes:
-                good_op_pickle = load(get_abs_path("good-opcodes.db"))
-                good_opcodes_db = good_op_pickle
-        except Exception, e:
-            use_opcodes = False
-            traceback.print_exc()
+        # Initialize all databases
+        for file in os.listdir("./"):
+            if not file.endswith(".db"):
+                continue
+            # String databases
+            if file.startswith("good-strings"):
+                try:
+                    print "[+] Processing %s ..." % file
+                    good_pickle = load(get_abs_path(file))
+                    good_strings_db.update(good_pickle)
+                    print "[+] Total: %s / Added %d entries" % (len(good_strings_db), len(good_strings_db) - strings_num)
+                    strings_num = len(good_strings_db)
+                except Exception, e:
+                    traceback.print_exc()
+            # Opcode databases
+            if file.startswith("good-opcodes"):
+                try:
+                    if use_opcodes:
+                        print "[+] Processing %s ..." % file
+                        good_op_pickle = load(get_abs_path(file))
+                        good_opcodes_db.update(good_op_pickle)
+                        print "[+] Total: %s / Added %d entries" % (len(good_opcodes_db), len(good_opcodes_db) - opcodes_num)
+                        opcodes_num = len(good_opcodes_db)
+                except Exception, e:
+                    use_opcodes = False
+                    traceback.print_exc()
 
     # If malware directory given
     if args.m:
