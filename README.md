@@ -49,7 +49,6 @@ For yarGen I integrated their [public API](https://github.com/binarlyhq/binarly-
 In order to be able to use it you just need an API key that you can get for 
 free if you contact them at contact@binar.ly. The option to activate binarly
 lookups is '--binarly'.
-/* Feb 2017: The API service is currently offline */
 
 Since version 0.17.0 yarGen allows creating multiple databases for
 opcodes and strings. You can now easily create a new database by using
@@ -66,22 +65,21 @@ for a file that was already covered by super rule by using --nosimple.
 
 ### Installation
 
-1. Make sure you have at least 3GB of RAM on the machine you plan to use yarGen (5GB if opcodes are included in rule generation, use with --opcodes)
+1. Make sure you have at least 4GB of RAM on the machine you plan to use yarGen (6GB if opcodes are included in rule generation, use with --opcodes)
 2. Download the latest release from the "release" section
 3. Install all dependancies with ```sudo pip install scandir lxml naiveBayesClassifier pefile``` (@twpDone reported that in case of errors try ```sudo pip install pefile``` and ```sudo pip3 install scandir lxml naiveBayesClassifier```)
 4. Clone and install [Binarly-SDK](https://github.com/binarlyhq/binarly-sdk/) and install it with ```python ./setup.py install```
-5. Run python yarGen.py --update to automatically download the built-in databases or download them manuall from [here](https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28) and place them in a new './dbs' sub folder
+5. Run python ```yarGen.py --update``` to automatically download the built-in databases or download them manuall from [here](https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28) and place them in a new './dbs' sub folder
 6. See help with ```python yarGen.py --help``` for more information on the command line parameters
 
 ### Memory Requirements
-
-Warning: yarGen pulls the whole goodstring database to memory and uses up to 
-3 GB of memory for a few seconds - 5 GB if opcodes evaluation is used.
+Warning: yarGen pulls the whole goodstring database to memory and uses at least
+4 GB of memory for a few seconds - 6 GB if opcodes evaluation is used. 
 
 I've already tried to migrate the database to sqlite but the numerous string
 comparisons and lookups made the analysis inacceptably slow.
 
-# Multiple Database support
+# Multiple Database Support
 yarGen allows creating multiple databases for opcodes or strings. You can easily create a new database by using "-c" for new database creation and "-i identifier" to give the new database a unique identifier as e.g. "office". It will the create two new database files named "good-strings-office.db" and "good-opcodes-office.db" that will from then on be initialized during startup with the built-in databases.
 
 ### Example
@@ -108,6 +106,9 @@ In order to use the Binarly lookup, you need an API key placed in a file named
 ```apikey.txt``` in the ```./config``` subfolder. 
 
 Request an Binarly API key by mail to: contact@binar.ly  
+
+### Offline
+Feb 2017: The Binarly API service is currently offline, but you can still use the website to verify the opcode rule components create by yarGen.
 
 ## Command Line Parameters
 
