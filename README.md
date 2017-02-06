@@ -51,17 +51,11 @@ free if you contact them at contact@binar.ly. The option to activate binarly
 lookups is '--binarly'.
 /* Feb 2017: The API service is currently offline */
 
-Since version 0.17.0 yarGen allows you to create multiple databases for
-opcodes or strings. You can now easily create a new database by using
-"-c" for new database creation and "-i identifier" to give the new
-database a unique identifier as e.g. "office". It will the create two new
+Since version 0.17.0 yarGen allows creating multiple databases for
+opcodes and strings. You can now easily create a new database by using
+"-c" and an identifier "-i identifier" e.g. "office". It will then create two new
 database files named "good-strings-office.db" and "good-opcodes-office.db"
-that will from then on initialized during startup with the built-in
-databases. You can also update the databases and add new values like
-```yarGen.py -u --opcodes -i office -g /opt/packs/office2013``` and
-```yarGen.py -u --opcodes -i office -g /opt/packs/office356```
-The initialization process will look for all files matching the
-patterns "good-strings-*.db" and "good-opcodes-*.db".
+that will be initialized during startup with the built-in databases. 
 
 The rule generation process also tries to identify similarities between the
 files that get analyzed and then combines the strings to so called "super rules".
@@ -73,12 +67,11 @@ for a file that was already covered by super rule by using --nosimple.
 ### Installation
 
 1. Make sure you have at least 3GB of RAM on the machine you plan to use yarGen (5GB if opcodes are included in rule generation, use with --opcodes)
-2. Clone the git repository
+2. Download the latest release from the "release" section
 3. Install all dependancies with ```sudo pip install scandir lxml naiveBayesClassifier pefile``` (@twpDone reported that in case of errors try ```sudo pip install pefile``` and ```sudo pip3 install scandir lxml naiveBayesClassifier```)
 4. Clone and install [Binarly-SDK](https://github.com/binarlyhq/binarly-sdk/) and install it with ```python ./setup.py install```
-5. Unzip the goodware string database (e.g. ```7z x good-strings.db.zip.001```)
-6. Unzip the goodware opcode database (e.g. ```7z x good-opcodes.db.zip.001```)
-7. See help with ```python yarGen.py --help```
+5. Run python yarGen.py --update to automatically download the built-in databases or download them manuall from [here](https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28) and place them in a new './dbs' sub folder
+6. See help with ```python yarGen.py --help``` for more information on the command line parameters
 
 ### Memory Requirements
 
@@ -87,6 +80,27 @@ Warning: yarGen pulls the whole goodstring database to memory and uses up to
 
 I've already tried to migrate the database to sqlite but the numerous string
 comparisons and lookups made the analysis inacceptably slow.
+
+# Multiple Database support
+yarGen allows creating multiple databases for opcodes or strings. You can easily create a new database by using "-c" for new database creation and "-i identifier" to give the new database a unique identifier as e.g. "office". It will the create two new database files named "good-strings-office.db" and "good-opcodes-office.db" that will from then on be initialized during startup with the built-in databases.
+
+### Example
+Create a new strings and opcodes database from an Office 2013 program directory:
+```
+yarGen.py -c --opcodes -i office -g /opt/packs/office2013
+```
+The analysis and string extraction process will create the following new databases in the "./dbs" sub folder.
+```
+good-strings-office.db
+good-opcodes-office.db
+```
+The values from these new databases will be automatically applied during the rule creation process because all *.db files in the sub folder "./dbs" will be initialized during startup.
+
+You can update the once created databases with the "-u" parameter
+```
+yarGen.py -u --opcodes -i office -g /opt/packs/office365
+```
+This would update the "office" databases with new strings extracted from files in the given directory. 
 
 ## Binarly
 
