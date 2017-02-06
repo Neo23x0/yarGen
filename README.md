@@ -2,7 +2,7 @@
 
 A Rule Generator for Yara Rules
 
-Florian Roth, April 2016
+Florian Roth, February 2017
 
 yarGen is a generator for [YARA](https://github.com/plusvic/yara/) rules
 
@@ -14,9 +14,10 @@ yarGen includes a big goodware strings and opcode database as ZIP archives that
 have to be extracted before the first use. 
 
 Since version 0.12.0 yarGen does not completely remove the goodware strings from
-the analysis process but includes them with a very low score. The rules will be
-included if no better strings can be found and marked with a comment /* Goodware
-rule */. Force yarGen to remvoe all goodware strings with --excludegood. Also
+the analysis process but includes them with a very low score depending on the
+number of occurences in goodware samples. The rules will be included if no
+better strings can be found and marked with a comment /* Goodware rule */.
+Force yarGen to remvoe all goodware strings with --excludegood. Also
 since version 0.12.0 yarGen allows to place the "strings.xml" from
 [PEstudio](https://winitor.com/) in the program directory in order to apply the
 blacklist definition during the string analysis process. You'll get better
@@ -48,8 +49,21 @@ For yarGen I integrated their [public API](https://github.com/binarlyhq/binarly-
 In order to be able to use it you just need an API key that you can get for 
 free if you contact them at contact@binar.ly. The option to activate binarly
 lookups is '--binarly'.
+/* Feb 2017: The API service is currently offline */
 
-The rule generation process als tries to identify similarities between the 
+Since version 0.17.0 yarGen allows you to create multiple databases for
+opcodes or strings. You can now easily create a new database by using
+"-c" for new database creation and "-i identifier" to give the new
+database a unique identifier as e.g. "office". It will the create two new
+database files named "good-strings-office.db" and "good-opcodes-office.db"
+that will from then on initialized during startup with the built-in
+databases. You can also update the databases and add new values like
+```yarGen.py -u --opcodes -i office -g /opt/packs/office2013``` and
+```yarGen.py -u --opcodes -i office -g /opt/packs/office356```
+The initialization process will look for all files matching the
+patterns "good-strings-*.db" and "good-opcodes-*.db".
+
+The rule generation process also tries to identify similarities between the
 files that get analyzed and then combines the strings to so called "super rules".
 Up to now the super rule generation does not remove the simple rule for the
 files that have been combined in a single super rule. This means that there
@@ -58,7 +72,7 @@ for a file that was already covered by super rule by using --nosimple.
 
 ### Installation
 
-1. Make sure you have at least 3GB of RAM on the machine you plan to use yarGen (5GB if opcodes should be included in rule generation, use with --opcodes)
+1. Make sure you have at least 3GB of RAM on the machine you plan to use yarGen (5GB if opcodes are included in rule generation, use with --opcodes)
 2. Clone the git repository
 3. Install all dependancies with ```sudo pip install scandir lxml naiveBayesClassifier pefile``` (@twpDone reported that in case of errors try ```sudo pip install pefile``` and ```sudo pip3 install scandir lxml naiveBayesClassifier```)
 4. Clone and install [Binarly-SDK](https://github.com/binarlyhq/binarly-sdk/) and install it with ```python ./setup.py install```
@@ -69,10 +83,10 @@ for a file that was already covered by super rule by using --nosimple.
 ### Memory Requirements
 
 Warning: yarGen pulls the whole goodstring database to memory and uses up to 
-3 GB of memory for a few seconds - 5 GB if opcode evaluation is used. 
+3 GB of memory for a few seconds - 5 GB if opcodes evaluation is used.
 
-I already tried to migrate the database to sqlite but the numerous string 
-comparisons and lookups made the analysis very slow.
+I've already tried to migrate the database to sqlite but the numerous string
+comparisons and lookups made the analysis inacceptably slow.
 
 ## Binarly
 
@@ -88,8 +102,8 @@ usage: yarGen.py [-h] [-m M] [-l min-size] [-z min-score] [-x high-scoring]
                  [-s max-size] [-rc maxstrings] [--excludegood]
                  [-o output_rule_file] [-a author] [-r ref] [-p prefix]
                  [--score] [--nosimple] [--nomagic] [--nofilesize] [-fm FM]
-                 [--globalrule] [--nosuper] [-g G] [-u] [-c] [--nr] [--oe]
-                 [-fs size-in-MB] [--debug] [--opcodes] [-n opcode-num]
+                 [--globalrule] [--nosuper] [-g G] [-u] [-c] [-i I] [--nr]
+                 [--oe] [-fs size-in-MB] [--debug] [--opcodes] [-n opcode-num]
                  [--binarly]
 
 yarGen
@@ -127,8 +141,12 @@ Rule Output:
 Database Operations:
   -g G                 Path to scan for goodware (dont use the database
                        shipped with yaraGen)
-  -u                   Update local goodware database (use with -g)
-  -c                   Create new local goodware database (use with -g)
+  -u                   Update local standard goodware database (use with -g)
+  -c                   Create new local goodware database (use with -g and
+                       optionally -i "identifier")
+  -i I                 Specify an identifier for the newly created databases
+                       (good-strings-identifier.db, good-opcodes-
+                       identifier.db)
 
 General Options:
   --nr                 Do not recursively scan directories
@@ -193,7 +211,11 @@ In order to use only strings for your rules that match a certain minimum score u
 
 ```python yarGen.py -a "Florian Roth" -r "http://goo.gl/c2qgFx" -m /opt/mal/case_441 -o case441.yar```
 
-### Exclude strings from Goodware samples
+### Add opcodes to the rules
+
+```python yarGen.py --opcodes -a "Florian Roth" -r "http://goo.gl/c2qgFx" -m /opt/mal/case33 -o rules33.yar```
+
+### Exclude all strings from Goodware samples
 
 ```python yarGen.py --excludegood -m /opt/mal/case_441```
 
@@ -207,12 +229,18 @@ In order to use only strings for your rules that match a certain minimum score u
 
 ### Create a new goodware strings database
 
-```python yarGen.py -c -g C:\Windows\System32```
+```python yarGen.py -c --opcodes -g /home/user/Downloads/office2013 -i office```
 
-### Update the goodware strings database (append new strings to the old ones)
+This will generate two new databases for strings and opcodes named:
+- good-strings-office.db
+- good-opcodes-office.db
 
-```python yarGen.py -u -g "C:\Program Files"```
+The new databases will automatically be initialized during startup and are from then on used for rule generation.
+
+### Update a goodware strings database (append new strings to the old ones)
+
+```python yarGen.py -u -g /home/user/Downloads/office365 -i office```
 
 ### My Best Pratice Command Line
 
-```python yarGen.py --debug --score --binarly -z 3 /opt/mal/APTx/samples```
+```python yarGen.py --opcodes -a "Florian Roth" -r "Internal Reserahc" -m /opt/mal/apt_case_32 -o rules32.yar```
