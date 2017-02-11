@@ -528,8 +528,11 @@ def filter_string_set(string_set):
 
             # Certain strings add-ons ----------------------------------------------
             # Extensions - Drive
-            if re.search(r'([A-Za-z]:\\|\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.vbs|'
-                         r'\.tmp|\.sys)', string, re.IGNORECASE):
+            if re.search(r'[A-Za-z]:\\', string, re.IGNORECASE):
+                localStringScores[string] += 2
+            # Relevant file extensions
+            if re.search(r'(\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.vbs|'
+                         r'\.tmp|\.sys|\.ps1)', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # System keywords
             if re.search(r'(cmd.exe|system32|users|Documents and|SystemRoot|Grant|hello|password|process|log)',
@@ -1318,7 +1321,8 @@ def get_rule_strings(string_elements, opcode_elements):
     opcodes_included = False
     if len(opcode_elements) > 0:
         rule_strings += "\n"
-        rule_strings += "      /* Recommendation - verify the opcodes on Binarly : http://www.binar.ly/ */\n"
+        rule_strings += "      /* Recommendation - verify the opcodes on Binarly : http://www.binar.ly */\n"
+        rule_strings += "      /* Test each of them in the search field & reduce length until it generates matches */\n"
         for i, opcode in enumerate(opcode_elements):
             rule_strings += "      $op%s = { %s } /* Opcode */\n" % (str(i), opcode)
             opcodes_included = True
