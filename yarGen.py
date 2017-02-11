@@ -287,7 +287,7 @@ def extract_opcodes(filePath):
                 for text_part in text_parts:
                     if text_part == '' or len(text_part) < 8:
                         continue
-                    opcodes.append(text_part[:24].encode('hex'))
+                    opcodes.append(text_part[:16].encode('hex'))
 
     except Exception, e:
         if args.debug:
@@ -1738,17 +1738,6 @@ if __name__ == '__main__':
     use_opcodes = False
     if args.opcodes:
         use_opcodes = True
-    if not os.path.isfile(get_abs_path("./dbs/good-opcodes.db")) and use_opcodes:
-        print "[E] Please download good-opcodes.db database via (--update) or get it from here " \
-              "https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28 if you want to use opcodes in your " \
-              "rules."
-        print "[-] Deactivating opcode generation ..."
-        use_opcodes = False
-
-    if not os.path.isfile(get_abs_path("./dbs/good-strings.db")) and not args.c:
-        print "[E] Please download the strings and opcodes databases (via --update or " \
-              "URL https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28 )"
-        sys.exit(1)
 
     # Read PEStudio string list
     pestudio_strings = {}
@@ -1901,11 +1890,23 @@ if __name__ == '__main__':
                         print "[+] Processing %s ..." % filePath
                         good_op_pickle = load(get_abs_path(filePath))
                         good_opcodes_db.update(good_op_pickle)
-                        print "[+] Total: %s / Added %d entries" % (len(good_opcodes_db), len(good_opcodes_db) - opcodes_num)
+                        print "[+] Total: %s (removed duplicates) / Added %d entries" % (len(good_opcodes_db), len(good_opcodes_db) - opcodes_num)
                         opcodes_num = len(good_opcodes_db)
                 except Exception, e:
                     use_opcodes = False
                     traceback.print_exc()
+
+        if use_opcodes and len(good_opcodes_db) < 1:
+            print "[E] Please download good-opcodes.db database via (--update) or get it from here " \
+                  "https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28 if you want to use opcodes in your " \
+                  "rules."
+            print "[-] Deactivating opcode generation ..."
+            use_opcodes = False
+
+        if len(good_strings_db) < 1 and not args.c:
+            print "[E] Please download the strings and opcodes databases (via --update or " \
+                  "URL https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28 )"
+            sys.exit(1)
 
     # If malware directory given
     if args.m:
