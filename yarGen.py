@@ -38,8 +38,19 @@ RELEVANT_EXTENSIONS = [".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".
                        ".wsf", ".wsh", ".input", ".war", ".jsp", ".php", ".asp", ".aspx", ".psd1", ".psm1", ".py"]
 
 REPO_URLS = {
-    'good-strings.db': 'https://www.bsk-consulting.de/download/good-strings.db',
-    'good-opcodes.db': 'https://www.bsk-consulting.de/download/good-opcodes.db'}
+    'good-opcodes-part1.db': 'https://www.bsk-consulting.de/download/good-opcodes-part1.db',
+    'good-opcodes-part2.db': 'https://www.bsk-consulting.de/download/good-opcodes-part2.db',
+    'good-opcodes-part3.db': 'https://www.bsk-consulting.de/download/good-opcodes-part3.db',
+    'good-opcodes-part4.db': 'https://www.bsk-consulting.de/download/good-opcodes-part4.db',
+    'good-opcodes-part5.db': 'https://www.bsk-consulting.de/download/good-opcodes-part5.db',
+    'good-opcodes-part6.db': 'https://www.bsk-consulting.de/download/good-opcodes-part6.db',
+    'good-strings-part1.db': 'https://www.bsk-consulting.de/download/good-strings-part1.db',
+    'good-strings-part2.db': 'https://www.bsk-consulting.de/download/good-strings-part2.db',
+    'good-strings-part3.db': 'https://www.bsk-consulting.de/download/good-strings-part3.db',
+    'good-strings-part4.db': 'https://www.bsk-consulting.de/download/good-strings-part4.db',
+    'good-strings-part5.db': 'https://www.bsk-consulting.de/download/good-strings-part5.db',
+    'good-strings-part6.db': 'https://www.bsk-consulting.de/download/good-strings-part6.db',
+}
 
 PE_STRINGS_FILE = "./3rdparty/strings.xml"
 
@@ -1649,7 +1660,7 @@ def print_welcome():
     print "   Yara Rule Generator"
     print "   by Florian Roth"
     print "   February 2017"
-    print "   Version 0.17.0"
+    print "   Version 0.17.1"
     print "   "
     print "###############################################################################"
 
@@ -1824,7 +1835,7 @@ if __name__ == '__main__':
             print "[+] Creating local database ..."
             # Evaluate the database identifiers
             db_identifier = ""
-            if args.n != "":
+            if args.i != "":
                 db_identifier = "-%s" % args.i
             strings_db = "./dbs/good-strings%s.db" % db_identifier
             opcodes_db = "./dbs/good-opcodes%s.db" % db_identifier
@@ -1880,8 +1891,9 @@ if __name__ == '__main__':
             # String databases
             if file.startswith("good-strings"):
                 try:
-                    print "[+] Processing %s ..." % filePath
+                    print "[+] Loading %s ..." % filePath
                     good_pickle = load(get_abs_path(filePath))
+                    print "[+] Merging %s ..." % filePath
                     good_strings_db.update(good_pickle)
                     print "[+] Total: %s / Added %d entries" % (len(good_strings_db), len(good_strings_db) - strings_num)
                     strings_num = len(good_strings_db)
@@ -1891,8 +1903,9 @@ if __name__ == '__main__':
             if file.startswith("good-opcodes"):
                 try:
                     if use_opcodes:
-                        print "[+] Processing %s ..." % filePath
+                        print "[+] Loading %s ..." % filePath
                         good_op_pickle = load(get_abs_path(filePath))
+                        print "[+] Merging %s ..." % filePath
                         good_opcodes_db.update(good_op_pickle)
                         print "[+] Total: %s (removed duplicates) / Added %d entries" % (len(good_opcodes_db), len(good_opcodes_db) - opcodes_num)
                         opcodes_num = len(good_opcodes_db)
