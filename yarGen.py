@@ -639,7 +639,7 @@ def filter_string_set(string_set):
                 localStringScores[string] += 5
             # Missed user profiles
             if re.search(r'[\\](users|profiles|username|benutzer|Documents and Settings|Utilisateurs|Utenti|'
-                         r'Usu·rios)[\\]', string, re.IGNORECASE):
+                         r'Usu√°rios)[\\]', string, re.IGNORECASE):
                 localStringScores[string] += 3
             # Strings: Words ending with numbers
             if re.search(r'^[A-Z][a-z]+[0-9]+$', string, re.IGNORECASE):
@@ -1884,7 +1884,7 @@ if __name__ == '__main__':
         strings_num = 0
 
         # Initialize all databases
-        for file in os.listdir("./dbs/"):
+        for file in os.listdir(get_abs_path("./dbs/")):
             if not file.endswith(".db"):
                 continue
             filePath = os.path.join("./dbs/", file)
