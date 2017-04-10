@@ -432,21 +432,37 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
 
 def filter_opcode_set(opcode_set):
 
+    # Preferred Opcodes
+    pref_opcodes = [' 34 ', 'ff ff ff ']
+
     # Useful set
     useful_set = []
+    pref_set = []
 
     for opcode in opcode_set:
         if opcode in good_opcodes_db:
             continue
 
+        # Format the opcode
+        formatted_opcode = get_opcode_string(opcode)
+
+        # Preferred opcodes
+        set_in_pref = False
+        for pref in pref_opcodes:
+            if pref in formatted_opcode:
+                pref_set.append(formatted_opcode)
+                set_in_pref = True
+        if set_in_pref:
+            continue
+
         # Else add to useful set
         useful_set.append(get_opcode_string(opcode))
 
-        # OpCode max count reached
-        if len(useful_set) >= args.n:
-            break
+    # Preferred opcodes first
+    useful_set = pref_set + useful_set
 
-    return useful_set
+    # Only return the number of opcodes defined with the "-n" parameter
+    return useful_set[:int(args.n)]
 
 
 def filter_string_set(string_set):
@@ -1806,7 +1822,7 @@ if __name__ == '__main__':
 
                 # Evaluate the database identifiers
                 db_identifier = ""
-                if args.n != "":
+                if args.i != "":
                     db_identifier = "-%s" % args.i
                 strings_db = "./dbs/good-strings%s.db" % db_identifier
                 opcodes_db = "./dbs/good-opcodes%s.db" % db_identifier
