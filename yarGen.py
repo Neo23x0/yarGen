@@ -746,7 +746,13 @@ def filter_string_set(string_set):
                 localStringScores[string] += 2
             # Persistence
             if re.search(r'(sc.exe |schtasks|at \\\\|at [0-9]{2}:[0-9]{2})', string, re.IGNORECASE):
-                localStringScores[string] += 2
+                localStringScores[string] += 3
+            # Unix/Linux
+            if re.search(r'(;chmod |; chmod |sh -c|/dev/tcp/|/bin/telnet|selinux| shell| cp /bin/sh )', string, re.IGNORECASE):
+                localStringScores[string] += 3
+            # Attack
+            if re.search(r'(attacker|brute force|bruteforce|connecting back|EXHAUSTIVE|exhaustion| spawn| evil| elevated)', string, re.IGNORECASE):
+                localStringScores[string] += 3
 
             # Binarly Lookup
             if binarly_active and localStringScores[string] > 0:
