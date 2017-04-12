@@ -879,6 +879,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
     general_info += "   Author: {0}\n".format(args.a)
     general_info += "   Date: {0}\n".format(get_timestamp_basic())
     general_info += "   Identifier: {0}\n".format(os.path.basename(args.m))
+    general_info += "   Reference: {0}\n".format(args.r)
     general_info += "*/\n\n"
 
     fh.write(general_info)
@@ -1151,7 +1152,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 rule += "   condition:\n"
                 rule += "      {0}\n".format(condition)
-                rule += "}\n"
+                rule += "}\n\n"
 
                 # print rule
                 # Add to rules string
@@ -1351,7 +1352,7 @@ def get_rule_strings(string_elements, opcode_elements):
         rule_strings += "      /* Recommendation - verify the opcodes on Binarly : http://www.binar.ly */\n"
         rule_strings += "      /* Test each of them in the search field & reduce length until it generates matches */\n"
         for i, opcode in enumerate(opcode_elements):
-            rule_strings += "      $op%s = { %s } /* Opcode */\n" % (str(i), opcode)
+            rule_strings += "      $op%s = { %s }\n" % (str(i), opcode)
             opcodes_included = True
     else:
         print "[-] Not enough unique opcodes found to include them"
