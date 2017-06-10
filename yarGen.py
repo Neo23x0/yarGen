@@ -28,6 +28,7 @@ from naiveBayesClassifier.classifier import Classifier
 
 try:
     from lxml import etree
+
     lxml_available = True
 except Exception, e:
     print "[E] lxml not found - disabling PeStudio string check functionality"
@@ -54,27 +55,28 @@ REPO_URLS = {
 
 PE_STRINGS_FILE = "./3rdparty/strings.xml"
 
+
 def get_abs_path(filename):
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)),filename)
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
+
 
 def get_files(dir, notRecursive):
     # Not Recursive
     if notRecursive:
         for filename in os.listdir(dir):
-            filePath = os.path.join(dir,filename)
+            filePath = os.path.join(dir, filename)
             if os.path.isdir(filePath):
                 continue
             yield filePath
     # Recursive
     else:
-        for root, directories, files in scandir.walk (dir, followlinks=False):
+        for root, directories, files in scandir.walk(dir, followlinks=False):
             for filename in files:
-                filePath = os.path.join(root,filename)
+                filePath = os.path.join(root, filename)
                 yield filePath
 
 
 def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantExtensions=False):
-
     # Prepare dictionary
     string_stats = {}
     opcode_stats = {}
@@ -91,23 +93,23 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
             extension = os.path.splitext(filePath)[1].lower()
             if not extension in RELEVANT_EXTENSIONS and onlyRelevantExtensions:
                 if args.debug:
-                    print "[-] EXTENSION %s - Skipping file %s" % ( extension, filePath )
+                    print "[-] EXTENSION %s - Skipping file %s" % (extension, filePath)
                 continue
 
             # Size Check
             size = 0
             try:
                 size = os.stat(filePath).st_size
-                if size > ( args.fs * 1024 * 1024 ):
+                if size > (args.fs * 1024 * 1024):
                     if args.debug:
-                        print "[-] File is to big - Skipping file %s (use -fs to adjust this behaviour)" % ( filePath )
+                        print "[-] File is to big - Skipping file %s (use -fs to adjust this behaviour)" % (filePath)
                     continue
             except Exception, e:
                 pass
 
             # Extract strings from file
-            ( strings, sha256sum ) = extract_strings(filePath, generateInfo)
-            
+            (strings, sha256sum) = extract_strings(filePath, generateInfo)
+
             # Extract opcodes from file
             opcodes = []
             if use_opcodes:
@@ -115,7 +117,7 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
 
             # Skip if MD5 already known - avoid duplicate files
             if sha256sum in known_sha1sums:
-                #if args.debug:
+                # if args.debug:
                 print "[-] Skipping strings/opcodes from %s due to MD5 duplicate detection" % filePath
                 continue
 
@@ -162,7 +164,7 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
                     string_stats[string]["files_basename"][fileName] = 0
                 string_stats[string]["files_basename"][fileName] += 1
                 string_stats[string]["files"].append(filePath)
-                
+
             # Add opcods to statistics
             for opcode in opcodes:
                 # String is not already known
@@ -180,8 +182,8 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
                 opcode_stats[opcode]["files"].append(filePath)
 
             if args.debug:
-                print "[+] Processed " + filePath + " Size: "+ str(size) + " Strings: " + str(len(string_stats)) + \
-                    " OpCodes: "+str(len(opcode_stats))+" ... "
+                print "[+] Processed " + filePath + " Size: " + str(size) + " Strings: " + str(len(string_stats)) + \
+                      " OpCodes: " + str(len(opcode_stats)) + " ... "
 
         except Exception, e:
             traceback.print_exc()
@@ -191,7 +193,6 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
 
 
 def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
-
     # Prepare dictionary
     all_strings = Counter()
     all_opcodes = Counter()
@@ -201,7 +202,7 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
         extension = os.path.splitext(filePath)[1].lower()
         if extension not in RELEVANT_EXTENSIONS and onlyRelevantExtensions:
             if args.debug:
-                print "[-] EXTENSION %s - Skipping file %s" % ( extension, filePath )
+                print "[-] EXTENSION %s - Skipping file %s" % (extension, filePath)
             continue
 
         # Size Check
@@ -214,7 +215,7 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
             pass
 
         # Extract strings from file
-        ( strings, sha1sum ) = extract_strings(filePath, generateInfo=False)
+        (strings, sha1sum) = extract_strings(filePath, generateInfo=False)
         # Append to all strings
         all_strings.update(strings)
 
@@ -231,7 +232,7 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
 def extract_strings(filePath, generateInfo):
     # String list
     strings = []
-    cleaned_strings	= []
+    cleaned_strings = []
     sha256sum = ""
     # Read file data
     try:
@@ -250,18 +251,18 @@ def extract_strings(filePath, generateInfo):
             ascii_count = len(strings)
         strings += [str("UTF16LE:%s" % ws.decode("utf-16le")) for ws in re.findall("(?:[\x1f-\x7e][\x00]){6,}", data)]
         if args.debug:
-            print "%s ASCII strings extracted" % ( len(strings) - ascii_count )
+            print "%s ASCII strings extracted" % (len(strings) - ascii_count)
 
         # Escape strings
         for string in strings:
             # Check if last bytes have been string and not yet saved to list
             if len(string) > 0:
-                string = string.replace('\\','\\\\')
-                string = string.replace('"','\\"')
+                string = string.replace('\\', '\\\\')
+                string = string.replace('"', '\\"')
                 if string not in cleaned_strings:
                     cleaned_strings.append(string.lstrip(" "))
 
-    except Exception,e:
+    except Exception, e:
         if args.debug:
             traceback.print_exc()
         pass
@@ -309,7 +310,6 @@ def extract_opcodes(filePath):
 
 
 def sample_string_evaluation(string_stats, opcode_stats, file_info):
-
     # Generate Stats -----------------------------------------------------------
     print "[+] Generating statistical data ..."
     file_strings = {}
@@ -361,7 +361,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                         if fileName not in inverse_stats:
                             inverse_stats[fileName] = []
                         if args.debug:
-                            print "Appending %s to %s" % ( string, fileName )
+                            print "Appending %s to %s" % (string, fileName)
                         inverse_stats[fileName].append(string)
 
         # SUPER RULE GENERATION -----------------------------------------------
@@ -399,19 +399,19 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
     for combi_count in range(max_combi_count, 1, -1):
         for combi in combinations:
             if combi_count == combinations[combi]["count"]:
-                #print "Count %s - Combi %s" % ( str(combinations[combi]["count"]), combi )
+                # print "Count %s - Combi %s" % ( str(combinations[combi]["count"]), combi )
                 # Filter the string set
-                #print "BEFORE"
-                #print len(combinations[combi]["strings"])
-                #print combinations[combi]["strings"]
+                # print "BEFORE"
+                # print len(combinations[combi]["strings"])
+                # print combinations[combi]["strings"]
                 string_set = combinations[combi]["strings"]
                 combinations[combi]["strings"] = []
                 combinations[combi]["strings"] = filter_string_set(string_set)
-                #print combinations[combi]["strings"]
-                #print "AFTER"
-                #print len(combinations[combi]["strings"])
+                # print combinations[combi]["strings"]
+                # print "AFTER"
+                # print len(combinations[combi]["strings"])
                 # Combi String count after filtering
-                #print "String count after filtering: %s" % str(len(combinations[combi]["strings"]))
+                # print "String count after filtering: %s" % str(len(combinations[combi]["strings"]))
 
                 # If the string set of the combination has a required size
                 if len(combinations[combi]["strings"]) >= int(args.rc):
@@ -422,8 +422,8 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                                 del file_strings[file]
                     # Add it as a super rule
                     print "[-] Adding Super Rule with %s strings." % str(len(combinations[combi]["strings"]))
-                    #if args.debug:
-                    #print "Rule Combi: %s" % combi
+                    # if args.debug:
+                    # print "Rule Combi: %s" % combi
                     super_rules.append(combinations[combi])
 
     # Return all data
@@ -431,7 +431,6 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
 
 
 def filter_opcode_set(opcode_set):
-
     # Preferred Opcodes
     pref_opcodes = [' 34 ', 'ff ff ff ']
 
@@ -466,7 +465,6 @@ def filter_opcode_set(opcode_set):
 
 
 def filter_string_set(string_set):
-
     # This is the only set we have - even if it's a weak one
     useful_set = []
 
@@ -503,20 +501,20 @@ def filter_string_set(string_set):
         # Good string valuation (after the UTF modification)
         if goodstring:
             # Reduce the score by the number of occurence in goodware files
-            localStringScores[string] = ( goodcount * -1 ) + 5
+            localStringScores[string] = (goodcount * -1) + 5
         else:
             localStringScores[string] = 0
 
         # PEStudio String Blacklist Evaluation
         if pestudio_available:
-            ( pescore, type ) = get_pestudio_score(string)
+            (pescore, type) = get_pestudio_score(string)
             # print string
             # Reset score of goodware files to 5 if blacklisted in PEStudio
             if type != "":
                 pestudioMarker[string] = type
                 # Modify the PEStudio blacklisted strings with their goodware stats count
                 if goodstring:
-                    pescore = pescore - ( goodcount / 1000.0 )
+                    pescore = pescore - (goodcount / 1000.0)
                     # print "%s - %s - %s" % (string, pescore, goodcount)
                 localStringScores[string] = pescore
 
@@ -537,7 +535,7 @@ def filter_string_set(string_set):
             # Length Score
             length = len(string)
             if length > int(args.l) and length < int(args.s):
-                localStringScores[string] += round( len(string) / 8, 2)
+                localStringScores[string] += round(len(string) / 8, 2)
             if length >= int(args.s):
                 localStringScores[string] += 1
 
@@ -589,8 +587,9 @@ def filter_string_set(string_set):
             if re.search(r'([C-Zc-z]:\\)', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # IP
-            if re.search(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b',
-                         string, re.IGNORECASE): # IP Address
+            if re.search(
+                    r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b',
+                    string, re.IGNORECASE):  # IP Address
                 localStringScores[string] += 5
             # Copyright Owner
             if re.search(r'(coded | c0d3d |cr3w\b|Coded by |codedby)', string, re.IGNORECASE):
@@ -726,7 +725,8 @@ def filter_string_set(string_set):
             if re.search(r'(isset\($post\[|isset\($get\[|eval\(Request)', string, re.IGNORECASE):
                 localStringScores[string] += 2
             # Suspicious words 1
-            if re.search(r'(impersonate|drop|upload|download|execute|shell|\bcmd\b|decode|rot13|decrypt)', string, re.IGNORECASE):
+            if re.search(r'(impersonate|drop|upload|download|execute|shell|\bcmd\b|decode|rot13|decrypt)', string,
+                         re.IGNORECASE):
                 localStringScores[string] += 2
             # Suspicious words 1
             if re.search(r'([+] |[-] |[*] |injecting|exploit|dumped|dumping|scanning|scanned|elevation|'
@@ -738,6 +738,9 @@ def filter_string_set(string_set):
                          r'Attaching to |ser has been successfully added|target system |LSA Secrets|DefaultPassword|'
                          r'Password: |loading dll|.Execute\(|Shellcode)', string, re.IGNORECASE):
                 localStringScores[string] += 4
+            # Mutex / Named Pipes
+            if re.search(r'(Mutex|NamedPipe|\\Global\\|\\pipe\\)', string, re.IGNORECASE):
+                localStringScores[string] += 3
             # Usage
             if re.search(r'(isset\($post\[|isset\($get\[)', string, re.IGNORECASE):
                 localStringScores[string] += 2
@@ -748,10 +751,13 @@ def filter_string_set(string_set):
             if re.search(r'(sc.exe |schtasks|at \\\\|at [0-9]{2}:[0-9]{2})', string, re.IGNORECASE):
                 localStringScores[string] += 3
             # Unix/Linux
-            if re.search(r'(;chmod |; chmod |sh -c|/dev/tcp/|/bin/telnet|selinux| shell| cp /bin/sh )', string, re.IGNORECASE):
+            if re.search(r'(;chmod |; chmod |sh -c|/dev/tcp/|/bin/telnet|selinux| shell| cp /bin/sh )', string,
+                         re.IGNORECASE):
                 localStringScores[string] += 3
             # Attack
-            if re.search(r'(attacker|brute force|bruteforce|connecting back|EXHAUSTIVE|exhaustion| spawn| evil| elevated)', string, re.IGNORECASE):
+            if re.search(
+                    r'(attacker|brute force|bruteforce|connecting back|EXHAUSTIVE|exhaustion| spawn| evil| elevated)',
+                    string, re.IGNORECASE):
                 localStringScores[string] += 3
 
             # Binarly Lookup
@@ -767,7 +773,7 @@ def filter_string_set(string_set):
             try:
                 if len(string) > 8:
                     # Try different ways - fuzz string
-                    for m_string in ( string, string[1:], string[1:] + "=", string + "=", string + "==" ):
+                    for m_string in (string, string[1:], string[1:] + "=", string + "=", string + "=="):
                         if is_base_64(m_string):
                             decoded_string = m_string.decode('base64')
                             # print decoded_string
@@ -795,7 +801,7 @@ def filter_string_set(string_set):
                 is_utf = True
             else:
                 is_utf = False
-            # print "SCORE: %s\tUTF: %s\tSTRING: %s" % ( localStringScores[string], is_utf, string )
+                # print "SCORE: %s\tUTF: %s\tSTRING: %s" % ( localStringScores[string], is_utf, string )
 
     sorted_set = sorted(localStringScores.iteritems(), key=operator.itemgetter(1), reverse=True)
 
@@ -827,7 +833,6 @@ def filter_string_set(string_set):
 
 
 def generate_general_condition(file_info):
-
     condition = ""
 
     # Different Magic Headers and File Sizes
@@ -871,7 +876,6 @@ def generate_general_condition(file_info):
 
 
 def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_stats):
-
     # Write to file ---------------------------------------------------
     if args.o:
         try:
@@ -963,7 +967,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 # Create a clean new name
                 cleanedName = fileBase
                 # Adapt length of rule name
-                if len(fileBase) < 8: # if name is too short add part from path
+                if len(fileBase) < 8:  # if name is too short add part from path
                     cleanedName = path.split('\\')[-1:][0] + "_" + cleanedName
                 # File name starts with a number
                 if re.search(r'^[0-9]', cleanedName):
@@ -982,7 +986,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 # Meta data -----------------------------------------------
                 rule += "   meta:\n"
-                rule += "      description = \"%s - file %s\"\n" % ( args.p, file )
+                rule += "      description = \"%s - file %s\"\n" % (args.p, file)
                 rule += "      author = \"%s\"\n" % args.a
                 rule += "      reference = \"%s\"\n" % args.r
                 rule += "      date = \"%s\"\n" % get_timestamp_basic()
@@ -996,9 +1000,9 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 rule += rule_strings
 
                 # Condition -----------------------------------------------
-                cond_op = "" # opcodes condition
-                cond_hs = "" # high scoring strings condition
-                cond_ls = "" # low scoring strings condition
+                cond_op = ""  # opcodes condition
+                cond_hs = ""  # high scoring strings condition
+                cond_ls = ""  # low scoring strings condition
                 low_scoring_strings = (string_rule_count - high_scoring_strings)
                 if high_scoring_strings > 0:
                     cond_hs = "1 of ($x*)"
@@ -1098,13 +1102,13 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 # Print rule title
                 rule += "rule %s {\n" % rule_name
                 rule += "   meta:\n"
-                rule += "      description = \"%s - from files %s\"\n" % ( args.p, file_listing )
+                rule += "      description = \"%s - from files %s\"\n" % (args.p, file_listing)
                 rule += "      author = \"%s\"\n" % args.a
                 rule += "      reference = \"%s\"\n" % args.r
                 rule += "      date = \"%s\"\n" % get_timestamp_basic()
                 rule += "      super_rule = 1\n"
                 for i, filePath in enumerate(super_rule["files"]):
-                    rule += "      hash%s = \"%s\"\n" % (str(i+1), file_info[filePath]["hash"])
+                    rule += "      hash%s = \"%s\"\n" % (str(i + 1), file_info[filePath]["hash"])
 
                 rule += "   strings:\n"
 
@@ -1118,9 +1122,9 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 rule += rule_strings
 
                 # Condition -----------------------------------------------
-                cond_op = "" # opcodes condition
-                cond_hs = "" # high scoring strings condition
-                cond_ls = "" # low scoring strings condition
+                cond_op = ""  # opcodes condition
+                cond_hs = ""  # high scoring strings condition
+                cond_ls = ""  # low scoring strings condition
                 low_scoring_strings = (string_rule_count - high_scoring_strings)
                 if high_scoring_strings > 0:
                     cond_hs = "1 of ($x*)"
@@ -1222,12 +1226,12 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 # Meta data -----------------------------------------------
                 rule += "   meta:\n"
-                rule += "      description = \"%s for anomaly detection - file %s\"\n" % ( args.p, fileName )
+                rule += "      description = \"%s for anomaly detection - file %s\"\n" % (args.p, fileName)
                 rule += "      author = \"%s\"\n" % args.a
                 rule += "      reference = \"%s\"\n" % args.r
                 rule += "      date = \"%s\"\n" % get_timestamp_basic()
                 for i, hash in enumerate(file_info[fileName]["hashes"]):
-                    rule += "      hash%s = \"%s\"\n" % (str(i+1), hash)
+                    rule += "      hash%s = \"%s\"\n" % (str(i + 1), hash)
 
                 rule += "   strings:\n"
 
@@ -1275,11 +1279,10 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
     if args.debug:
         print rules
 
-    return ( rule_count, inverse_rule_count, super_rule_count )
+    return (rule_count, inverse_rule_count, super_rule_count)
 
 
 def get_rule_strings(string_elements, opcode_elements):
-
     rule_strings = ""
     high_scoring_strings = 0
     string_rule_count = 0
@@ -1298,7 +1301,7 @@ def get_rule_strings(string_elements, opcode_elements):
         goodware_comment = ""
 
         if string in good_strings_db:
-            goodware_comment = " /* Goodware String - occured %s times */" % ( good_strings_db[string] )
+            goodware_comment = " /* Goodware String - occured %s times */" % (good_strings_db[string])
 
         if string in stringScores:
             if args.score:
@@ -1310,7 +1313,8 @@ def get_rule_strings(string_elements, opcode_elements):
                         string_type = "wide"
                         # print "removed UTF16LE from %s" % string
                         string_lookup = string[8:]
-                    binarly_score = " (binarly: t: %s m: %s p: %s c: %s s: %s) " % get_binarly_data(string_lookup, string_type)
+                    binarly_score = " (binarly: t: %s m: %s p: %s c: %s s: %s) " % get_binarly_data(string_lookup,
+                                                                                                    string_type)
                 score_comment += " /* score: '%.2f'%s*/" % (stringScores[string], binarly_score)
         else:
             print "NO SCORE: %s" % string
@@ -1339,9 +1343,13 @@ def get_rule_strings(string_elements, opcode_elements):
         # No compose the rule line
         if float(stringScores[initial_string]) > score_highly_specific:
             high_scoring_strings += 1
-            rule_strings += "      $x%s = \"%s\"%s%s%s%s%s%s%s\n" % (str(i+1), string, fullword, enc, base64comment, reversedComment, pestudio_comment, score_comment, goodware_comment )
+            rule_strings += "      $x%s = \"%s\"%s%s%s%s%s%s%s\n" % (
+            str(i + 1), string, fullword, enc, base64comment, reversedComment, pestudio_comment, score_comment,
+            goodware_comment)
         else:
-            rule_strings += "      $s%s = \"%s\"%s%s%s%s%s%s%s\n" % (str(i+1), string, fullword, enc, base64comment, reversedComment, pestudio_comment, score_comment, goodware_comment )
+            rule_strings += "      $s%s = \"%s\"%s%s%s%s%s%s%s\n" % (
+            str(i + 1), string, fullword, enc, base64comment, reversedComment, pestudio_comment, score_comment,
+            goodware_comment)
 
         # If too many string definitions found - cut it at the
         # count defined via command line param -rc
@@ -1391,7 +1399,6 @@ def initialize_pestudio_strings():
 
 
 def initialize_bayes_filter():
-
     # BayesTrainer
     stringTrainer = Trainer(tokenizer)
 
@@ -1437,11 +1444,11 @@ def get_binarly_data(string, string_type, paranoid=False):
     try:
         if result['stats']['total_count'] > 0:
             # Counts
-            r_count     = float(result['stats']['total_count'])
-            r_mal       = float(result['stats']['malware_count'])
-            r_pus       = float(result['stats']['pua_count'])
-            r_clean     = float(result['stats']['clean_count'])
-            r_susp      = float(result['stats']['suspicious_count'])
+            r_count = float(result['stats']['total_count'])
+            r_mal = float(result['stats']['malware_count'])
+            r_pus = float(result['stats']['pua_count'])
+            r_clean = float(result['stats']['clean_count'])
+            r_susp = float(result['stats']['suspicious_count'])
 
     except Exception, e:
         if args.debug:
@@ -1491,11 +1498,11 @@ def get_binarly_score(string, string_type, paranoid=False):
     try:
         if result['stats']['total_count'] > 0:
             # Counts
-            r_count     = float(result['stats']['total_count'])
-            r_mal       = float(result['stats']['malware_count'])
-            r_pus       = float(result['stats']['pua_count'])
-            r_clean     = float(result['stats']['clean_count'])
-            r_susp      = float(result['stats']['suspicious_count'])
+            r_count = float(result['stats']['total_count'])
+            r_mal = float(result['stats']['malware_count'])
+            r_pus = float(result['stats']['pua_count'])
+            r_clean = float(result['stats']['clean_count'])
+            r_susp = float(result['stats']['suspicious_count'])
             # Calculating score
             evil = r_mal + r_susp
             score = round(30 * (evil / r_count), 2)
@@ -1523,7 +1530,7 @@ def get_binarly_score(string, string_type, paranoid=False):
 
 
 def get_opcode_string(opcode):
-    return ' '.join(opcode[i:i+2] for i in range(0, len(opcode), 2))
+    return ' '.join(opcode[i:i + 2] for i in range(0, len(opcode), 2))
 
 
 def get_magic(filePath):
@@ -1541,7 +1548,8 @@ def get_uint_string(magic):
     if len(magic) == 2:
         return "uint16(0) == 0x{1}{0}".format(magic[0].encode('hex'), magic[1].encode('hex'))
     if len(magic) == 4:
-        return "uint32(0) == 0x{3}{2}{1}{0}".format(magic[0].encode('hex'), magic[1].encode('hex'), magic[2].encode('hex'), magic[3].encode('hex'))
+        return "uint32(0) == 0x{3}{2}{1}{0}".format(magic[0].encode('hex'), magic[1].encode('hex'),
+                                                    magic[2].encode('hex'), magic[3].encode('hex'))
     return ""
 
 
@@ -1568,7 +1576,7 @@ def get_file_range(size):
         size_string = "filesize < {0}KB".format(max_size)
         if args.debug:
             print "File Size Eval: SampleSize (b): {0} SizeWithMultiplier (b/Kb): {1} / {2} RoundedSize: {3}".format(
-                    str(size), str(max_size_b), str(max_size_kb), str(max_size) )
+                str(size), str(max_size_b), str(max_size_kb), str(max_size))
     except Exception, e:
         if args.debug:
             traceback.print_exc()
@@ -1586,10 +1594,10 @@ def get_timestamp_basic(date_obj=None):
 
 def is_ascii_char(b, padding_allowed=False):
     if padding_allowed:
-        if ( ord(b)<127 and ord(b)>31 ) or ord(b) == 0 :
+        if (ord(b) < 127 and ord(b) > 31) or ord(b) == 0:
             return 1
     else:
-        if ord(b)<127 and ord(b)>31 :
+        if ord(b) < 127 and ord(b) > 31:
             return 1
     return 0
 
@@ -1597,10 +1605,10 @@ def is_ascii_char(b, padding_allowed=False):
 def is_ascii_string(string, padding_allowed=False):
     for b in string:
         if padding_allowed:
-            if not ( ( ord(b)<127 and ord(b)>31 ) or ord(b) == 0 ):
+            if not ((ord(b) < 127 and ord(b) > 31) or ord(b) == 0):
                 return 0
         else:
-            if not ( ord(b)<127 and ord(b)>31 ):
+            if not (ord(b) < 127 and ord(b) > 31):
                 return 0
     return 1
 
@@ -1608,7 +1616,8 @@ def is_ascii_string(string, padding_allowed=False):
 def is_base_64(s):
     return (len(s) % 4 == 0) and re.match('^[A-Za-z0-9+/]+[=]{0,2}$', s)
 
-def save(object, filename, protocol = 0):
+
+def save(object, filename, protocol=0):
     file = gzip.GzipFile(filename, 'wb')
     file.write(pickle.dumps(object, protocol))
     file.close()
@@ -1623,7 +1632,7 @@ def load(filename):
             break
         buffer += data
     object = pickle.loads(buffer)
-    del(buffer)
+    del (buffer)
     file.close()
     return object
 
@@ -1636,15 +1645,15 @@ def init_binarly_apikey(api_key_file):
     """
     api_key = ""
     try:
-        with open (api_key_file, 'r') as keyfile:
+        with open(api_key_file, 'r') as keyfile:
             api_key = keyfile.readline().rstrip('\n\l\r ')
     except Exception, e:
         print "[E] Cannot read Binarly API key from file '%s'" % api_key_file
 
     return api_key
 
-def update_databases():
 
+def update_databases():
     # Preparations
     try:
         dbDir = './dbs/'
@@ -1726,7 +1735,7 @@ if __name__ == '__main__':
                               action='store_true', default=False)
     group_output.add_argument('--nosuper', action='store_true', default=False, help='Don\'t try to create super rules '
                                                                                     'that match against various files')
-    
+
     group_db = parser.add_argument_group('Database Operations')
     group_db.add_argument('--update', action='store_true', default=False, help='Update the local strings and opcodes '
                                                                                'dbs from the online repository '
@@ -1739,7 +1748,7 @@ if __name__ == '__main__':
     group_db.add_argument('-i', default="", help='Specify an identifier for the newly created databases '
                                                  '(good-strings-identifier.db, good-opcodes-identifier.db)')
 
-    group_general = parser.add_argument_group('General Options')    
+    group_general = parser.add_argument_group('General Options')
     group_general.add_argument('--nr', action='store_true', default=False, help='Do not recursively scan directories')
     group_general.add_argument('--oe', action='store_true', default=False, help='Only scan executable extensions EXE, '
                                                                                 'DLL, ASP, JSP, PHP, BIN, INFECTED')
@@ -1747,7 +1756,7 @@ if __name__ == '__main__':
                                default=10)
     group_general.add_argument('--debug', action='store_true', default=False, help='Debug output')
 
-    group_opcode= parser.add_argument_group('Other Features')
+    group_opcode = parser.add_argument_group('Other Features')
     group_opcode.add_argument('--opcodes', action='store_true', default=False, help='Do use the OpCode feature '
                                                                                     '(use this if not enough high '
                                                                                     'scoring strings can be found)')
@@ -1798,6 +1807,7 @@ if __name__ == '__main__':
     if args.binarly:
         try:
             from BinarlyAPIv1 import *
+
             # Get API key
             api_key = init_binarly_apikey("./config/apikey.txt")
             if api_key != "":
@@ -1918,7 +1928,8 @@ if __name__ == '__main__':
                     good_pickle = load(get_abs_path(filePath))
                     print "[+] Merging %s ..." % filePath
                     good_strings_db.update(good_pickle)
-                    print "[+] Total: %s / Added %d entries" % (len(good_strings_db), len(good_strings_db) - strings_num)
+                    print "[+] Total: %s / Added %d entries" % (
+                    len(good_strings_db), len(good_strings_db) - strings_num)
                     strings_num = len(good_strings_db)
                 except Exception, e:
                     traceback.print_exc()
@@ -1930,7 +1941,8 @@ if __name__ == '__main__':
                         good_op_pickle = load(get_abs_path(filePath))
                         print "[+] Merging %s ..." % filePath
                         good_opcodes_db.update(good_op_pickle)
-                        print "[+] Total: %s (removed duplicates) / Added %d entries" % (len(good_opcodes_db), len(good_opcodes_db) - opcodes_num)
+                        print "[+] Total: %s (removed duplicates) / Added %d entries" % (
+                        len(good_opcodes_db), len(good_opcodes_db) - opcodes_num)
                         opcodes_num = len(good_opcodes_db)
                 except Exception, e:
                     use_opcodes = False
@@ -1965,7 +1977,7 @@ if __name__ == '__main__':
         stringScores = {}
 
         # Extract all information
-        ( sample_string_stats, sample_opcode_stats, file_info ) = \
+        (sample_string_stats, sample_opcode_stats, file_info) = \
             parse_sample_dir(args.m, args.nr, generateInfo=True, onlyRelevantExtensions=args.oe)
 
         # Evaluate Strings
