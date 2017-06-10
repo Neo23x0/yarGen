@@ -75,7 +75,7 @@ for a file that was already covered by super rule by using --nosimple.
 
 1. Make sure you have at least 4GB of RAM on the machine you plan to use yarGen (6GB if opcodes are included in rule generation, use with --opcodes)
 2. Download the latest release from the "release" section
-3. Install all dependancies with ```sudo pip install scandir lxml naiveBayesClassifier pefile``` (@twpDone reported that in case of errors try ```sudo pip install pefile``` and ```sudo pip3 install scandir lxml naiveBayesClassifier```)
+3. Install all dependancies with ```sudo pip install scandir lxml naiveBayesClassifier pefile``` (@twpDone reported that in case of errors try ```sudo pip install pefile``` and ```sudo pip install scandir lxml naiveBayesClassifier```)
 4. Clone and install [Binarly-SDK](https://github.com/binarlyhq/binarly-sdk/) and install it with ```python ./setup.py install```
 5. Run python ```yarGen.py --update``` to automatically download the built-in databases or download them manuall from [here](https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28) and place them in a new './dbs' sub folder
 6. See help with ```python yarGen.py --help``` for more information on the command line parameters
@@ -116,7 +116,7 @@ In order to use the Binarly lookup, you need an API key placed in a file named
 Request an Binarly API key by mail to: contact@binar.ly  
 
 ### Offline
-Feb 2017: The Binarly API service is currently offline, but you can still use the website to verify the opcode rule components create by yarGen.
+Feb 2017: The Binarly API service is currently offline. There will be a replacement in the near future which will then be supported by yarGen.
 
 ## Command Line Parameters
 
