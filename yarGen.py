@@ -713,7 +713,7 @@ def filter_string_set(string_set):
                 localStringScores[string] += 4
             # Powershell
             if re.search(r'(-exec bypass|IEX |Invoke-Expression|Net.Webclient|Invoke[A-Z]|Net.WebClient|-w hidden |'
-                         r'-encodedcommand| -nop |MemoryLoadLibrary|FromBase64String)', string):
+                         r'-encodedcommand| -nop |MemoryLoadLibrary|FromBase64String|Download|EncodedCommand)', string):
                 localStringScores[string] += 4
             # Signing Certificates
             if re.search(r'( Inc | Co.|  Ltd.,| LLC| Limited)', string):
@@ -736,7 +736,8 @@ def filter_string_set(string_set):
                          r'] token|] Token |] Firing | hashes | etc/passwd| SAM | NTML|unsupported target|'
                          r'race condition|Token system |LoaderConfig| add user |ile upload |ile download |'
                          r'Attaching to |ser has been successfully added|target system |LSA Secrets|DefaultPassword|'
-                         r'Password: |loading dll|.Execute\(|Shellcode)', string, re.IGNORECASE):
+                         r'Password: |loading dll|.Execute\(|Shellcode|Loader|inject x86|inject x64)',
+                         string, re.IGNORECASE):
                 localStringScores[string] += 4
             # Mutex / Named Pipes
             if re.search(r'(Mutex|NamedPipe|\\Global\\|\\pipe\\)', string, re.IGNORECASE):
