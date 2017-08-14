@@ -1,0 +1,3193 @@
+﻿<!--
+strings.mxl is part of the pestudio (www.winitor.com)
+It contains the strings that will be detected as blackListed by pestudio.
+-->
+
+<xml version="1.0" encoding="utf-8" md5="">
+
+  <settings>
+    <setting>
+      <minimum-size comment="the minimum character size of a string">4</minimum-size>
+      <case-sensitive comment="">0</case-sensitive>
+      <substring comment="">0</substring>
+      <HideImportedLibraryNames comment="">0</HideImportedLibraryNames>
+      <HideImportedFunctionNames comment="">0</HideImportedFunctionNames>
+    </setting>
+  </settings>
+
+  <white>
+    <item>not enough space for lowio initialization</item>
+    <item>not enough space for stdio initialization</item>
+    <item>pure virtual function call</item>
+    <item>not enough space for _onexit/atexit table</item>
+    <item>unable to open console device</item>
+    <item>unexpected heap error</item>
+    <item>unexpected multithread lock error</item>
+    <item>not enough space for thread data</item>
+    <item>This application has requested the Runtime to terminate it in an unusual way.</item>
+    <item>Please contact the application's support team for more information.</item>
+    <item>not enough space for environment</item>
+    <item>not enough space for arguments</item>
+    <item>program name unknown</item>
+    <item>Runtime Error!</item>
+    <item>Program: </item>
+    <item> Complete Object Locator'</item>
+    <item> Class Hierarchy Descriptor'</item>
+    <item> Base Class Array'</item>
+    <item> Base Class Descriptor at (</item>
+    <item> Type Descriptor'</item>
+    <item>`local static thread guard'</item>
+    <item>`managed vector copy constructor iterator'</item>
+    <item>`vector vbase copy constructor iterator'</item>
+    <item>`vector copy constructor iterator'</item>
+    <item>`dynamic atexit destructor for '</item>
+    <item>`dynamic initializer for '</item>
+    <item>`eh vector vbase copy constructor iterator'</item>
+    <item>`eh vector copy constructor iterator'</item>
+    <item>`managed vector destructor iterator'</item>
+    <item>`managed vector constructor iterator'</item>
+    <item>`placement delete[] closure'</item>
+    <item>`placement delete closure'</item>
+    <item>`omni callsig'</item>
+    <item> delete[]</item>
+    <item> new[]</item>
+    <item>`local vftable constructor closure'</item>
+    <item>`local vftable'</item>
+    <item>`RTTI</item>
+    <item>`udt returning'</item>
+    <item>`copy constructor closure'</item>
+    <item>`eh vector vbase constructor iterator'</item>
+    <item>`eh vector destructor iterator'</item>
+    <item>`eh vector constructor iterator'</item>
+    <item>`virtual displacement map'</item>
+    <item>`vector vbase constructor iterator'</item>
+    <item>`vector destructor iterator'</item>
+    <item>`vector constructor iterator'</item>
+    <item>`scalar deleting destructor'</item>
+    <item>`default constructor closure'</item>
+    <item>`vector deleting destructor'</item>
+    <item>`vbase destructor'</item>
+    <item>`string'</item>
+    <item>`local static guard'</item>
+    <item>`typeof'</item>
+    <item>`vcall'</item>
+    <item>`vbtable'</item>
+    <item>`vftable'</item>
+    <item>operator</item>
+    <item> delete</item>
+    <item> new</item>
+    <item>__unaligned</item>
+    <item>__restrict</item>
+    <item>__ptr64</item>
+    <item>__clrcall</item>
+    <item>__fastcall</item>
+    <item>__thiscall</item>
+    <item>__stdcall</item>
+    <item>__pascal</item>
+    <item>__cdecl</item>
+    <item>__based(</item>
+    <item>December</item>
+    <item>November</item>
+    <item>October</item>
+    <item>September</item>
+    <item>August</item>
+    <item>July</item>
+    <item>June</item>
+    <item>April</item>
+    <item>March</item>
+    <item>February</item>
+    <item>January</item>
+    <item>Saturday</item>
+    <item>Friday</item>
+    <item>Thursday</item>
+    <item>Wednesday</item>
+    <item>Tuesday</item>
+    <item>Monday</item>
+    <item>Sunday</item>
+    <item>SunMonTueWedThuFriSat</item>
+    <item>JanFebMarAprMayJunJulAugSepOctNovDec</item>
+    <item>R6002</item>
+    <item>R6008</item>
+    <item>R6009</item>
+    <item>R6016</item>
+    <item>R6017</item>
+    <item>R6018</item>
+    <item>R6019</item>
+    <item>R6024</item>
+    <item>R6025</item>
+    <item>R6026</item>
+    <item>winm</item>
+  </white>
+
+  <!-- Virustotal AntiVirus -->
+  <avs>
+    <av>threatexpert</av>
+    <av>emsisoft</av>
+    <av>rising</av>
+    <av>pctools</av>
+    <av>norman</av>
+    <av>k7computing</av>
+    <av>ikarus</av>
+    <av>hacksoft</av>
+    <av>gdata</av>
+    <av>fortinet</av>
+    <av>ewido</av>
+    <av>clamav</av>
+    <av>comodo</av>
+    <av>quickheal</av>
+    <av>avira</av>
+    <av>avast</av>
+    <av>esafe</av>
+    <av>ahnlab</av>
+    <av>centralcommand</av>
+    <av>drweb</av>
+    <av>grisoft</av>
+    <av>nod32</av>
+    <av>f-prot</av>
+    <av>jotti</av>
+    <av>computerassociates</av>
+    <av>networkassociates</av>
+    <av>etrust</av>
+    <av>panda</av>
+    <av>sophos</av>
+    <av>trendmicro</av>
+    <av>defender</av>
+    <av>rootkit</av>
+    <av>spyware</av>
+    <av>Kaspersky</av>
+    <av>BitDefender</av>
+    <av>Dr.Web</av>
+    <av>Kaspersky Antivirus</av>
+    <av>Nod32 Antivirus 2.x</av>
+    <av>Ewido Security Suite</av>
+    <av>McAfee VirusScan</av>
+    <av>Panda Antivirus/Firewall</av>
+    <av>Symantec/Norton</av>
+    <av>PC-cillin Antivirus</av>
+    <av>F-Secure</av>
+    <av>Kingsoft ShaDu</av>
+    <av>NOD32 Antivirus</av>
+    <av>Rising Antivirus</av>
+    <av>Jiangmin Antivirus</av>
+    <av>360 ShaDu</av>
+    <av>360 Safe</av>
+    <av>McAfee AV</av>
+    <av>Bitdefender AV</av>
+    <av>Norton Symantec AV</av>
+    <av>F-Secure AV</av>
+    <av>AhnLab V3 Internet Security 8</av>
+    <av>Avast AntiVirus</av>
+    <av>Avira Antivirus</av>
+    <av>Eset Nod32 Scanner</av>
+    <av>F-Secure Gatekeeper Handler Starter</av>
+    <av>F-Secure Recognizer</av>
+    <av>F-Secure HIPS</av>
+    <av>F-Secure Gatekeeper</av>
+    <av>F-Secure Filter</av>
+    <av>WinDefend</av>
+    <av>OutpostFirewall</av>
+    <av>McAfee Framework Service</av>
+    <av>Panda Antivirus</av>
+    <av>ZoneAlarm Client</av>
+    <av>Zone Labs Client</av>
+    <av>windefender</av>
+    <av>Software\Microsoft\Windows\CurrentVersion\Uninstall\Kingsoft Antivirus</av>
+    <av>Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Kingsoft Antivirus</av>
+    <av>Software\Microsoft\Windows\CurrentVersion\Uninstall\360SD</av>
+    <av>Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\360SD</av>
+    <av>Software\Microsoft\Windows\CurrentVersion\Uninstall\Kingsoft PC Doctor</av>
+    <av>Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Kingsoft PC Doctor</av>
+    <av>Software\Microsoft\Windows\CurrentVersion\Uninstall\360 Internet Security</av>
+    <av>Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\360 Internet Security</av>
+    <av>Software\Microsoft\Windows\CurrentVersion\Uninstall\Kingsoft Internet Security 9</av>
+    <av>Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Kingsoft Internet Security 9</av>
+    <av>Software\Microsoft\Windows\CurrentVersion\Uninstall\Kingsoft Internet Security U SP1</av>
+    <av>Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Kingsoft Internet Security U SP1</av>
+    <av>Software\Microsoft\Windows\CurrentVersion\Uninstall\{D1ABBC6D-4C7B-4D6B-9B50-F79399DD3652}</av>
+    <av>Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{D1ABBC6D-4C7B-4D6B-9B50-F79399DD3652}</av>
+    <av>Software\Microsoft\Windows\CurrentVersion\Uninstall\{AC54C7CC-3868-4942-BD2E-1BCA2519C881}</av>
+    <av>Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{AC54C7CC-3868-4942-BD2E-1BCA2519C881}</av>
+  </avs>
+
+  <regexs>
+    <regex>{[!22!]}{[!18!]}{[!33!]}{[!4!]}{[!34!]}= %d, {[!35!]}= 0x%x.{[!36!]}</regex>
+    <regex>{[!23!]}{[!22!]}, {[!24!]}{[!4!]}%d{[!25!]}</regex>
+    <regex>{[!28!]}%d.%d, {[!29!]}%d.%d.{[!1!]}</regex>
+    <regex>{[!37!]}{[!35!]}{[!4!]}{[!38!]}0x%x,{[!39!]}0x%x.</regex>
+    <regex>{[!37!]}{[!35!]}{[!4!]}{[!38!]}0x%x,{[!39!]}0x%x.{[!36!]}</regex>
+    <regex>{[!41!]}{[!4!]}{[!42!]}= 0x%x, {[!34!]}= 0x%x.{[!36!]}</regex>
+    <regex>[3-9]{1}[0-9]{1219}[D=\u0061][0-9]{1030}</regex>
+    <regex>((b|B)[0-9]{1319}\^[A-Za-z\s]{030}\/[A-Za-z\s]{030}\^(0[7-9]|1[0-5])((0[1-9])|(1[0-2]))[0-9\s]{350}[0-9]{1})</regex>
+    <regex>([0-9]{1516}[D=](0[7-9]|1[0-5])((0[1-9])|(1[0-2]))[0-9]{830})</regex>
+    <regex>[0-9]{1516}\^[a-zA-Z0-9=*></regex>
+    <regex>[0-9]{1516}=[0-9]{532}.{120}</regex>
+    <regex>([0-9]{1319}[=D][0-9]{550})\?</regex>
+    <regex>([0-9]{1319}[\^][A-Za-z\s]{030}[\/][[A-Za-z\s]{030}[\^]([0-9\s]{170})\?)</regex>
+    <regex>("^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$")</regex>
+    <regex>^http[s]?://([^\/:\s]+)(:[^\/\s]+)?(\/?[^\s]*)$</regex>
+    <regex>{[!11!]}{[!4!]}</regex>
+    <regex>{[!12!]}{[!10!]}http://%s:%d{[!4!]}</regex>
+    <regex>{[!13!]}{[!4!]}</regex>
+    <regex>{[!14!]}{[!4!]}</regex>
+    <regex>{[!15!]}{[!4!]}</regex>
+    <regex>{[!16!]}{[!20!]}{[!26!]}%s</regex>
+    <regex>{[!16!]}{[!46!]}%s (%d)</regex>
+    <regex>{[!17!]}{[!18!]}</regex>
+    <regex>{[!17!]}{[!19!]}</regex>
+    <regex>{[!2!]}{[!20!]}{[!21!]}%s</regex>
+    <regex>{[!22!]}%s{[!5!]}</regex>
+    <regex>{[!22!]}{[!18!]}{[!33!]}{[!4!]}{[!34!]}= %d {[!35!]}= 0x%x.{[!36!]}</regex>
+    <regex>{[!22!]}{[!5!]}%s -> %s [%d]{[!35!]}= 0x%x (== 0x%x)</regex>
+    <regex>{[!23!]}{[!22!]} {[!24!]}{[!4!]}%d{[!25!]}</regex>
+    <regex>{[!27!]}{[!30!]}{[!4!]}%s.{[!2!]}</regex>
+    <regex>{[!28!]}%d.%d {[!29!]}%d.%d.{[!1!]}</regex>
+    <regex>{[!29!]}{[!1!]}</regex>
+    <regex>{[!29!]}{[!32!]}%s</regex>
+    <regex>{[!3!]}%s{[!4!]}</regex>
+    <regex>{[!30!]}{[!31!]}{[!4!]}</regex>
+    <regex>{[!37!]}{[!35!]}{[!4!]}{[!38!]}0x%x{[!39!]}0x%x.</regex>
+    <regex>{[!37!]}{[!35!]}{[!4!]}{[!38!]}0x%x{[!39!]}0x%x.{[!36!]}</regex>
+    <regex>{[!4!]}{[!10!]}{[!44!]}{[!43!]}{[!21!]}</regex>
+    <regex>{[!4!]}{[!45!]}{[!21!]}</regex>
+    <regex>{[!40!]}{[!4!]}{[!36!]}</regex>
+    <regex>{[!41!]}{[!4!]}{[!42!]}= 0x%x {[!34!]}= 0x%x.{[!36!]}</regex>
+    <regex>{[!43!]}{[!4!]}</regex>
+    <regex>{[!46!]}%d{[!1!]}</regex>
+    <regex>((b|B)[0-9]{13,19}\^[A-Za-z\s]{0,30}\/[A-Za-z\s]{0,30}\^(1[1-9])((0[1-9])|(1[0-2]))[0-9\s]{3,50}[0-9]{1})</regex>
+    <regex>([3-9]{1}[0-9]{14,15}[D=](1[1-9])((0[1-9])|(1[0-2]))[0-9]{8,30})</regex>
+    <regex>((b|B)[0-9]{13,19}\^[A-Za-z\s]{0,30}\/[A-Za-z\s]{0,30}\^(0[7-9]|1[0-5])((0[1-9])|(1[0-2]))[0-9\s]{3,50}[0-9]{1})</regex>
+    <regex>([0-9]{15,16}[D=](0[7-9]|1[0-5])((0[1-9])|(1[0-2]))[0-9]{8,30})</regex>
+  </regexs>
+
+  <privs>
+    <priv>SeAssignPrimaryTokenPrivilege</priv>
+    <priv>SeAuditPrivilege</priv>
+    <priv>SeBackupPrivilege</priv>
+    <priv>SeChangeNotifyPrivilege</priv>
+    <priv>SeCreateGlobalPrivilege</priv>
+    <priv>SeCreatePagefilePrivilege</priv>
+    <priv>SeCreatePermanentPrivilege</priv>
+    <priv>SeCreateSymbolicLinkPrivilege</priv>
+    <priv>SeCreateTokenPrivilege</priv>
+    <priv>SeDebugPrivilege</priv>
+    <priv>SeEnableDelegationPrivilege</priv>
+    <priv>SeImpersonatePrivilege</priv>
+    <priv>SeIncreaseBasePriorityPrivilege</priv>
+    <priv>SeIncreaseQuotaPrivilege</priv>
+    <priv>SeIncreaseWorkingSetPrivilege</priv>
+    <priv>SeLoadDriverPrivilege</priv>
+    <priv>SeLockMemoryPrivilege</priv>
+    <priv>SeMachineAccountPrivilege</priv>
+    <priv>SeManageVolumePrivilege</priv>
+    <priv>SeProfileSingleProcessPrivilege</priv>
+    <priv>SeRelabelPrivilege</priv>
+    <priv>SeRemoteShutdownPrivilege</priv>
+    <priv>SeRestorePrivilege</priv>
+    <priv>SeSecurityPrivilege</priv>
+    <priv>SeShutdownPrivilege</priv>
+    <priv>SeSyncAgentPrivilege</priv>
+    <priv>SeSystemEnvironmentPrivilege</priv>
+    <priv>SeSystemProfilePrivilege</priv>
+    <priv>SeSystemtimePrivilege</priv>
+    <priv>SeTakeOwnershipPrivilege</priv>
+    <priv>SeTcbPrivilege</priv>
+    <priv>SeTimeZonePrivilege</priv>
+    <priv>SeTrustedCredManAccessPrivilege</priv>
+    <priv>SeUndockPrivilege</priv>
+    <priv>SeUnsolicitedInputPrivilege</priv>
+  </privs>
+
+  <oids>
+    <oid>2.16.840.1.113730.4.1</oid>
+    <oid>1.3.6.1.4.1.311.10.3.3</oid>
+    <oid>1.3.6.1.5.5.7.3.2</oid>
+    <oid>1.3.6.1.5.5.7.3.1</oid>
+    <oid>1.2.840.113549.1.1.11</oid>
+    <oid>1.2.840.113549.1.1.2</oid>
+    <oid>1.2.840.113549.1.1.4</oid>
+    <oid>1.2.840.113549.1.1.5</oid>
+    <oid>1.2.840.113549.1.9.6</oid>
+    <oid>1.2.840.113549.2.5</oid>
+    <oid>1.2.840.113549.1.9.5</oid>
+    <oid>1.2.840.113556.1.4.1221</oid>
+    <oid>1.2.840.113556.1.4.1222</oid>
+    <oid>1.2.840.113556.1.4.1362</oid>
+    <oid>1.2.840.113556.1.4.1413</oid>
+    <oid>1.2.840.113556.1.4.521</oid>
+    <oid>1.2.840.113556.1.4.616</oid>
+    <oid>1.2.840.113556.1.4.801</oid>
+    <oid>1.2.840.113556.1.4.805</oid>
+    <oid>1.2.840.113556.1.4.903</oid>
+    <oid>1.2.840.113556.1.4.904</oid>
+    <oid>1.2.840.113556.1.4.905</oid>
+    <oid>1.2.840.113556.1.4.906</oid>
+    <oid>1.2.840.113556.1.4.907</oid>
+    <oid>1.3.14.3.2.26</oid>
+    <oid>1.3.14.3.2.29</oid>
+    <oid>1.3.14.3.2.3</oid>
+    <oid>1.3.6.1.4.1.311.2.1.12</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.10</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.11</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.12</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.13</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.14</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.15</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.19</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.2</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.21</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.22</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.23</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.24</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.25</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.26</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.27</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.28</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.3</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.32</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.33</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.34</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.36</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.37</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.38</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.39</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.4</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.40</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.41</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.43</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.44</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.5</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.50</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.51</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.52</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.53</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.6</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.7</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.8</oid>
+    <oid>1.3.6.1.4.1.1466.115.121.1.9</oid>
+    <oid>1.3.6.1.4.1.311.10.3.6</oid>
+    <oid>1.3.6.1.4.1.311.88.2.1</oid>
+    <oid>1.3.6.1.4.1.311.88.2.2</oid>
+    <oid>1.3.6.1.5.5.7.3.3</oid>
+  </oids>
+
+  <agents>
+    <agent>Mozilla/1.22</agent>
+    <agent>Mozilla/3.0</agent>
+    <agent>Mozilla/3.1</agent>
+    <agent>Mozilla/3.6</agent>
+    <agent>Mozilla/4.0</agent>
+    <agent>Mozilla/4.08</agent>
+    <agent>Mozilla/5.0</agent>
+
+    <agent>Opera/8.90</agent>
+    <agent>Opera/9.00</agent>
+    <agent>Opera/9.25</agent>
+    <agent>Opera/9.33</agent>
+    <agent>Opera 9.4</agent>
+    <agent>Opera/9.80</agent>
+  </agents>
+
+  <exts>
+    <ext enable="1" risk="1">3fr</ext>
+    <ext enable="1" risk="1">386</ext>
+    <ext enable="1" risk="1">3dm</ext>
+    <ext enable="1" risk="1">3ds</ext>
+
+    <ext enable="1" risk="1">Application</ext>
+    <ext enable="1" risk="1">accdb</ext>
+    <ext enable="1" risk="1">acf</ext>
+    <ext enable="1" risk="1">ade</ext>
+    <ext enable="1" risk="1">adn</ext>
+    <ext enable="1" risk="1">adp</ext>
+    <ext enable="1" risk="1">ani</ext>
+    <ext enable="1" risk="1">arc</ext>
+    <ext enable="1" risk="1">amr</ext>
+    <ext enable="1" risk="1">arcs</ext>
+    <ext enable="1" risk="1">apk</ext>
+    <ext enable="1" risk="1">arch00</ext>
+    <ext enable="1" risk="1">arw</ext>
+    <ext enable="1" risk="1">asset</ext>
+    <ext enable="1" risk="1">arj</ext>
+    <ext enable="1" risk="1">asf</ext>
+    <ext enable="1" risk="1">asp</ext>
+    <ext enable="1" risk="1">asm</ext>
+    <ext enable="1" risk="1">asx</ext>
+    <ext enable="1" risk="1">avi</ext>
+    <ext enable="1" risk="1">atf</ext>
+    <ext enable="1" risk="1">app</ext>
+    <ext enable="1" risk="1">aspx</ext>
+    <ext enable="1" risk="1">admin</ext>
+
+    <ext enable="1" risk="1">b64</ext>
+    <ext enable="1" risk="1">bc7</ext>
+    <ext enable="1" risk="1">bc6</ext>
+    <ext enable="1" risk="1">bay</ext>
+    <ext enable="1" risk="1">big</ext>
+    <ext enable="1" risk="1">bik</ext>
+    <ext enable="1" risk="1">bkf</ext>
+    <ext enable="1" risk="1">bkp</ext>
+    <ext enable="1" risk="1">blob</ext>
+    <ext enable="1" risk="1">bsa</ext>
+    <ext enable="1" risk="1">bat</ext>
+    <ext enable="1" risk="1">bak</ext>
+    <ext enable="1" risk="1">bhx</ext>
+    <ext enable="1" risk="1">bin</ext>
+    <ext enable="1" risk="1">bmp</ext>
+    <ext enable="1" risk="1">binPK</ext>
+    <ext enable="1" risk="1">bar</ext>
+    <ext enable="1" risk="1">bas</ext>
+    <ext enable="1" risk="1">bsd</ext>
+    <ext enable="1" risk="1">backup</ext>
+
+    <ext enable="1" risk="1">cdw</ext>
+    <ext enable="1" risk="1">csr</ext>
+    <ext enable="1" risk="1">cx</ext>
+    <ext enable="1" risk="1">cc</ext>
+    <ext enable="1" risk="1">cas</ext>
+    <ext enable="1" risk="1">cdr</ext>
+    <ext enable="1" risk="1">cer</ext>
+    <ext enable="1" risk="1">cfr</ext>
+    <ext enable="1" risk="1">cr2</ext>
+    <ext enable="1" risk="1">crt</ext>
+    <ext enable="1" risk="1">crw</ext>
+    <ext enable="1" risk="1">css</ext>
+    <ext enable="1" risk="1">csv</ext>
+    <ext enable="1" risk="1">c</ext>
+    <ext enable="1" risk="1">cab</ext>
+    <ext enable="1" risk="1">cpio</ext>
+    <ext enable="1" risk="1">cap</ext>
+    <ext enable="1" risk="1">cbl</ext>
+    <ext enable="1" risk="1">cbm</ext>
+    <ext enable="1" risk="1">cert</ext>
+    <ext enable="1" risk="1">cbo</ext>
+    <ext enable="1" risk="1">css</ext>
+    <ext enable="1" risk="1">cache</ext>
+    <ext enable="1" risk="1">cfg</ext>
+    <ext enable="1" risk="1">cfm</ext>
+    <ext enable="1" risk="1">cpp</ext>
+    <ext enable="1" risk="1">cxx</ext>
+    <ext enable="1" risk="1">cer</ext>
+    <ext enable="1" risk="1">ceo</ext>
+    <ext enable="1" risk="1">ce0</ext>
+    <ext enable="1" risk="1">chm</ext>
+    <ext enable="1" risk="1">cgi</ext>
+    <ext enable="1" risk="1">classPK</ext>
+    <ext enable="1" risk="1">cmd</ext>
+    <ext enable="1" risk="1">cnt</ext>
+    <ext enable="1" risk="1">com</ext>
+    <ext enable="1" risk="1">com0</ext>
+    <ext enable="1" risk="1">cs</ext>
+    <ext enable="1" risk="1">cpl</ext>
+    <ext enable="1" risk="1">crl</ext>
+    <ext enable="1" risk="1">ctl</ext>
+    <ext enable="1" risk="1">cur</ext>
+    <ext  enable="1" risk="1">class</ext>
+    <ext  enable="1" risk="1">cbtl</ext>
+
+    <ext enable="1" risk="1">dat</ext>
+    <ext enable="1" risk="1">dbg</ext>
+    <ext enable="1" risk="1">dsm</ext>
+    <ext enable="1" risk="1">dun</ext>
+    <ext enable="1" risk="1">dk</ext>
+    <ext enable="1" risk="1">dll</ext>
+    <ext enable="1" risk="1">de</ext>
+    <ext enable="1" risk="1">docx</ext>
+    <ext enable="1" risk="1">dotm</ext>
+    <ext enable="1" risk="1">docm</ext>
+    <ext enable="1" risk="1">drv</ext>
+    <ext enable="1" risk="1">doc</ext>
+    <ext enable="1" risk="1">docc</ext>
+    <ext enable="1" risk="1">docpk</ext>
+    <ext enable="1" risk="1">dot</ext>
+    <ext enable="1" risk="1">d3dbsp</ext>
+    <ext enable="1" risk="1">das</ext>
+    <ext enable="1" risk="1">dazip</ext>
+    <ext enable="1" risk="1">db0</ext>
+    <ext enable="1" risk="1">dbfv</ext>
+    <ext enable="1" risk="1">dcr</ext>
+    <ext enable="1" risk="1">dif</ext>
+    <ext enable="1" risk="1">der</ext>
+    <ext enable="1" risk="1">dex</ext>
+    <ext enable="1" risk="1">desc</ext>
+    <ext enable="1" risk="1">dmp</ext>
+    <ext enable="1" risk="1">dng</ext>
+    <ext enable="1" risk="1">dwg</ext>
+    <ext enable="1" risk="1">dxg</ext>
+    <ext enable="1" risk="1">dba</ext>
+    <ext enable="1" risk="1">dbf</ext>
+    <ext enable="1" risk="1">dsp</ext>
+    <ext enable="1" risk="1">dsw</ext>
+    <ext enable="1" risk="1">dtd</ext>
+    <ext enable="1" risk="1">detour</ext>
+
+    <ext enable="1" risk="1">ecc</ext>
+    <ext enable="1" risk="1">edt</ext>
+    <ext enable="1" risk="1">epk</ext>
+    <ext enable="1" risk="1">eps</ext>
+    <ext enable="1" risk="1">erf</ext>
+    <ext enable="1" risk="1">esm</ext>
+    <ext enable="1" risk="1">en</ext>
+    <ext enable="1" risk="1">exd</ext>
+    <ext enable="1" risk="1">exe</ext>
+    <ext enable="1" risk="1">ex_</ext>
+    <ext enable="1" risk="1">_exe</ext>
+    <ext enable="1" risk="1">email</ext>
+    <ext enable="1" risk="1">emf</ext>
+    <ext enable="1" risk="1">eot</ext>
+    <ext enable="1" risk="1">eddx</ext>
+    <ext enable="1" risk="1">edoc</ext>
+    <ext enable="1" risk="1">emlx</ext>
+    <ext enable="1" risk="1">epub</ext>
+    <ext enable="1" risk="1">exePK</ext>
+
+    <ext enable="1" risk="1">fini</ext>
+    <ext enable="1" risk="1">flv</ext>
+    <ext enable="1" risk="1">forge</ext>
+    <ext enable="1" risk="1">fos</ext>
+    <ext enable="1" risk="1">fpk</ext>
+    <ext enable="1" risk="1">fsh</ext>
+    <ext enable="1" risk="1">fpl</ext>
+    <ext enable="1" risk="1">flg</ext>
+    <ext enable="1" risk="1">far</ext>
+    <ext enable="1" risk="1">fav</ext>
+    <ext enable="1" risk="1">ftp</ext>
+    <ext enable="1" risk="1">fla</ext>
+
+    <ext enable="1" risk="1">go</ext>
+    <ext enable="1" risk="1">gdb</ext>
+    <ext enable="1" risk="1">gho</ext>
+    <ext enable="1" risk="1">gzip</ext>
+    <ext enable="1" risk="1">gz</ext>
+    <ext enable="1" risk="1">gif</ext>
+    <ext enable="1" risk="1">gadget</ext>
+    <ext enable="1" risk="1">gcode</ext>
+
+    <ext enable="1" risk="1">hlp</ext>
+    <ext enable="1" risk="1">hpj</ext>
+    <ext enable="1" risk="1">hta</ext>
+    <ext enable="1" risk="1">hhp</ext>
+    <ext enable="1" risk="1">hkdb</ext>
+    <ext enable="1" risk="1">hkx</ext>
+    <ext enable="1" risk="1">hplg</ext>
+    <ext enable="1" risk="1">hvpl</ext>
+    <ext enable="1" risk="1">h</ext>
+    <ext enable="1" risk="1">hpp</ext>
+    <ext enable="1" risk="1">hxx</ext>
+    <ext enable="1" risk="1">htm</ext>
+    <ext enable="1" risk="1">html</ext>
+    <ext enable="1" risk="1">htt</ext>
+    <ext enable="1" risk="1">http</ext>
+    <ext enable="1" risk="1">hqx</ext>
+    <ext enable="1" risk="1">ht</ext>
+    <ext enable="1" risk="1">htapk</ext>
+    <ext enable="1" risk="1">href</ext>
+
+    <ext enable="1" risk="1">ibank</ext>
+    <ext enable="1" risk="1">icxs</ext>
+    <ext enable="1" risk="1">indd</ext>
+    <ext enable="1" risk="1">itdb</ext>
+    <ext enable="1" risk="1">itl</ext>
+    <ext enable="1" risk="1">itm</ext>
+    <ext enable="1" risk="1">iwd</ext>
+    <ext enable="1" risk="1">iwi</ext>
+    <ext enable="1" risk="1">ini</ext>
+    <ext enable="1" risk="1">inl</ext>
+    <ext enable="1" risk="1">iniPK</ext>
+    <ext enable="1" risk="1">inc</ext>
+    <ext enable="1" risk="1">ico</ext>
+    <ext enable="1" risk="1">idc</ext>
+    <ext enable="1" risk="1">info</ext>
+    <ext enable="1" risk="1">inf</ext>
+    <ext enable="1" risk="1">ins</ext>
+    <ext enable="1" risk="1">iso</ext>
+    <ext enable="1" risk="1">isp</ext>
+    <ext enable="1" risk="1">it</ext>
+    <ext enable="1" risk="1">its</ext>
+    <ext enable="1" risk="1">idml</ext>
+    <ext enable="1" risk="1">indd</ext>
+    <ext enable="1" risk="1">identifier</ext>
+
+    <ext enable="1" risk="1">jar</ext>
+    <ext enable="1" risk="1">jav</ext>
+    <ext enable="1" risk="1">java</ext>
+    <ext enable="1" risk="1">jcr</ext>
+    <ext enable="1" risk="1">jpeg</ext>
+    <ext enable="1" risk="1">jpegPK</ext>
+    <ext enable="1" risk="1">js</ext>
+    <ext enable="1" risk="1">jsp</ext>
+    <ext enable="1" risk="1">jpe</ext>
+    <ext enable="1" risk="1">jpg</ext>
+    <ext enable="1" risk="1">jse</ext>
+    <ext enable="1" risk="1">jfif</ext>
+    <ext enable="1" risk="1">jspa</ext>
+    <ext enable="1" risk="1">jspx</ext>
+    <ext enable="1" risk="1">kdb</ext>
+    <ext enable="1" risk="1">kdc</ext>
+    <ext enable="1" risk="1">key</ext>
+    <ext enable="1" risk="1">jps</ext>
+
+    <ext enable="1" risk="1">locky</ext>
+    <ext enable="1" risk="1">layout</ext>
+    <ext enable="1" risk="1">lbf</ext>
+    <ext enable="1" risk="1">ldf</ext>
+    <ext enable="1" risk="1">litemod</ext>
+    <ext enable="1" risk="1">lrf</ext>
+    <ext enable="1" risk="1">ltx</ext>
+    <ext enable="1" risk="1">lvl</ext>
+    <ext enable="1" risk="1">lzh</ext>
+    <ext enable="1" risk="1">lnk</ext>
+    <ext enable="1" risk="1">lsf</ext>
+    <ext enable="1" risk="1">lsx</ext>
+    <ext enable="1" risk="1">log</ext>
+    <ext enable="1" risk="1">lzma</ext>
+    <ext enable="1" risk="1">locked</ext>
+
+    <ext enable="1" risk="1">max</ext>
+    <ext enable="1" risk="1">md</ext>
+    <ext enable="1" risk="1">mad</ext>
+    <ext enable="1" risk="1">maf</ext>
+    <ext enable="1" risk="1">maq</ext>
+    <ext enable="1" risk="1">mar</ext>
+    <ext enable="1" risk="1">mas</ext>
+    <ext enable="1" risk="1">mat</ext>
+    <ext enable="1" risk="1">mav</ext>
+    <ext enable="1" risk="1">maw</ext>
+    <ext enable="1" risk="1">mam</ext>
+    <ext enable="1" risk="1">mag</ext>
+    <ext enable="1" risk="1">m3u</ext>
+    <ext enable="1" risk="1">m4a</ext>
+    <ext enable="1" risk="1">map</ext>
+    <ext enable="1" risk="1">mcr</ext>
+    <ext enable="1" risk="1">mcgame</ext>
+    <ext enable="1" risk="1">mcmeta</ext>
+    <ext enable="1" risk="1">msi</ext>
+    <ext enable="1" risk="1">msp</ext>
+    <ext enable="1" risk="1">mst</ext>
+    <ext enable="1" risk="1">msc</ext>
+    <ext enable="1" risk="1">mda</ext>
+    <ext enable="1" risk="1">mde</ext>
+    <ext enable="1" risk="1">mdz</ext>
+    <ext enable="1" risk="1">mht</ext>
+    <ext enable="1" risk="1">mdb</ext>
+    <ext enable="1" risk="1">mdn</ext>
+    <ext enable="1" risk="1">mdt</ext>
+    <ext enable="1" risk="1">mdbackup</ext>
+    <ext enable="1" risk="1">manifest</ext>
+    <ext enable="1" risk="1">mddata</ext>
+    <ext enable="1" risk="1">mdf</ext>
+    <ext enable="1" risk="1">mef</ext>
+    <ext enable="1" risk="1">mp4</ext>
+    <ext enable="1" risk="1">mid</ext>
+    <ext enable="1" risk="1">mov</ext>
+    <ext enable="1" risk="1">msg</ext>
+    <ext enable="1" risk="1">msh</ext>
+    <ext enable="1" risk="1">midi</ext>
+    <ext enable="1" risk="1">mim</ext>
+    <ext enable="1" risk="1">mmf</ext>
+    <ext enable="1" risk="1">menu</ext>
+    <ext enable="1" risk="1">mlx</ext>
+    <ext enable="1" risk="1">mpqge</ext>
+    <ext enable="1" risk="1">mrwref</ext>
+    <ext enable="1" risk="1">mp3</ext>
+    <ext enable="1" risk="1">mpg</ext>
+    <ext enable="1" risk="1">mpeg</ext>
+    <ext enable="1" risk="1">mp3PK</ext>
+    <ext enable="1" risk="1">mbox</ext>
+    <ext enable="1" risk="1">mdbackup</ext>
+    <ext enable="1" risk="1">mddata</ext>
+    <ext enable="1" risk="1">mdinfo</ext>
+    <ext enable="1" risk="1">m4v</ext>
+    <ext enable="1" risk="1">mkv</ext>
+    <ext enable="1" risk="1">mui</ext>
+    <ext enable="1" risk="1">memdump</ext>
+    <ext enable="1" risk="1">m4u</ext>
+
+    <ext enable="1" risk="1">nak</ext>
+    <ext enable="1" risk="1">net</ext>
+    <ext enable="1" risk="1">nch</ext>
+    <ext enable="1" risk="1">nrg</ext>
+    <ext enable="1" risk="1">nls</ext>
+    <ext enable="1" risk="1">ncb</ext>
+    <ext enable="1" risk="1">ncf</ext>
+    <ext enable="1" risk="1">nrw</ext>
+    <ext enable="1" risk="1">ntl</ext>
+    <ext enable="1" risk="1">nws</ext>
+    <ext enable="1" risk="1">note</ext>
+    <ext enable="1" risk="1">nt</ext>
+
+    <ext enable="1" risk="1">ogg</ext>
+    <ext enable="1" risk="1">oca</ext>
+    <ext enable="1" risk="1">ocx</ext>
+    <ext enable="1" risk="1">oft</ext>
+    <ext enable="1" risk="1">oss</ext>
+    <ext enable="1" risk="1">olb</ext>
+    <ext enable="1" risk="1">org</ext>
+    <ext enable="1" risk="1">osd</ext>
+    <ext enable="1" risk="1">odb</ext>
+    <ext enable="1" risk="1">odc</ext>
+    <ext enable="1" risk="1">odm</ext>
+    <ext enable="1" risk="1">odp</ext>
+    <ext enable="1" risk="1">ods</ext>
+    <ext enable="1" risk="1">odt</ext>
+    <ext enable="1" risk="1">orf</ext>
+    <ext enable="1" risk="1">ovl</ext>
+    <ext enable="1" risk="1">opt</ext>
+    <ext enable="1" risk="1">oxps</ext>
+    <ext enable="1" risk="1">odx</ext>
+
+    <ext enable="1" risk="1">pas</ext>
+    <ext enable="1" risk="1">pct</ext>
+    <ext enable="1" risk="1">pdc</ext>
+    <ext enable="1" risk="1">pkxm</ext>
+    <ext enable="1" risk="1">pcap</ext>
+    <ext enable="1" risk="1">pack</ext>
+    <ext enable="1" risk="1">pyz</ext>
+    <ext enable="1" risk="1">pps</ext>
+    <ext enable="1" risk="1">pdb</ext>
+    <ext enable="1" risk="1">php</ext>
+    <ext enable="1" risk="1">phtml</ext>
+    <ext enable="1" risk="1">p12</ext>
+    <ext enable="1" risk="1">p7b</ext>
+    <ext enable="1" risk="1">pict</ext>
+    <ext enable="1" risk="1">p7c</ext>
+    <ext enable="1" risk="1">pak</ext>
+    <ext enable="1" risk="1">pdd</ext>
+    <ext enable="1" risk="1">pdf</ext>
+    <ext enable="1" risk="1">pic</ext>
+    <ext enable="1" risk="1">pyd</ext>
+    <ext enable="1" risk="1">pef</ext>
+    <ext enable="1" risk="1">pem</ext>
+    <ext enable="1" risk="1">pfx</ext>
+    <ext enable="1" risk="1">pkpass</ext>
+    <ext enable="1" risk="1">png</ext>
+    <ext enable="1" risk="1">pol</ext>
+    <ext enable="1" risk="1">pot</ext>
+    <ext enable="1" risk="1">plg</ext>
+    <ext enable="1" risk="1">ppa</ext>
+    <ext enable="1" risk="1">ppt</ext>
+    <ext enable="1" risk="1">prf</ext>
+    <ext enable="1" risk="1">pptm</ext>
+    <ext enable="1" risk="1">pptx</ext>
+    <ext enable="1" risk="1">psd</ext>
+    <ext enable="1" risk="1">psk</ext>
+    <ext enable="1" risk="1">pf</ext>
+    <ext enable="1" risk="1">py</ext>
+    <ext enable="1" risk="1">pypk</ext>
+    <ext enable="1" risk="1">pst</ext>
+    <ext enable="1" risk="1">pwl</ext>
+    <ext enable="1" risk="1">ptx</ext>
+    <ext enable="1" risk="1">pif</ext>
+    <ext enable="1" risk="1">pl</ext>
+    <ext enable="1" risk="1">pls</ext>
+    <ext enable="1" risk="1">pax</ext>
+    <ext enable="1" risk="1">pad</ext>
+    <ext enable="1" risk="1">plist</ext>
+    <ext enable="1" risk="1">phtm</ext>
+    <ext enable="1" risk="1">php3</ext>
+    <ext enable="1" risk="1">php4</ext>
+    <ext enable="1" risk="1">php5</ext>
+    <ext enable="1" risk="1">phps</ext>
+    <ext enable="1" risk="1">phpx</ext>
+    <ext enable="1" risk="1">phpxx</ext>
+    <ext enable="1" risk="1">ppdf</ext>
+    <ext enable="1" risk="1">ppsm</ext>
+    <ext enable="1" risk="1">ppsx</ext>
+    <ext enable="1" risk="1">plist_bak</ext>
+    <ext enable="1" risk="1">Permissions</ext>
+
+    <ext enable="1" risk="1">qc</ext>
+    <ext enable="1" risk="1">qdf</ext>
+    <ext enable="1" risk="1">qic</ext>
+    <ext enable="1" risk="1">qtl</ext>
+    <ext enable="1" risk="1">qtif</ext>
+
+    <ext enable="1" risk="1">ro</ext>
+    <ext enable="1" risk="1">rodata</ext>
+    <ext enable="1" risk="1">rar</ext>
+    <ext enable="1" risk="1">rat</ext>
+    <ext enable="1" risk="1">rsrc</ext>
+    <ext enable="1" risk="1">reg</ext>
+    <ext enable="1" risk="1">rels</ext>
+    <ext enable="1" risk="1">rtf</ext>
+    <ext enable="1" risk="1">r3d</ext>
+    <ext enable="1" risk="1">raf</ext>
+    <ext enable="1" risk="1">rar</ext>
+    <ext enable="1" risk="1">ru</ext>
+    <ext enable="1" risk="1">raw</ext>
+    <ext enable="1" risk="1">re4</ext>
+    <ext enable="1" risk="1">rgss3a</ext>
+    <ext enable="1" risk="1">rim</ext>
+    <ext enable="1" risk="1">rofl</ext>
+    <ext enable="1" risk="1">rsrc</ext>
+    <ext enable="1" risk="1">rtf</ext>
+    <ext enable="1" risk="1">rw2</ext>
+    <ext enable="1" risk="1">rwl</ext>
+    <ext enable="1" risk="1">rdp</ext>
+    <ext enable="1" risk="1">rdf</ext>
+    <ext enable="1" risk="1">reg</ext>
+    <ext enable="1" risk="1">rjs</ext>
+    <ext enable="1" risk="1">rm</ext>
+    <ext enable="1" risk="1">rpt</ext>
+    <ext enable="1" risk="1">relspk</ext>
+    <ext enable="1" risk="1">rsapk</ext>
+    <ext enable="1" risk="1">rtfpk</ext>
+
+    <ext enable="1" risk="1">sch</ext>
+    <ext enable="1" risk="1">stc</ext>
+    <ext enable="1" risk="1">std</ext>
+    <ext enable="1" risk="1">sti</ext>
+    <ext enable="1" risk="1">stw</ext>
+    <ext enable="1" risk="1">sxc</ext>
+    <ext enable="1" risk="1">sxd</ext>
+    <ext enable="1" risk="1">sxi</ext>
+    <ext enable="1" risk="1">sxm</ext>
+    <ext enable="1" risk="1">sxw</ext>
+    <ext enable="1" risk="1">sdb</ext>
+    <ext enable="1" risk="1">scf</ext>
+    <ext enable="1" risk="1">scp</ext>
+    <ext enable="1" risk="1">sfx</ext>
+    <ext enable="1" risk="1">sfpk</ext>
+    <ext enable="1" risk="1">sql</ext>
+    <ext enable="1" risk="1">scr</ext>
+    <ext enable="1" risk="1">sct</ext>
+    <ext enable="1" risk="1">shb</ext>
+    <ext enable="1" risk="1">so</ext>
+    <ext enable="1" risk="1">sqlite</ext>
+    <ext enable="1" risk="1">sqlitedb</ext>
+    <ext enable="1" risk="1">sqlite3</ext>
+    <ext enable="1" risk="1">shs</ext>
+    <ext enable="1" risk="1">sit</ext>
+    <ext enable="1" risk="1">slk</ext>
+    <ext enable="1" risk="1">smi</ext>
+    <ext enable="1" risk="1">smil</ext>
+    <ext enable="1" risk="1">stl</ext>
+    <ext enable="1" risk="1">stm</ext>
+    <ext enable="1" risk="1">spl</ext>
+    <ext enable="1" risk="1">sys</ext>
+    <ext enable="1" risk="1">swf</ext>
+    <ext enable="1" risk="1">sav</ext>
+    <ext enable="1" risk="1">sc2save</ext>
+    <ext enable="1" risk="1">sid</ext>
+    <ext enable="1" risk="1">sidd</ext>
+    <ext enable="1" risk="1">sidn</ext>
+    <ext enable="1" risk="1">sie</ext>
+    <ext enable="1" risk="1">sis</ext>
+    <ext enable="1" risk="1">slm</ext>
+    <ext enable="1" risk="1">snx</ext>
+    <ext enable="1" risk="1">sr2</ext>
+    <ext enable="1" risk="1">srfv</ext>
+    <ext enable="1" risk="1">srw</ext>
+    <ext enable="1" risk="1">sum</ext>
+    <ext enable="1" risk="1">svg</ext>
+    <ext enable="1" risk="1">syncdb</ext>
+    <ext enable="1" risk="1">srf</ext>
+    <ext enable="1" risk="1">sys</ext>
+    <ext enable="1" risk="1">ssh</ext>
+    <ext enable="1" risk="1">sldm</ext>
+    <ext enable="1" risk="1">sldx</ext>
+    <ext enable="1" risk="1">sdf</ext>
+
+    <ext enable="1" risk="1">t13</ext>
+    <ext enable="1" risk="1">tet</ext>
+    <ext enable="1" risk="1">tar</ext>
+    <ext enable="1" risk="1">tz</ext>
+    <ext enable="1" risk="1">taz</ext>
+    <ext enable="1" risk="1">tgz</ext>
+    <ext enable="1" risk="1">tif</ext>
+    <ext enable="1" risk="1">tiff</ext>
+    <ext enable="1" risk="1">tga</ext>
+    <ext enable="1" risk="1">tmp</ext>
+    <ext enable="1" risk="1">temp</ext>
+    <ext enable="1" risk="1">txt</ext>
+    <ext enable="1" risk="1">tlb</ext>
+    <ext enable="1" risk="1">txt3</ext>
+    <ext enable="0" risk="1">text</ext>
+    <ext enable="1" risk="1">t12</ext>
+    <ext enable="1" risk="1">t13v</ext>
+    <ext enable="1" risk="1">tax</ext>
+    <ext enable="1" risk="1">tor</ext>
+    <ext enable="1" risk="1">txt</ext>
+
+    <ext enable="1" risk="1">unity3d</ext>
+    <ext enable="1" risk="1">upk</ext>
+    <ext enable="1" risk="1">url</ext>
+    <ext enable="1" risk="1">ult</ext>
+
+    <ext enable="1" risk="1">vb</ext>
+    <ext enable="1" risk="1">vbe</ext>
+    <ext enable="1" risk="1">vbs</ext>
+    <ext enable="1" risk="1">vbp</ext>
+    <ext enable="1" risk="1">vdf</ext>
+    <ext enable="1" risk="1">vfs0</ext>
+    <ext enable="1" risk="1">vpk</ext>
+    <ext enable="1" risk="1">vaf</ext>
+    <ext enable="1" risk="1">vpp_pcv</ext>
+    <ext enable="1" risk="1">vtf</ext>
+    <ext enable="1" risk="1">vcf</ext>
+    <ext enable="1" risk="1">vbspk</ext>
+    <ext enable="1" risk="1">vxd</ext>
+    <ext enable="1" risk="1">vhdx</ext>
+    <ext enable="1" risk="1">vhdx</ext>
+    <ext enable="1" risk="1">vmdk</ext>
+    <ext enable="1" risk="1">vfs4</ext>
+    <ext enable="1" risk="1">vpp_pc</ext>
+    <ext enable="1" risk="1">vhd</ext>
+    <ext enable="1" risk="1">vdi</ext>
+    <ext enable="1" risk="1">vbox</ext>
+    <ext enable="1" risk="1">vob</ext>
+
+    <ext enable="1" risk="1">wav</ext>
+    <ext enable="1" risk="1">wab</ext>
+    <ext enable="1" risk="1">wap</ext>
+    <ext enable="1" risk="1">wbk</ext>
+    <ext enable="1" risk="1">wiz</ext>
+    <ext enable="1" risk="1">wjf</ext>
+    <ext enable="1" risk="1">ws</ext>
+    <ext enable="1" risk="1">w3x</ext>
+    <ext enable="1" risk="1">wb2</ext>
+    <ext enable="1" risk="1">wma</ext>
+    <ext enable="1" risk="1">wmf</ext>
+    <ext enable="1" risk="1">wmo</ext>
+    <ext enable="1" risk="1">wmv</ext>
+    <ext enable="1" risk="1">wotreplay</ext>
+    <ext enable="1" risk="1">wpd</ext>
+    <ext enable="1" risk="1">wps</ext>
+    <ext enable="1" risk="1">wsc</ext>
+    <ext enable="1" risk="1">wsf</ext>
+    <ext enable="1" risk="1">wsh</ext>
+    <ext enable="1" risk="1">webm</ext>
+    <ext enable="1" risk="1">wks</ext>
+    <ext enable="1" risk="1">wk1</ext>
+    <ext enable="1" risk="1">wallet</ext>
+
+    <ext enable="1" risk="1">x3f</ext>
+    <ext enable="1" risk="1">xaml</ext>
+    <ext enable="1" risk="1">xla</ext>
+    <ext enable="1" risk="1">xsd</ext>
+    <ext enable="1" risk="1">xls</ext>
+    <ext enable="1" risk="1">xsl</ext>
+    <ext enable="1" risk="1">xlb</ext>
+    <ext enable="1" risk="1">xlsm</ext>
+    <ext enable="1" risk="1">xlsm</ext>
+    <ext enable="1" risk="1">xlsx</ext>
+    <ext enable="1" risk="1">xlt</ext>
+    <ext enable="1" risk="1">xlv</ext>
+    <ext enable="1" risk="1">xml</ext>
+    <ext enable="1" risk="1">xmlPK</ext>
+    <ext enable="1" risk="1">xmp</ext>
+    <ext enable="1" risk="1">xll</ext>
+    <ext enable="1" risk="1">xlsm</ext>
+    <ext enable="1" risk="1">xlsx</ext>
+    <ext enable="1" risk="1">xlc</ext>
+    <ext enable="1" risk="1">xld</ext>
+    <ext enable="1" risk="1">xlk</ext>
+    <ext enable="1" risk="1">xor</ext>
+    <ext enable="1" risk="1">xlw</ext>
+    <ext enable="1" risk="1">xltx</ext>
+    <ext enable="1" risk="1">xltm</ext>
+    <ext enable="1" risk="1">xlsb</ext>
+    <ext enable="1" risk="1">xlm</ext>
+    <ext enable="1" risk="1">xxx</ext>
+    <ext enable="1" risk="1">xfp</ext>
+    <ext enable="1" risk="1">xsd</ext>
+    <ext enable="1" risk="1">xbtl</ext>
+    <ext enable="1" risk="1">x509crl</ext>
+    <ext enable="1" risk="1">x509cert</ext>
+
+    <ext enable="1" risk="1">z</ext>
+    <ext enable="1" risk="1">zip</ext>
+    <ext enable="1" risk="1">zipx</ext>
+    <ext enable="1" risk="1">ztmp</ext>
+  </exts>
+
+  <domains>
+  </domains>
+
+  <!-- SDDL -->
+  <sddls>
+    <sddl>(A;;0xb;;;AC)</sddl>
+    <sddl>(A;;0x3;;;AC)</sddl>
+    <sddl>D:(D;OICI;GA;;;BG)(D;OICI;GA;;;AN)(A;OICI;GA;;;AU)(A;OICI;GA;;;BA)</sddl>
+    <sddl>D:(A;OICI;GA;;;WD)S:(ML;CIOI;NRNWNX;;;LW)</sddl>
+    <sddl>D:(A;OICI;GA;;;WD)</sddl>
+    <sddl>D:(A;;GA;;;WD)S:(ML;;NRNWNX;;;LW)</sddl>
+    <sddl>D:(A;;GA;;;WD)</sddl>
+    <sddl>D:(A;OICI;GA;;;CO)(A;OICI;GA;;;SY)(A;OICI;GA;;;BA)(A;OICI;GA;;;%s)</sddl>
+    <sddl>D:AI(A;;GAFA;;;WD)</sddl>
+    <sddl>D:AI(A;;RPWPCCDCLCSWRCWDWOGA;;;WD)</sddl>
+    <sddl>D:P(D;CIOI;GA;;;BG)(D;CIOI;GA;;;LG)(A;;GA;;;WD)</sddl>
+    <sddl>D:P(D;CIOI;GA;;;DG)(D;CIOI;GA;;;BG)(D;CIOI;GA;;;LG)(A;;GA;;;WD)</sddl>
+    <sddl>D:P(D;CIOI;GA;;;BG)(D;CIOI;GA;;;LG)(D;;SD;;;WD)(A;;0x1e01ff;;;WD)(A;OICIIO;GA;;;WD)</sddl>
+    <sddl>D:P(D;CIOI;GA;;;DG)(D;CIOI;GA;;;BG)(D;CIOI;GA;;;LG)(D;;SD;;;WD)(A;;0x1e01ff;;;WD)(A;OICIIO;GA;;;WD)</sddl>
+    <sddl>D:(A;;LC;;;WD)(A;;CCDCLCSWRPSDRCWDWO;;;SY)(A;;LCSWRPRCGW;;;BA)(A;;LC;;;AC);AC);AC)</sddl>
+    <sddl>D:(A;;0x100001;;;WD)(A;;0x1f0001;;;SY)(A;;0x1f0001;;;%s)(A;;0x100001;;;AC);AC);AC)</sddl>
+    <sddl>D:(A;;0x00120001;;;WD)(A;;0x001C0002;;;PS)</sddl>
+    <sddl>D:(A;;0x00120003;;;WD)</sddl>
+    <sddl>D:(A;;0x00120001;;;WD)(A;;0x001C0002;;;PS)</sddl>
+    <sddl>D:(A;;0x00120003;;;WD)</sddl>
+    <sddl>D:(A;;0x100001;;;WD)(A;;0x1f0001;;;SY)(A;;0x1f0001;;;%s)(A;;0x100001;;;AC);AC);AC)</sddl>
+    <sddl>D:(A;;GR;;;RC)(A;;GR;;;%s)</sddl>
+    <sddl>D:(A;;GR;;;RC)(A;;GR;;;%s)(A;;GR;;;%s)</sddl>
+    <sddl>D:(A;;GRGWGX;;;WD)(A;;GRGWGX;;;RC)(A;;GA;;;BA)(A;;GA;;;OW)(A;;GR;;;AC)(A;;LC;;;AC)</sddl>
+    <sddl>D:(A;;LC;;;WD)(A;;CCDCLCSWRPSDRCWDWO;;;SY)(A;;CCDCLCSWRPSDRCWDWO;;;%s)(A;;LC;;;AC)</sddl>
+    <sddl>D:(A;;LC;;;WD)(A;;CCDCLCSWRPSDRCWDWO;;;SY)(A;;LCSWRPRCGW;;;BA)(A;;LC;;;AC);AC);AC)</sddl>
+    <sddl>D:(A;;0x1f0003;;;BA)(A;;0x100000;;;WD)</sddl>
+    <sddl>D:(A;;GA;;;WD)(A;;GA;;;AN)</sddl>
+    <sddl>D:(A;;GA;;;WD)(A;;GA;;;AN)S:(ML;;NW;;;LW)</sddl>
+    <sddl>D:(A;;GA;;;AU)(A;;GA;;;BA)(A;;GA;;;AN)(A;;GA;;;BG)(A;;GA;;;AC)S:(ML;;NW;;;LW)</sddl>
+    <sddl>D:(A;;FA;;;SY)(A;;FA;;;LS)(A;;FRFW;;;BA)(A;;FRFW;;;BU)(A;;FRFW;;;AN)S:(ML;;;;;LW)</sddl>
+    <sddl>D:(D;OICI;FA;;;AN)(A;OICI;FA;;;BG)(A;OICI;FA;;;SY)(A;OICI;FA;;;LS)(A;OICI;FA;;;AU)(A;OICI;FA;;;BA))</sddl>
+    <sddl>D:(D;OICI;FA;;;AN)(A;OICI;FA;;;BG)(A;OICI;FA;;;SY)(A;OICI;FA;;;LS)(A;OICI;FA;;;AU)(A;OICI;FA;;;BA)</sddl>
+    <sddl>D:P(A;;GA;;;SY)</sddl>
+    <sddl>D:P(A;;GA;;;SY)(A;;GA;;;BA)</sddl>
+    <sddl>D:P(A;;GA;;;SY)(A;;GRGX;;;BA)</sddl>
+    <sddl>D:P(A;;GA;;;SY)(A;;GRGWGX;;;BA)(A;;GR;;;WD)</sddl>
+    <sddl>D:P(A;;GA;;;SY)(A;;GRGWGX;;;BA)(A;;GR;;;WD)(A;;GR;;;RC)</sddl>
+    <sddl>D:P(A;;GA;;;SY)(A;;GRGWGX;;;BA)(A;;GRGW;;;WD)(A;;GR;;;RC)</sddl>
+    <sddl>D:P(A;;GA;;;SY)(A;;GRGWGX;;;BA)(A;;GRGWGX;;;WD)(A;;GRGWGX;;;RC)</sddl>
+    <sddl>S:(ML;;NRNWNX;;;LW)</sddl>
+    <sddl>S:(ML;CIOI;NRNWNX;;;LW)</sddl>
+    <sddl>S:(ML;CIOI;NRNWNX;;;LW)</sddl>
+    <sddl>S:(ML;;NW;;;LW)</sddl>
+    <sddl>S:(ML;;NW;;;S-1-16-0)</sddl>
+    <sddl>S:(ML;;NW;;;LW)D:(A;;0x12019b;;;WD)</sddl>
+    <sddl>O:BAG:BAD:(A;;0x7;;;WD)(A;;0x7;;;AN)(A;;0x7;;;%s)(A;;0x7;;;%s)(A;;0x3;;;AC)</sddl>
+    <sddl>O:SYG:SYD:(A;;RC;;;SY)</sddl>
+    <sddl>O:BAG:BAD:(A;;0x7;;;WD)(A;;0x3;;;AN)(A;;0x7;;;%s)(A;;0x7;;;%s)(A;;0x3;;;AC)C;;;AC)</sddl>
+    <sddl>O:BAG:BAD:(A;;0x1f;;;BA)(A;;0xb;;;WD)(A;;0x1f;;;%s)(A;;0x1f;;;%s)(A;;0xb;;;AC);AC)</sddl>
+    <sddl>O:BAG:BAD:(A;;0x1f;;;BA)(A;;0xb;;;IU)(A;;0xb;;;SY)</sddl>
+    <sddl>O:BAG:BAD:(A;;0x7;;;PS)(A;;0x3;;;SY)(A;;0x7;;;BA)</sddl>
+  </sddls>
+
+  <!-- The KNOWNFOLDERID constants represent GUIDs that identify standard folders registered with the system as Known Folders 
+		http://msdn.microsoft.com/en-us/library/dd378457(v=vs.85).aspx  -->
+  <folders>
+    <folder name="Account Pictures">{008ca0b1-55b4-4c56-b8a8-4de4b299d3be}</folder>
+    <folder name="Get Programs">{de61d971-5ebc-4f02-a3a9-6c82895e5c04}</folder>
+    <folder name="Administrative">{724EF170-A42D-4FEF-9F26-B60E846FBA4F}</folder>
+    <folder name="Application">{A3918781-E5F2-4890-B3D9-A7E54332328C}</folder>
+    <folder name="Applications">{1e87508d-89c2-42f0-8a7e-645a0f50ca58}</folder>
+    <folder name="Installed Updates">{a305ce99-f527-492b-8b1a-7e76fa98d6e4}</folder>
+    <folder name="Camera Roll">{AB5FB87B-7CE2-4F83-915D-550846C9537B}</folder>
+    <folder name="Temporary Burn Folder">{9E52AB10-F80D-49DF-ACB8-4330F5687855}</folder>
+    <folder name="Programs and Features">{df7266ac-9274-4867-8d55-3bd661de872d}</folder>
+    <folder name="Administrative Tools">{D0384E7D-BAC3-4797-8F14-CBA229B392B5}</folder>
+    <folder name="OEM Links">{C1BAE2D0-10DF-4334-BEDD-7AA20B227A9D}</folder>
+    <folder name="Programs	Folder">{0139D44E-6AFE-49F2-8690-3DAFCAE6FFB8}</folder>
+    <folder name="Start Menu">{A4115719-D62E-491D-AA7C-E74B8BE3B067}</folder>
+    <folder name="Startup">{82A5EA35-D9CD-47C5-9629-E15D2F714E6E}</folder>
+    <folder name="Templates">{B94237E7-57AC-4347-9151-B08C6C32D1F7}</folder>
+    <folder name="Computer">{0AC0837C-BBF8-452A-850D-79D08E667CA7}</folder>
+    <folder name="Conflicts">{4bfefb45-347d-4006-a5be-ac0cb0567192}</folder>
+    <folder name="Network Connections">{6F0CD92B-2E97-45D1-88FF-B0D186B8DEDD}</folder>
+    <folder name="Contacts">{56784854-C6CB-462b-8169-88E350ACB882}</folder>
+    <folder name="Control Panel">{82A74AEB-AEB4-465C-A014-D097EE346D63}</folder>
+    <folder name="Cookies">{2B0F765D-C0E9-4171-908E-08A611B84FF6}</folder>
+    <folder name="Desktop">{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}</folder>
+    <folder name="DeviceMetadataStore">{5CE4A5E9-E4EB-479D-B89F-130C02886155}</folder>
+    <folder name="Documents">{FDD39AD0-238F-46AF-ADB4-6C85480369C7}</folder>
+    <folder name="Documents">{7B0DB17D-9CD2-4A93-9733-46CC89022E7C}</folder>
+    <folder name="Downloads">{374DE290-123F-4565-9164-39C4925E467B}</folder>
+    <folder name="Favorites">{1777F761-68AD-4D8A-87BD-30B759FA33DD}</folder>
+    <folder name="Fonts">{FD228CB7-AE11-4AE3-864C-16F3910AB8FE}</folder>
+    <folder name="Games">{CAC52C1A-B53D-4edc-92D7-6B2E8AC19434}</folder>
+    <folder name="GameExplorer">{054FAE61-4DD8-4787-80B6-090220C4B700}</folder>
+    <folder name="History">{D9DC8A3B-B784-432E-A781-5A1130A75963}</folder>
+    <folder name="Homegroup">{52528A6B-B9E3-4ADD-B60D-588C2DBA842D}</folder>
+    <folder name="users username">{9B74B6A3-0DFD-4f11-9E78-5F7800F2E772}</folder>
+    <folder name="ImplicitAppShortcuts">{BCB5256F-79F6-4CEE-B725-DC34E402FD46}</folder>
+    <folder name="Temporary Internet Files">{352481E8-33BE-4251-BA85-6007CAEDCF9D}</folder>
+    <folder name="The Internet">{4D9F7874-4E0C-4904-967B-40B0D20C3E4B}</folder>
+    <folder name="Libraries">{1B3EA5DC-B587-4786-B4EF-BD1DC332AEAE}</folder>
+    <folder name="Links">{bfb9d5e0-c6a9-404c-b2b2-ae6db6af4968}</folder>
+    <folder name="Local">{F1B32785-6FBA-4FCF-9D55-7B8E7F157091}</folder>
+    <folder name="LocalLow">{A520A1A4-1780-4FF6-BD18-167343C5AF16}</folder>
+    <folder name="None">{2A00375E-224C-49DE-B8D1-440DF7EF3DDC}</folder>
+    <folder name="Music">{4BD8D571-6D19-48D3-BE97-422220080E43}</folder>
+    <folder name="Music">{2112AB0A-C86A-4FFE-A368-0DE96E47012E}</folder>
+    <folder name="Network Shortcuts">{C5ABBF53-E17F-4121-8900-86626FC2C973}</folder>
+    <folder name="Network">{D20BEEC4-5CA8-4905-AE3B-BF251EA09B53}</folder>
+    <folder name="Original Images">{2C36C0AA-5812-4b87-BFD0-4CD0DFB19B39}</folder>
+    <folder name="Slide Shows">{69D2CF90-FC33-4FB7-9A0C-EBB0F0FCB43C}</folder>
+    <folder name="Pictures">{A990AE9F-A03B-4E80-94BC-9912D7504104}</folder>
+    <folder name="Pictures">{33E28130-4E1E-4676-835A-98395C3BC3BB}</folder>
+    <folder name="Playlists">{DE92C1C7-837F-4F69-A3BB-86E631204A23}</folder>
+    <folder name="Printers">{76FC4E2D-D6AD-4519-A663-37BD56068185}</folder>
+    <folder name="Printer Shortcuts">{9274BD8D-CFD1-41C3-B35E-B13F55A758F4}</folder>
+    <folder name="The users username">{5E6C858F-0E22-4760-9AFE-EA3317B67173}</folder>
+    <folder name="ProgramData">{62AB5D82-FDC1-4DC3-A9DD-070D1D495D97}</folder>
+    <folder name="Program Files">{905e63b6-c1bf-494e-b29c-65b732d3d21a}</folder>
+    <folder name="Program Files">{6D809377-6AF0-444b-8957-A3773F02200E}</folder>
+    <folder name="Program Files">{7C5A40EF-A0FB-4BFC-874A-C0F2E0B9FA8E}</folder>
+    <folder name="Common Files">{F7F1ED05-9F6D-47A2-AAAE-29D317C6F066}</folder>
+    <folder name="Common Files">{6365D5A7-0F0D-45E5-87F6-0DA56B6A4F7D}</folder>
+    <folder name="Common Files">{DE974D24-D9C6-4D3E-BF91-F4455120B917}</folder>
+    <folder name="Programs">{A77F5D77-2E2B-44C3-A6A2-ABA601054A51}</folder>
+    <folder name="Public">{DFDF76A2-C82A-4D63-906A-5644AC457385}</folder>
+    <folder name="Public Desktop">{C4AA340D-F20F-4863-AFEF-F87EF2E6BA25}</folder>
+    <folder name="Public Documents">{ED4824AF-DCE4-45A8-81E2-FC7965083634}</folder>
+    <folder name="Public Downloads">{3D644C9B-1FB8-4f30-9B45-F670235F79C0}</folder>
+    <folder name="GameExplorer">{DEBF2536-E1A8-4c59-B6A2-414586476AEA}</folder>
+    <folder name="Libraries">{48DAF80B-E6CF-4F4E-B800-0E69D84EE384}</folder>
+    <folder name="Public">{3214FAB5-9757-4298-BB61-92A9DEAA44FF}</folder>
+    <folder name="Public Pictures">{B6EBFB86-6907-413C-9AF7-4FC2ABF07CC5}</folder>
+    <folder name="Ringtones">{E555AB60-153B-4D17-9F04-A5FE99FC15EC}</folder>
+    <folder name="Public Account Pictures">{0482af6c-08f1-4c34-8c90-e17ec98b1e17}</folder>
+    <folder name="Public Videos">{2400183A-6185-49FB-A2D8-4A392A602BA3}</folder>
+    <folder name="Quick Launch">{52a4f021-7b75-48a9-9f6b-4b87a210bc8f}</folder>
+    <folder name="Recent Items">{AE50C081-EBD2-438A-8655-8A092E34987A}</folder>
+    <folder name="Recorded TV">{1A6FDBA2-F42D-4358-A798-B74D745926C5}</folder>
+    <folder name="Recycle Bin">{B7534046-3ECB-4C18-BE4E-64CD4CB7D6AC}</folder>
+    <folder name="Resources">{8AD10C31-2ADB-4296-A8F7-E4701232C972}</folder>
+    <folder name="Ringtones">{C870044B-F49E-4126-A9C3-B52A1FF411E8}</folder>
+    <folder name="Roaming">{3EB685DB-65F9-4CF6-A03A-E3EF65729F3D}</folder>
+    <folder name="RoamedTileImages">{AAA8D5A5-F1D6-4259-BAA8-78E7EF60835E}</folder>
+    <folder name="RoamingTiles">{00BCFC5A-ED94-4e48-96A1-3F6217F21990}</folder>
+    <folder name="Sample Music">{B250C668-F57D-4EE1-A63C-290EE7D1AA1F}</folder>
+    <folder name="Sample Pictures">{C4900540-2379-4C75-844B-64E6FAF8716B}</folder>
+    <folder name="Sample Playlists">{15CA69B3-30EE-49C1-ACE1-6B5EC372AFB5}</folder>
+    <folder name="Sample Videos">{859EAD94-2E85-48AD-A71A-0969CB56A6CD}</folder>
+    <folder name="Saved Games">{4C5C32FF-BB9D-43b0-B5B4-2D72E54EAAA4}</folder>
+    <folder name="Searches">{7d1d3a04-debb-4115-95cf-2f29da2920da}</folder>
+    <folder name="Screenshots">{b7bede81-df94-4682-a7d8-57a52620b86f}</folder>
+    <folder name="Offline Files">{ee32e446-31ca-4aba-814f-a5ebd2fd6d5e}</folder>
+    <folder name="History">{0D4C3DB6-03A3-462F-A0E6-08924C41B5D4}</folder>
+    <folder name="Search Results">{190337d1-b8ca-4121-a639-6d472d16972a}</folder>
+    <folder name="Microsoft Office Outlook">{98ec0e18-2098-4d44-8644-66979315a281}</folder>
+    <folder name="Templates">{7E636BFE-DFA9-4D5E-B456-D7B39851D8A9}</folder>
+    <folder name="SendTo">{8983036C-27C0-404B-8F08-102D10DCFD74}</folder>
+    <folder name="Gadgets">{7B396E54-9EC5-4300-BE0A-2482EBAE1A26}</folder>
+    <folder name="Gadgets">{A75D362E-50FC-4fb7-AC2C-A8BEAA314493}</folder>
+    <folder name="OneDrive">{A52BBA46-E9E1-435f-B3D9-28DAA648C0F6}</folder>
+    <folder name="Camera Roll">{767E6811-49CB-4273-87C2-20F355E1085B}</folder>
+    <folder name="Documents">{24D89E24-2F19-4534-9DDE-6A6671FBB8FE}</folder>
+    <folder name="Pictures">{339719B5-8C47-4894-94C2-D8F77ADD44A6}</folder>
+    <folder name="Start Menu">{625B53C3-AB48-4EC1-BA1F-A1EF4146FC19}</folder>
+    <folder name="Startup">{B97D20BB-F46A-4C97-BA10-5E3608430854}</folder>
+    <folder name="Sync Center">{43668BF8-C14E-49B2-97C9-747784D784B7}</folder>
+    <folder name="Sync Results">{289a9a43-be44-4057-a41b-587a76d7e7f9</folder>
+    <folder name="Sync Setup">{0F214138-B1D3-4a90-BBA9-27CBC0C5389A}</folder>
+    <folder name="System32">{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}</folder>
+    <folder name="System32">{D65231B0-B2F1-4857-A4CE-A8E7C6EA7D27}</folder>
+    <folder name="Templates">{A63293E8-664E-48DB-A079-DF759E0509F7}</folder>
+    <folder name="User Pinned">{9E3995AB-1F9C-4F13-B827-48B24B6C7174}</folder>
+    <folder name="Users">{0762D272-C50A-4BB0-A382-697DCD729B80}</folder>
+    <folder name="Programs">{5CD7AEE2-2219-4A67-B85D-6C9CE15660CB}</folder>
+    <folder name="Programs">{BCBD3057-CA5C-4622-B42D-BC56DB0AE516}</folder>
+    <folder name="Users full name entered when the user account was created">{f3ce0f7c-4901-4acc-8648-d5d44b04ef8f}</folder>
+    <folder name="Libraries">{A302545D-DEFF-464b-ABE8-61C8648D939B}</folder>
+    <folder name="Videos">{18989B1D-99B5-455B-841C-AB7C74E4DDFC}</folder>
+    <folder name="Videos">{491E922F-5643-4AF4-A7EB-4E7A138D8174}</folder>
+    <folder name="Windows">{F38BF404-1D43-42F2-9305-67DE0B28FC23}</folder>
+  </folders>
+
+  <!-- guid -->
+  <guids>
+    <guid>27C3B8ED-0790-42BD-9AD7-18465E7F7696</guid>
+    <guid>27C3B8ED-0790-42BD-9AD7-18465E7F7696</guid>
+    <guid>27C3B8ED-0790-42BD-9AD7-18465E7F7696</guid>
+    <guid>97808F6C-4769-49D5-9553-18AE9C62ACD7</guid>
+    <guid>B196B286-BAB4-101A-B69C-00AA00341D07</guid>
+    <guid>D27CDB6E-AE6D-11CF-96B8-444553540000</guid>
+    <guid>abe2869f-9b47-4cd9-a358-c22904dba7f7</guid>
+    <guid>00000000-0000-0000-C000-000000000046</guid>
+    <guid>ADB880A6-D8FF-11CF-9377-00AA003B7A11</guid>
+    <guid>5e7e8100-9138-11d1-945a-00c04fc308ff</guid>
+    <guid>82bd0e67-9fea-4748-8672-d5efe5b779b0</guid>
+    <guid>5e7e8100-9138-11d1-945a-00c04fc308ff</guid>
+    <guid>82BD0E67-9FEA-4748-8672-D5EFE5B779B0</guid>
+    <guid>8856F961-340A-11D0-A96B-00C04FD705A2</guid>
+  </guids>
+
+  <!-- Registry -->
+  <regs>
+    <reg>\Device\KeyboardClass0</reg>
+    <reg>Software\Skype\Phone</reg>
+    <reg>\registry\machine\system\CurrentControlSet\Services\Tcpip\Parameters\Interfaces\</reg>
+    <reg>SYSTEM\CurrentControlSet</reg>
+    <reg>Software\Microsoft</reg>
+    <reg>System\WPA\</reg>
+    <reg>HARDWARE\DEVICEMAP\SERIALCOMM</reg>
+    <reg>HARDWARE\DEVICEMAP\PARALLEL PORTS</reg>
+    <reg>Software\Microsoft\Windows\CurrentVersion\Run</reg>
+    <reg>.DEFAULT\Software\Microsoft\Windows\CurrentVersion\RunServices</reg>
+    <reg>.DEFAULT\Software\Microsoft\Windows\CurrentVersion\Runonce</reg>
+    <reg>.DEFAULT\Software\Microsoft\Windows\CurrentVersion\Run</reg>
+    <reg>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings\UserReset</reg>
+    <reg>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run\</reg>
+    <reg>HKEY_CURRENT_USER\Software\Microsoft</reg>
+    <reg>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\UserInit</reg>
+    <reg>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\Shell</reg>
+    <reg>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\Run\wdfmgr</reg>
+    <reg>HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Internet Settings\UserRestart</reg>
+    <reg>Software\Policies\Microsoft\Cryptography\AutoEnrollment</reg>
+    <reg>Software\KasperskyLab\protected\AVP9\settings</reg>
+    <reg>Software\KasperskyLab\protected\AVP8\settings</reg>
+    <reg>Software\kingsoft\AntiVirus</reg>
+    <reg>Software\JiangMin</reg>
+    <reg>Software\Norton\SecurityStatusSDK</reg>
+    <reg>Software\ESET\ESET Security\CurrentVersion\Info</reg>
+    <reg>Software\Cisco Systems\VPN Client\AllAccess</reg>
+    <reg>Software\AVAST Software</reg>
+    <reg>Software\ESET</reg>
+    <reg>Software\Classes\TypeLib\{F9043C88-F6F2-101A-A3C9-08002B2F49FB}\1.2\0\win32</reg>
+    <reg>CurrentVersion\Run</reg>
+    <reg>HKEY_CLASSES_ROOT</reg>
+    <reg>HKEY_CURRENT_USER</reg>
+    <reg>HKEY_LOCAL_MACHINE</reg>
+    <reg>HKEY_USERS</reg>
+    <reg>HKEY_PERFORMANCE_DATA</reg>
+    <reg>HKEY_CURRENT_CONFIG</reg>
+    <reg>HKEY_DYN_DATA</reg>
+    <reg>HKCR</reg>
+    <reg>HKCU</reg>
+    <reg>HKLM</reg>
+    <reg>HKPD</reg>
+    <reg>HKDD</reg>
+    <reg>HKCC</reg>
+    <reg>HKCU</reg>
+    <reg>Hardware\Description\System\CentralProcessor</reg>
+    <reg>Hardware\ACPI\DSDT</reg>
+    <reg>HARDWARE\DEVICEMAP</reg>
+    <reg>hklm\SYSTEM\ControlSet001\Control\SafeBoot\Network\{4D36E967-E325-11CE-BFC1-08002BE10318}</reg>
+    <reg>hklm\SYSTEM\ControlSet001\Control\SafeBoot\Minimal\{4D36E967-E325-11CE-BFC1-08002BE10318}</reg>
+    <reg>HARDWARE\DESCRIPTION\System\CentralProcessor\0</reg>
+    <reg>DEFAULT\Software\Microsoft\Windows\CurrentVersion\Run</reg>
+    <reg>DisableTaskManager</reg>
+    <reg>HKCU\Control Panel\Desktop</reg>
+    <reg>LoadAppInit_DLLs</reg>
+    <reg>AppInit_DLLs</reg>
+    <reg>WarnOnIntranet</reg>
+    <reg>NoProtectedModeBanner</reg>
+    <reg>CLSID\{6C736DB0-BD94-11D0-8A23-00AA00B58E10}\EnableEvents</reg>
+    <reg>ROOT\SecurityCenter</reg>
+    <reg>ROOT\SecurityCenter2</reg>
+    <reg>\shell\open\command</reg>
+    <reg>\Device\KeyboardClassC</reg>
+    <reg>\DosDevices\KeyboardClassC</reg>
+  </regs>
+
+  <folders>
+    <!-- Common folder variables http://www.microsoft.com/security/portal/mmpc/shared/variables.aspx#startup -->
+    <folder>%ALLUSERPROFILE%</folder>
+    <folder>%APPDATA%</folder>
+    <folder>commonappdata</folder>
+    <folder>%CommonProgramFiles%</folder>
+    <folder>%HOMEPATH%</folder>
+    <folder>%LOCALAPPDATA%</folder>
+    <folder>%ProgramData%</folder>
+    <folder>%ProgramFiles%</folder>
+    <folder>%PUBLIC%</folder>
+    <folder>%SystemDrive%</folder>
+    <folder>%SystemRoot%</folder>
+    <folder>%TEMP%</folder>
+    <folder>%USERPROFILE%</folder>
+    <folder>%windows%</folder>
+    <folder>%windir%</folder>
+    <folder>%system%</folder>
+    <folder>%temp%</folder>
+    <folder>%user%</folder>
+    <folder>%programfiles%</folder>
+    <folder>C:\Program Files\Common Files\System\wab32</folder>
+  </folders>
+
+  <oss>
+    <os>Microsoft Windows ME</os>
+    <os>Microsoft Windows 98</os>
+    <os>Microsoft Windows 95</os>
+    <os>Microsoft Windows 2000</os>
+    <os>Microsoft Windows XP</os>
+    <os>Home-Basic-Edition</os>
+    <os>Home-Premium-Edition</os>
+    <os>Home_Edition</os>
+    <os>Home_Server</os>
+    <os>WinNT</os>
+    <os>WIN32_NT</os>
+    <os>WIN_2008R2</os>
+    <os>WIN_7</os>
+    <os>WIN_2008</os>
+    <os>WIN_VISTA</os>
+    <os>WIN_2003</os>
+    <os>WIN_XPe</os>
+    <os>WIN_XP</os>
+    <os>WIN_2000</os>
+    <os>Web_Server_Edition</os>
+    <os>Standard_Edition_core_installation</os>
+    <os>Standard_Edition</os>
+    <os>Small_Business_Server_Premium_Edition</os>
+    <os>Small_Business_Server</os>
+    <os>Enterprise_Edition_for_ItaniumBased_System</os>
+    <os>Enterprise_Edition_core_installation</os>
+    <os>Datacenter_Edition_core_installation</os>
+    <os>Datacenter_Edition</os>
+    <os>Cluster_Server_Edition</os>
+    <os>Starter_Edition</os>
+    <os>Business_Edition</os>
+    <os>Enterprise_Edition</os>
+    <os>Home_Basic_Edition</os>
+    <os>Home_Premium_Edition</os>
+    <os>Ultimate_Edition</os>
+    <os>Server2008R2</os>
+    <os>Seven</os>
+    <os>Server2008</os>
+    <os>Win8</os>
+    <os>WinServer2012</os>
+    <os>Win7</os>
+    <os>WinServer2008R2</os>
+    <os>WinServer2008</os>
+    <os>Vista</os>
+    <os>WinHomeServer</os>
+    <os>WinServer2003R2</os>
+    <os>WinServer2003</os>
+    <os>WinXP64</os>
+    <os>WinXP</os>
+    <os>Win2K</os>
+    <os>Windows Me</os>
+    <os>Windows 98</os>
+    <os>Windows 95</os>
+    <os>Windows NT</os>
+    <os>Windows Vista</os>
+    <os>Windows 7</os>
+    <os>Windows 8</os>
+    <os>Windows 8.1</os>
+    <os>Windows NT 3.51</os>
+    <os>Windows NT 4.0</os>
+    <os>Windows Server</os>
+    <os>Windows Server 2012 R2</os>
+    <os>Windows 10</os>
+    <os>Windows Server 2016 Technical Preview</os>
+    <os>Ultimate Edition</os>
+    <os>Home Premium Edition</os>
+    <os>Home Basic Edition</os>
+    <os>Enterprise Edition</os>
+    <os>Business Edition</os>
+    <os>Starter Edition</os>
+    <os>Cluster Server Edition</os>
+    <os>Datacenter Edition</os>
+    <os>Datacenter Edition (core installation)</os>
+    <os>Enterprise Edition (core installation)</os>
+    <os>Enterprise Edition for Itanium-based Systems</os>
+    <os>Small Business Server</os>
+    <os>Small Business Server Premium Edition</os>
+    <os>Standard Edition</os>
+    <os>Standard Edition (core installation)</os>
+    <os>Web Server Edition</os>
+    <os>Professional Edition</os>
+    <os>Windows Server 2003</os>
+    <os>Windows Server 2003 R2</os>
+    <os>Windows Storage Server 2003</os>
+    <os>Windows XP</os>
+    <os>Windows XP Professional x64 Edition</os>
+    <os>Windows XP Professional x64</os>
+    <os>Datacenter Edition for Itanium-based Systems</os>
+    <os>Datacenter x64 Edition</os>
+    <os>Enterprise x64 Edition</os>
+    <os>Standard x64 Edition</os>
+    <os>Compute Cluster Edition</os>
+    <os>Web Edition</os>
+    <os>Home Edition</os>
+    <os>Professional</os>
+    <os>Windows 2000</os>
+    <os>Datacenter Server</os>
+    <os>Advanced Server</os>
+    <os>Windows Home Server</os>
+    <os>Windows Server 2008</os>
+    <os>Windows Server 2008 R2</os>
+    <os>Windows Server R2</os>
+    <os>Media Center Edition</os>
+    <os>Tablet PC Edition</os>
+    <os>Embedded Edition</os>
+    <os>Professional x64 Edition</os>
+    <os>Storage Server 2003 R2</os>
+    <os>Storage Server 2003</os>
+    <os>Server 2003 R2</os>
+    <os>Server 2003</os>
+    <os>Server 2008</os>
+    <os>Business</os>
+    <os>Business N</os>
+    <os>Datacenter Edition(Core)</os>
+    <os>Enterprise N</os>
+    <os>Enterprise Edition(Core)</os>
+    <os>Home Basic</os>
+    <os>Home Basic N</os>
+    <os>Home Premium</os>
+    <os>Home Premium N</os>
+    <os>Ultimate</os>
+    <os>Ultimate N</os>
+    <os>Standard Edition(Core)</os>
+    <os>NT3.1</os>
+    <os>NT3.5</os>
+    <os>NT3.51</os>
+    <os>2000</os>
+    <os>2003 Server</os>
+    <os>2008 Server</os>
+    <os>Win Vista</os>
+    <os>Win Srv 2008</os>
+    <os>Win 7</os>
+    <os>Win 8</os>
+    <os>Windows+8.1</os>
+    <os>Win Srv 2003</os>
+    <os>Win Srv</os>
+    <os>Win XP</os>
+    <os>Windows+XP</os>
+    <os>Windows XP (5.1)</os>
+    <os>Win 2000</os>
+    <os>Windows Server 2012</os>
+    <os>32-bit Edition</os>
+    <os>64-bit Edition</os>
+    <os>Windows Server 2000</os>
+    <os>2003</os>
+    <os>2008</os>
+    <os>Windows Server 2000</os>
+    <os>Windows+8</os>
+    <os>Windows+7</os>
+    <os>Windows+Vista</os>
+    <os>Windows+Server+2003</os>
+    <os>Windows+2000</os>
+    <os>Windows 2000 (5.0)</os>
+    <os>Windows 7 (6.1)</os>
+    <os>Windows Server 2003  (5.2)</os>
+    <os>Windows Server 2003 R2 (5.2)</os>
+    <os>Windows Server 2008 (6.0)</os>
+    <os>Windows Server 2008 R2 (6.1)</os>
+    <os>Windows Vista (6.0)</os>
+  </oss>
+
+  <!--Sandbox Product IDs -->
+  <products>
+    <product>76487-640-1457236-23837</product>
+    <product>76487-337-8429955-22614</product>
+    <product>76487-644-3177037-23510</product>
+    <product>76487-640-8834005-23195</product>
+    <product>76487-640-0716662-23535</product>
+    <product>76487-644-8648466-23106</product>
+    <product>76487-341-5883812-22420</product>
+    <product>76487-OEM-0027453-63796</product>
+    <product>76497-640-6308873-23835</product>
+    <product>55274-640-2673064-23950</product>
+    <product>00426-293-8170032-85146</product>
+  </products>
+
+  <!-- SID (Security Identifiers -->
+  <sids>
+    <sid>S-1-0</sid>
+    <sid>S-1-0-0</sid>
+    <sid>S-1-1</sid>
+    <sid>S-1-1-0</sid>
+    <sid>S-1-2</sid>
+    <sid>S-1-2-0</sid>
+    <sid>S-1-2-1</sid>
+    <sid>S-1-3</sid>
+    <sid>S-1-3-0</sid>
+    <sid>S-1-3-1</sid>
+    <sid>S-1-3-2</sid>
+    <sid>S-1-3-3</sid>
+    <sid>S-1-3-4</sid>
+    <sid>S-1-5-80-0</sid>
+    <sid>S-1-4</sid>
+    <sid>S-1-5</sid>
+    <sid>S-1-5-1</sid>
+    <sid>S-1-5-2</sid>
+    <sid>S-1-5-3</sid>
+    <sid>S-1-5-4</sid>
+    <sid>S-1-5-6</sid>
+    <sid>S-1-5-7</sid>
+    <sid>S-1-5-8</sid>
+    <sid>S-1-5-9</sid>
+    <sid>S-1-5-10</sid>
+    <sid>S-1-5-11</sid>
+    <sid>S-1-5-12</sid>
+    <sid>S-1-5-13</sid>
+    <sid>S-1-5-14</sid>
+    <sid>S-1-5-15</sid>
+    <sid>S-1-5-17</sid>
+    <sid>S-1-5-18</sid>
+    <sid>S-1-5-19</sid>
+    <sid>S-1-5-20</sid>
+    <sid>S-1-5-32-544</sid>
+    <sid>S-1-5-32-545</sid>
+    <sid>S-1-5-32-546</sid>
+    <sid>S-1-5-32-547</sid>
+    <sid>S-1-5-32-548</sid>
+    <sid>S-1-5-32-549</sid>
+    <sid>S-1-5-32-550</sid>
+    <sid>S-1-5-32-551</sid>
+    <sid>S-1-5-32-552</sid>
+    <sid>S-1-5-64-10</sid>
+    <sid>S-1-5-64-14</sid>
+    <sid>S-1-5-64-21</sid>
+    <sid>S-1-5-80</sid>
+    <sid>S-1-5-83-0</sid>
+    <sid>S-1-16-0</sid>
+    <sid>S-1-16-4096</sid>
+    <sid>S-1-16-8192</sid>
+    <sid>S-1-16-8448</sid>
+    <sid>S-1-16-12288</sid>
+    <sid>S-1-16-16384</sid>
+    <sid>S-1-16-20480</sid>
+    <sid>S-1-16-28672</sid>
+    <sid>S-1-5-32-554</sid>
+    <sid>S-1-5-32-555</sid>
+    <sid>S-1-5-32-556</sid>
+    <sid>S-1-5-32-557</sid>
+    <sid>S-1-5-32-558</sid>
+    <sid>S-1-5-32-559</sid>
+    <sid>S-1-5-32-560</sid>
+    <sid>S-1-5-32-561</sid>
+    <sid>S-1-5-32-562</sid>
+    <sid>S-1-5-32-569</sid>
+    <sid>S-1-5-32-573</sid>
+    <sid>S-1-5-32-574</sid>
+    <sid>S-1-5-32-575</sid>
+    <sid>S-1-5-32-576</sid>
+    <sid>S-1-5-32-577</sid>
+    <sid>S-1-5-32-578</sid>
+    <sid>S-1-5-32-579</sid>
+    <sid>S-1-5-32-580</sid>
+    <sid>S-1-5-80-2006800713-1441093265-249754844-3404434343-1444102779</sid>
+    <sid>S-1-5-80-3864065939-1897331054-469427076-3133256761-1570309435</sid>
+  </sids>
+
+  <protocols>
+    <protocol enable="1" risk="1">http</protocol>
+    <protocol enable="1" risk="1">https</protocol>
+    <protocol enable="1" risk="1">httpmail</protocol>
+    <protocol enable="1" risk="1">nntp</protocol>
+    <protocol enable="1" risk="1">imap</protocol>
+    <protocol enable="1" risk="1">pop3</protocol>
+    <protocol enable="1" risk="1">file</protocol>
+    <protocol enable="1" risk="1">smtp</protocol>
+    <protocol enable="1" risk="1">ftp</protocol>
+    <protocol enable="1" risk="1">icmp</protocol>
+  </protocols>
+
+  <keys>
+    <key enable="1" risk="1">[LArrow]</key>
+    <key enable="1" risk="1">[UArrow]</key>
+    <key enable="1" risk="1">[RArrow]</key>
+    <key enable="1" risk="1">[DArrow]</key>
+    <key enable="1" risk="1">[Ctrl+%c]</key>
+    <key enable="1" risk="1">[%s]</key>
+    <key enable="1" risk="1">[ESCAPE]</key>
+    <key enable="1" risk="1">[TAB]</key>
+    <key enable="1" risk="1">[DELETE]</key>
+    <key enable="1" risk="1">[CAPS LOCK]</key>
+    <key enable="1" risk="1">[BACKCPACE]</key>
+    <key enable="1" risk="1">[Backspace]</key>
+    <key enable="1" risk="1">[ENTER]</key>
+    <key enable="1" risk="1">[Enter]</key>
+    <key enable="1" risk="1">[Tab]</key>
+    <key enable="1" risk="1">[Arrow Left]</key>
+    <key enable="1" risk="1">[Arrow Up]</key>
+    <key enable="1" risk="1">[Arrow Right]</key>
+    <key enable="1" risk="1">[Arrow Down]</key>
+    <key enable="1" risk="1">[Home]</key>
+    <key enable="1" risk="1">[Page Up]</key>
+    <key enable="1" risk="1">[Page Down]</key>
+    <key enable="1" risk="1">[End]</key>
+    <key enable="1" risk="1">[Break]</key>
+    <key enable="1" risk="1">[Delete]</key>
+    <key enable="1" risk="1">[Insert]</key>
+    <key enable="1" risk="1">[Ent]</key>
+    <key enable="1" risk="1">[Print Screen]</key>
+    <key enable="1" risk="1">[Scroll Lock]</key>
+    <key enable="1" risk="1">[Caps Lock]</key>
+    <key enable="1" risk="1">[Alt]</key>
+    <key enable="1" risk="1">[Esc]</key>
+    <key enable="1" risk="1">[Back Space]</key>
+    <key enable="1" risk="1">[CONTROL]</key>
+    <key enable="1" risk="1">[PUSE]</key>
+    <key enable="1" risk="1">[LEFT]</key>
+    <key enable="1" risk="1">[RIGHT]</key>
+    <key enable="1" risk="1">[UP]</key>
+    <key enable="1" risk="1">[DOWN]</key>
+    <key enable="1" risk="1">[NUM LOCK]</key>
+    <key enable="1" risk="1">[RMOUSE]</key>
+    <key enable="1" risk="1">[LMOUSE]</key>
+    <key enable="1" risk="1">[AltRight]</key>
+    <key enable="1" risk="1">[AltLeft]</key>
+    <key enable="1" risk="1">[CtrlRight]</key>
+    <key enable="1" risk="1">[CtrlLeft]</key>
+    <key enable="1" risk="1">[ShiftRight]</key>
+    <key enable="1" risk="1">[ShiftLeft]</key>
+    <key enable="1" risk="1">[Scroll]</key>
+    <key enable="1" risk="1">[NumLock]</key>
+    <key enable="1" risk="1">[Sleep]</key>
+    <key enable="1" risk="1">[Menu]</key>
+    <key enable="1" risk="1">[WindowsRight]</key>
+    <key enable="1" risk="1">[WindowsLeft]</key>
+    <key enable="1" risk="1">[Suppr]</key>
+    <key enable="1" risk="1">[PrintScreen]</key>
+    <key enable="1" risk="1">[PageDown]</key>
+    <key enable="1" risk="1">[PageUp]</key>
+    <key enable="1" risk="1">[Caps]</key>
+    <key enable="1" risk="1">[Pause]</key>
+    <key enable="1" risk="1">[Ctrl]</key>
+    <key enable="1" risk="1">[Shift]</key>
+    <key enable="1" risk="1">[SHIFT]</key>
+    <key enable="1" risk="1">[Clear]</key>
+    <key enable="1" risk="1">[DownArrow]</key>
+    <key enable="1" risk="1">[RightArrow]</key>
+    <key enable="1" risk="1">[UpArrow]</key>
+    <key enable="1" risk="1">[LeftArrow]</key>
+    <key enable="1" risk="1">[Space]</key>
+    <key enable="1" risk="1">[CapsLock]</key>
+    <key enable="1" risk="1">[ALT-DOWN]</key>
+    <key enable="1" risk="1">[ALT-UP]</key>
+    <key enable="1" risk="1">[APPS]</key>
+    <key enable="1" risk="1">[BACK]</key>
+    <key enable="1" risk="1">[CLR]</key>
+    <key enable="1" risk="1">[CTRL-DOWN]</key>
+    <key enable="1" risk="1">[CTRL-UP]</key>
+    <key enable="1" risk="1">[Ctrl+A]</key>
+    <key enable="1" risk="1">[Ctrl+C]</key>
+    <key enable="1" risk="1">[Ctrl+D]</key>
+    <key enable="1" risk="1">[Ctrl+V]</key>
+    <key enable="1" risk="1">[Ctrl+X]</key>
+    <key enable="1" risk="1">[Ctrl+Z]</key>
+    <key enable="1" risk="1">[DEL]</key>
+    <key enable="1" risk="1">[EXECUTE]</key>
+    <key enable="1" risk="1">[F1]</key>
+    <key enable="1" risk="1">[F2]</key>
+    <key enable="1" risk="1">[F3]</key>
+    <key enable="1" risk="1">[F4]</key>
+    <key enable="1" risk="1">[F5]</key>
+    <key enable="1" risk="1">[F6]</key>
+    <key enable="1" risk="1">[F7]</key>
+    <key enable="1" risk="1">[F8]</key>
+    <key enable="1" risk="1">[F9]</key>
+    <key enable="1" risk="1">[F10]</key>
+    <key enable="1" risk="1">[F11]</key>
+    <key enable="1" risk="1">[F12]</key>
+    <key enable="1" risk="1">[BK]</key>
+    <key enable="1" risk="1">[INS]</key>
+    <key enable="1" risk="1">[LF]</key>
+    <key enable="1" risk="1">[SCROLLLOCK]</key>
+    <key enable="1" risk="1">[HELP]</key>
+    <key enable="1" risk="1">[BACK_SPACE]</key>
+    <key enable="1" risk="1">[RETURN]</key>
+    <key enable="1" risk="1">[Esc]</key>
+    <key enable="1" risk="1">[TAB]</key>
+    <key enable="1" risk="1">[CAPS LOCK]</key>
+    <key enable="1" risk="1">[SPACE]</key>
+    <key enable="1" risk="1">[LEFT_SHIFT]</key>
+    <key enable="1" risk="1">[RIGHT_SHIFT]</key>
+    <key enable="1" risk="1">[LEFT_CONTROL]</key>
+    <key enable="1" risk="1">[RIGHT_CONTROL]</key>
+    <key enable="1" risk="1">[LCONTROL-DOWN]</key>
+    <key enable="1" risk="1">[LCONTROL-UP]</key>
+    <key enable="1" risk="1">[LMENU-DOWN]</key>
+    <key enable="1" risk="1">[LMENU-UP]</key>
+    <key enable="1" risk="1">[LWIN-DOWN]</key>
+    <key enable="1" risk="1">[LWIN-UP]</key>
+    <key enable="1" risk="1">[PGDOWN]</key>
+    <key enable="1" risk="1">[PGUP]</key>
+    <key enable="1" risk="1">[PRINT]</key>
+    <key enable="1" risk="1">[RCONTROL-DOWN]</key>
+    <key enable="1" risk="1">[RCONTROL-UP]</key>
+    <key enable="1" risk="1">[RMENU-DOWN]</key>
+    <key enable="1" risk="1">[RMENU-UP]</key>
+    <key enable="1" risk="1">[RWIN-DOWN]</key>
+    <key enable="1" risk="1">[RWIN-UP]</key>
+    <key enable="1" risk="1">[SELECT]</key>
+    <key enable="1" risk="1">[SEPARATOR]</key>
+    <key enable="1" risk="1">[SNAPSHOT]</key>
+    <key enable="1" risk="1">[PRSC]</key>
+    <key enable="1" risk="1">[PrtSc]</key>
+    <key enable="1" risk="1">[WIN]</key>
+  </keys>
+
+  <events>
+    <event enable="1" risk="0">OnClick</event>
+    <event enable="1" risk="0">OnCreate</event>
+    <event enable="1" risk="0">OnData</event>
+    <event enable="1" risk="0">OnDataFind</event>
+    <event enable="1" risk="0">OnDataHint</event>
+    <event enable="1" risk="0">OnDeletion</event>
+    <event enable="1" risk="0">OnDestroy</event>
+    <event enable="1" risk="0">OnDragDrop</event>
+    <event enable="1" risk="0">OnKeyDown</event>
+    <event enable="1" risk="0">OnKeyPress</event>
+    <event enable="1" risk="0">OnKeyUp</event>
+    <event enable="1" risk="0">OnMouseDown</event>
+    <event enable="1" risk="0">OnMouseEnter</event>
+    <event enable="1" risk="0">OnMouseLeave</event>
+    <event enable="1" risk="0">OnMouseMove</event>
+    <event enable="1" risk="0">OnMouseUp</event>
+    <event enable="1" risk="0">OnProgress</event>
+    <event enable="1" risk="0">OnTimer</event>
+  </events>
+
+  <insults>
+    <insult>fuck</insult>
+    <insult>fukoff</insult>
+    <insult>Fuck You!!!</insult>
+    <insult>sandboxfuck</insult>
+    <insult>Fuck You By QQ:123**321</insult>
+    <insult>Shit!!</insult>
+    <insult>asshole</insult>
+    <insult>FUCK OFF!!!</insult>
+  </insults>
+
+  <strings>
+    <string score="0">ThisprogrammustberununderWin32</string>
+    <string score="80">!This is a PE executable</string>
+
+    <string score="0">unzip</string>
+    <string score="0">inflate</string>
+    <string score="0">\\.\SICE</string>
+    <string score="0">\\.\REGSYS</string>
+    <string score="0">\\.\REGVXG</string>
+    <string score="0">\\.\FILEVXG</string>
+    <string score="0">\\.\FILEM</string>
+
+    <string score="0">MSXML2.ServerXMLHTTP$</string>
+    <string score="0">Word.Document.8</string>
+    <string score="0">PROJECT.THISDOCUMENT.AUTOOPEN</string>
+    <string score="0">Microsoft Office</string>
+    <string score="0">Root Entry</string>
+    <string score="0">WordDocument</string>
+    <string score="0">SummaryInformation</string>
+    <string score="0">DocumentSummaryInformation</string>
+    <string score="0">Macros</string>
+    <string score="0">_VBA_PROJECT</string>
+    <string score="0">PROJECTwm</string>
+
+    <string score="1">webcam</string>
+    <string score="1">Please Enable Content* to see this document.</string>
+    <string score="1">Enable Content</string>
+    <string score="1">Program Files (x86)</string>
+    <string score="1">PROCEXPLORER</string>
+    <string score="1">MSScriptControl.ScriptControl.1</string>
+    <string score="1">Embedded Control</string>
+    <string score="1">Microsoft Word 10.0</string>
+    <string score="1">OCXNAME</string>
+    <string score="1">money</string>
+    <string score="0">Accept-Language: </string>
+    <string score="0">Accept-Encoding: </string>
+    <string score="0">Mr.Black</string>
+
+    <string score="0">WinZip Self-Extractor - Password</string>
+    <string score="0">This self-extracting Zip file is password protected.</string>
+    <string score="0">Windows Installer XML (3.0.5419.0)</string>
+    <string score="0">ResponseText</string>
+    <string score="0">Your personal files are encrypted!</string>
+    <string score="0">!!!Rescue your files!!!</string>
+    <string score="0">Now you have the last chance to decrypt your files.</string>
+    <string score="0">Any attempt to remove or corrupt this software will result</string>
+    <string score="0">in immediate elimination of the private key by the server.</string>
+    <string score="0">You must install this browser</string>
+    <string score="0">Your decryption price will</string>
+    <string score="0">Everything is fine now decrypting all files.</string>
+    <string score="0">All files Decrypted</string>
+    <string score="0">Enter Decrypt Key</string>
+    <string score="0">WScript.Shell</string>
+    <string score="0">System Volume Information</string>
+    <string score="0">Boot</string>
+    <string score="0">wevtutil clear-log Security</string>
+    <string score="0">wevtutil clear-log Setup</string>
+    <string score="0">wevtutil clear-log System</string>
+    <string score="0">wevtutil clear-log Application</string>
+    <string score="0">SECG curve over a 256 bit prime field</string>
+    <string score="0">SmartAssembly.Attributes</string>
+    <string score="0">Copyright (c) 1998-2009 by Joergen Ibsen All Rights Reserved.</string>
+    <string score="0">"Powered by SmartAssembly 6.8.0.121</string>
+    <string score="0">!Powered by SmartAssembly 6.6.1.44</string>
+    <string score="0">Microsoft Enhanced RSA and AES Cryptographic Provider</string>
+    <string score="0">!Require Windows</string>
+    <string score="0">ENIGMA</string>
+    <string score="0">$Info: This file is packed with the UPX executable packer http://upx.sf.net $</string>
+    <string score="0">$Id: UPX 3.91 Copyright (C) 1996-2013 the UPX Team. All Rights Reserved. $</string>
+    <string score="0">Microsoft Application Compatibility Toolkit 5.6</string>
+    <string score="0">Management</string>
+    <string score="0">File manager</string>
+    <string score="0">System Manager</string>
+    <string score="0">Screen Capture</string>
+    <string score="0">Webcam Capture</string>
+    <string score="0">Packet Sniffer</string>
+    <string score="0">Listen</string>
+    <string score="0">Kill</string>
+    <string score="0">Background</string>
+    <string score="0">\\.\mailslot\%s</string>
+    <string score="0">Macromedia Flash Player 7.0  r14</string>
+    <string score="0">Macromedia Flash Player 7.0</string>
+    <string score="0">dbgeng</string>
+    <string score="0">Network Performance and Security Manager</string>
+    <string score="0">ProxyEnable</string>
+    <string score="0">ProxyServer</string>
+    <string score="0">ProxyOverride</string>
+    <string score="0">ProxyUserName</string>
+    <string score="0">ProxyPassword</string>
+    <string score="0">SkpWnd</string>
+    <string score="0">SkypeControlAPIAttach</string>
+    <string score="0">SkypeControlAPIDiscover</string>
+    <string score="0">Skype:API</string>
+    <string score="0">GET SKYPEVERSION</string>
+    <string score="0">SkypePath</string>
+    <string score="0">AdministratorsGroup</string>
+    <string score="0">NtAuthority</string>
+    <string score="0">masterkey</string>
+    <string score="0">IEHistory</string>
+    <string score="0">BUILTIN</string>
+    <string score="0">NT AUTHORITY</string>
+
+    <!-- Firefox -->
+    <string score="0">PR_Bind</string>
+    <string score="0">PR_Accept</string>
+    <string score="0">PR_AcceptRead</string>
+    <string score="0">PR_Connect</string>
+    <string score="0">PR_Listen</string>
+    <string score="0">PR_Read</string>
+    <string score="0">PR_Write</string>
+    <string score="0">PR_Writev</string>
+    <string score="0">PR_Close</string>
+    <string score="0">PR_Send</string>
+    <string score="0">PR_TransmitFile</string>
+    <string score="0">PR_OpenTCPSocket</string>
+    <string score="0">PR_GetSocketOption</string>
+    <string score="0">PR_SetSocketOption</string>
+    <string score="0">PR_Shutdown</string>
+    <string score="0">PR_GetError</string>
+    <string score="0">PR_SetError</string>
+    <string score="0">PR_GetNameForIdentity</string>
+
+    <!-- Unclassified -->
+    <string score="0">cards</string>
+    <string score="0">card</string>
+    <string score="0">speex-1.1.11.1</string>
+    <string score="0">Time expiried.</string>
+    <string score="0">PClock</string>
+    <string score="0">Start scanner</string>
+    <string score="0">Scanner completed</string>
+    <string score="0">Start crypter</string>
+    <string score="0">Files encrypted</string>
+    <string score="0">SoftDownloaderWnd</string>
+    <string score="0">MemoryScanner</string>
+    <string score="0">ActiveX Control</string>
+    <string score="0">\\.\PhysicalDrive%d</string>
+    <string score="0">Microsoft Windows Auto Update</string>
+    <string score="0">PB_DropAccept</string>
+    <string score="0">PB_WindowID</string>
+    <string score="0">IsAdmin</string>
+    <string score="0">CryptKeyType</string>
+    <string score="0">CryptKeyId</string>
+    <string score="0">NetAdapter</string>
+    <string score="0">Gateway</string>
+    <string score="0">PriWinsServer</string>
+    <string score="0">SecWinsServer</string>
+    <string score="0">DHCPServer</string>
+    <string score="0">DnsServer</string>
+    <string score="0">Microsoft Enhanced Cryptographic Provider v1.0</string>
+    <string score="0">Microsoft Base Cryptographic Provider v1.0</string>
+    <string score="0">stub_helper</string>
+    <string score="0">vm_protect</string>
+
+    <string score="0">FtpServer</string>
+    <string score="0">FtpUserName</string>
+    <string score="0">FtpPassword</string>
+    <string score="0">FtpDirectory</string>
+    <string score="0">RootDirectory</string>
+    <string score="0">Port</string>
+    <string score="0">ServerType</string>
+    <string score="0">onEnterFrame</string>
+    <string score="0">attachMovie</string>
+    <string score="0">error to get HDD firmware serial</string>
+    <string score="0">aPLib v1.01  -  the smaller the better :)</string>
+    <string score="0">TrojanEngine</string>
+    <string score="0">Clinic</string>
+    <string score="0">NetMon</string>
+    <string score="0">FileSmash</string>
+    <string score="0">SafeBox</string>
+    <string score="0">IERepair</string>
+    <string score="0">KillVirus</string>
+    <string score="0">SoftMove</string>
+    <string score="0">SysClean</string>
+    <string score="0">Trojan</string>
+    <string score="0">CrashStackLen</string>
+    <string score="0">CrashDumpLen</string>
+    <string score="0">CrashStackBase64Len</string>
+    <string score="0">CrashDumpBase64Len</string>
+    <string score="0">CrashStack</string>
+    <string score="0">MinDump</string>
+    <string score="0">Google Update Service</string>
+    <string score="0">googleupdate</string>
+    <string score="0">VIRUS</string>
+    <string score="0">QEMU</string>
+
+    <string score="0">PaySafeCard</string>
+    <string score="0">MoneyPak</string>
+    <string score="0">moneypak</string>
+    <string score="0">MSFT</string>
+    <string score="0">EnumProcess</string>
+    <string score="0">InjectByPid</string>
+    <string score="0">Send to Server failed.</string>
+    <string score="0">HandShake with the server failed. Error:</string>
+    <string score="0">Microsoft Unified Security Protocol Provider</string>
+    <string score="0">ddos.bot</string>
+    <string score="0">passwords</string>
+    <string score="0">httpserver</string>
+    <string score="0">makedir</string>
+    <string score="0">sendkeys</string>
+    <string score="0">opencmd</string>
+    <string score="0">ProcessorNameString</string>
+    <string score="0">Identifier</string>
+    <string score="0">VendorIdentifier</string>
+    <string score="0">SystemBiosVersion</string>
+    <string score="0">SystemBiosDate</string>
+    <string score="0">VideoBiosVersion</string>
+    <string score="0">VideoBiosDate</string>
+    <string score="0">Windows File Protection</string>
+    <string score="0">LogonFailure</string>
+    <string score="0">killthread</string>
+    <string score="0">startkeylogger</string>
+    <string score="0">stopkeylogger</string>
+    <string score="0">listprocesses</string>
+    <string score="0">killprocess</string>
+    <string score="0">stopspy</string>
+    <string score="0">redirectspy</string>
+    <string score="0">stopredirectspy</string>
+    <string score="0">kazaabackupfiles</string>
+    <string score="0">SC_MONITORPOWER</string>
+    <string score="0">HWND_BROADCAST</string>
+    <string score="0">IsConnectedToInternet</string>
+    <string score="0">get_MachineName</string>
+    <string score="0">MacAddress</string>
+    <string score="0">EmailAddress</string>
+    <string score="0">PopServer</string>
+    <string score="0">PopPort</string>
+    <string score="0">PopAccount</string>
+    <string score="0">PopPassword</string>
+    <string score="0">SmtpServer</string>
+    <string score="0">SmtpPort</string>
+    <string score="0">SmtpAccount</string>
+    <string score="0">SmtpPassword</string>
+    <string score="0">WininetCacheCredentials</string>
+    <string score="0">PasswordType</string>
+    <string score="0">OutpostMonitor</string>
+
+    <string score="1">DisableAllPrivileges</string>
+    <string score="1">SetPrivilege</string>
+    <string score="0">telnet</string>
+    <string score="0">Download.Complete</string>
+    <string score="0">Download.Cancelled</string>
+    <string score="0">Download.Failed</string>
+    <string score="0">onLoadInit</string>
+    <string score="0">onLoadProgress</string>
+    <string score="0">onLoadError</string>
+    <string score="0">onLoadComplete</string>
+    <string score="0">onLoadStart</string>
+    <string score="0">onPress</string>
+    <string score="0">onInitialize</string>
+    <string score="0">onUnload</string>
+    <string score="0">onEnterFrame</string>
+    <string score="0">SMTP Password</string>
+    <string score="0">HTTPMail Password</string>
+    <string score="0">NNTP Password</string>
+    <string score="0">IMAP Password</string>
+    <string score="0">POP3 Password</string>
+    <string score="0">NNTP Password</string>
+    <string score="0">IMAP Password</string>
+    <string score="0">POP3 Password</string>
+    <string score="0">IMAP Port</string>
+    <string score="0">SMTP Port</string>
+    <string score="0">POP3 Port</string>
+    <string score="0">SMTP User</string>
+    <string score="0">HTTPMail Server</string>
+    <string score="0">IMAP User</string>
+    <string score="0">POP3 User</string>
+    <string score="0">HTTP Server URL</string>
+    <string score="0">HTTP User</string>
+    <string score="0">Email</string>
+    <string score="0">IMAP User Name</string>
+    <string score="0">IMAP Server</string>
+    <string score="0">NNTP Server</string>
+    <string score="0">NNTP User Name</string>
+    <string score="0">NNTP Email Address</string>
+    <string score="0">SMTP User Name</string>
+    <string score="0">SMTP Server</string>
+    <string score="0">SMTP Email Address</string>
+
+    <string score="0">Adobe ImageReadyq</string>
+    <string score="0">ClearBrowsingHistoryOnExit</string>
+    <string score="0">GetMACAddress</string>
+    <string score="0">GetProcessesByName</string>
+    <string score="0">WebRequest</string>
+    <string score="0">WebResponse</string>
+    <string score="0">GetResponse</string>
+    <string score="0">GetVolumeSerial</string>
+    <string score="0">ENCRYPtSTRING</string>
+    <string score="0">ENCRYPTBYTe</string>
+    <string score="0">VBRUN</string>
+    <string score="0">Blowfish</string>
+    <string score="0">CreateDecryptor</string>
+    <string score="0">MD5CryptoServiceProvider</string>
+    <string score="0">TripleDESCryptoServiceProvider</string>
+    <string score="0">PaddingMode</string>
+    <string score="0">iexplorer</string>
+    <string score="0">Shell_TrayWnd</string>
+    <string score="0">ExecuteCommand</string>
+    <string score="0">RunPE</string>
+    <string score="0">CCleaner</string>
+    <string score="0">Binder</string>
+    <string score="0">SpyTheSpy</string>
+    <string score="0">TCPEye</string>
+    <string score="0">SpeedGear</string>
+    <string score="0">taskmgr</string>
+    <string score="0">IPBlocker</string>
+    <string score="0">procexp</string>
+    <string score="0">Windows Update</string>
+    <string score="0">Payment ok</string>
+    <string score="0">Payment Received. Proceed to decryption.</string>
+    <string score="0">Waiting Payment</string>
+    <string score="0">Waiting TOR Connection</string>
+    <string score="0">TorLocker</string>
+    <string score="0">TorLocker_v0.9.3</string>
+    <string score="0">Wallpaper</string>
+    <string score="0">kippohome</string>
+    <string score="0">huffman</string>
+    <string score="0">DecodeHuffman</string>
+    <string score="0">Inflate</string>
+    <string score="0">Unzip</string>
+    <string score="0">ZipAndEncrypt</string>
+    <string score="0">ZipAndAES</string>
+    <string score="0">LoadFile</string>
+    <string score="0">SafenSoft</string>
+    <string score="0">SysWatch</string>
+    <string score="0">McAfee</string>
+    <string score="0">Security Center</string>
+    <string score="0">Symantec</string>
+    <string score="0">Protection</string>
+    <string score="0">Norton</string>
+
+    <string score="0">PONG!</string>
+    <string score="0">ReadPort</string>
+    <string score="0">WritePort</string>
+    <string score="0">cookie_module</string>
+    <string score="0">CompressAndSend</string>
+    <string score="0">EncryptFile</string>
+    <string score="0">RunAsShellUser</string>
+    <string score="0">SVNCStartServer</string>
+    <string score="0">Terminal Server</string>
+    <string score="0">Enterprise</string>
+    <string score="0">LanmanNT</string>
+    <string score="0">CONNECTED</string>
+    <string score="0">SENDME</string>
+    <string score="0">RESOLVE</string>
+    <string score="0">RESOLVED</string>
+    <string score="0">ESTABLISH_INTRO</string>
+    <string score="0">ESTABLISH_RENDEZVOUS</string>
+    <string score="0">RENDEZVOUS1</string>
+    <string score="0">RENDEZVOUS2</string>
+    <string score="0">INTRO_ESTABLISHED</string>
+    <string score="0">RENDEZVOUS_ESTABLISHED</string>
+    <string score="0">INTRODUCE_ACK</string>
+    <string score="0">ChewBacca/</string>
+    <string score="0">chewbacca</string>
+    <string score="0">TMemoryScanner</string>
+    <string score="0">Symantec Shared</string>
+    <string score="0">CWSandbox</string>
+    <string score="0">AVAST Software</string>
+    <string score="0">Registry optimiser</string>
+    <string score="0">Optimizing the registry...</string>
+    <string score="0">Virtual HD</string>
+    <string score="0">db2admin</string>
+    <string score="0">nopassword</string>
+    <string score="0">password12</string>
+    <string score="0">secret</string>
+    <string score="0">superman</string>
+    <string score="0">iloveyou</string>
+    <string score="0">helpme</string>
+    <string score="0">hockey</string>
+    <string score="0">home123</string>
+    <string score="0">changeme</string>
+    <string score="0">HotTracking</string>
+    <string score="0">OpenProcessToken fail</string>
+    <string score="0">AdjustTokenPrivileges fail</string>
+    <string score="0">replacement</string>
+    <string score="0">formgrabber</string>
+    <string score="0">redirects</string>
+    <string score="0">httpinjects</string>
+    <string score="0">Transfer-Encoding</string>
+    <string score="0">modify</string>
+    <string score="0">conditions</string>
+    <string score="0">actions</string>
+    <string score="0">process</string>
+    <string score="0">NtShutdownSystem</string>
+    <string score="0">coin-miner</string>
+    <string score="0">regwrite</string>
+    <string score="0">urlmon</string>
+    <string score="0">Internet Explorer</string>
+    <string score="0">inhibitPolicyMapping</string>
+    <string score="0">infinite</string>
+    <string score="0">openssl</string>
+    <string score="0">relativename</string>
+    <string score="0">Polynomial</string>
+    <string score="0">AES</string>
+    <string score="0">RSA</string>
+    <string score="0">RID</string>
+    <string score="0">LanmanWorkstation</string>
+    <string score="0">LanmanServer</string>
+    <string score="0">DNS</string>
+    <string score="0">Salt Length</string>
+    <string score="0">Seed</string>
+    <string score="0">Prime</string>
+    <string score="0">protocol testing</string>
+    <string score="0">experience Destroy</string>
+    <string score="0">winsock</string>
+    <string score="0">connection failed</string>
+    <string score="0">open internet failed</string>
+    <string score="0">payload</string>
+    <string score="0">Wscript.Shell</string>
+    <string score="0">Shell.Application</string>
+    <string score="0">createobject</string>
+    <string score="0">Extracting</string>
+    <string score="0">UltraVnc</string>
+    <string score="0">UltraVncSC</string>
+    <string score="0">RunProgram</string>
+    <string score="0">Signature</string>
+    <string score="0">Fast decoding</string>
+    <string score="0">Gina</string>
+    <string score="0">Macromedia</string>
+    <string score="0">FlashPlayer</string>
+    <string score="0">NetworkService\Cookies\</string>
+    <string score="0">unrarw32</string>
+    <string score="0">server</string>
+    <string score="0">verifyinginstaller</string>
+    <string score="0">Mozilla</string>
+    <string score="0">CONNECT</string>
+    <string score="0">AppData</string>
+    <string score="0">admin</string>
+    <string score="0">Microsoft.VisualBasic</string>
+    <string score="0">Dictionary</string>
+    <string score="0">Protocol not supported</string>
+    <string score="0">referer</string>
+    <string score="0">partner_online_url</string>
+    <string score="0">partner_new_url</string>
+    <string score="0">exe.agent.mail</string>
+    <string score="0">password</string>
+    <string score="0">Launcher</string>
+    <string score="0">setup</string>
+    <string score="0">remote</string>
+    <string score="0">random</string>
+    <string score="0">inject</string>
+    <string score="0">hook</string>
+    <string score="0">crack</string>
+    <string score="0">script</string>
+    <string score="0">browse</string>
+    <string score="0">Clipboard</string>
+    <string score="0">Privilege</string>
+    <string score="0">Reboot</string>
+    <string score="0">CABINET</string>
+    <string score="0">CabinetFile</string>
+    <string score="0">cabfile</string>
+    <string score="0">extract</string>
+    <string score="0">VB Runtime Installation</string>
+    <string score="0">Command.com</string>
+    <string score="0">Resume</string>
+    <string score="0">Pause</string>
+    <string score="0">Socket</string>
+    <string score="0">GetCode</string>
+    <string score="0">Console</string>
+    <string score="0">LZStart</string>
+    <string score="0">shell</string>
+    <string score="0">666</string>
+    <string score="0">alert</string>
+    <string score="0">reverse</string>
+    <string score="0">swap</string>
+    <string score="0">logon</string>
+    <string score="0">logoff</string>
+    <string score="0">HookProc</string>
+    <string score="0">attempt</string>
+    <string score="0">query</string>
+    <string score="0">scan</string>
+    <string score="0">module</string>
+    <string score="0">drop</string>
+    <string score="0">loop</string>
+    <string score="0">wait</string>
+    <string score="0">Download</string>
+    <string score="0">Upload</string>
+    <string score="0">CONNECT</string>
+    <string score="0">pipe</string>
+    <string score="0">Transaction</string>
+    <string score="0">Created by</string>
+    <string score="0">WinDir</string>
+    <string score="0">exec error</string>
+    <string score="0">LordPE</string>
+    <string score="0">Silvana</string>
+    <string score="0">petite</string>
+    <string score="0">PROGRAM</string>
+    <string score="0">deflate</string>
+    <string score="0">Keep-Alive</string>
+    <string score="0">Referer</string>
+    <string score="0">WinSta0</string>
+    <string score="0">Gh0st</string>
+    <string score="0">Update</string>
+    <string score="0">Forbidden</string>
+    <string score="0">Accepted</string>
+    <string score="0">sessionid</string>
+
+    <string score="0">sharedaccess</string>
+    <string score="0">localgroup</string>
+    <string score="0">administrators</string>
+    <string score="0">Administrator</string>
+    <string score="0">guest</string>
+    <string score="0">RDP-Tcp</string>
+    <string score="0">UnknownProcess</string>
+    <string score="0">%d Day %d Hour %d Min</string>
+    <string score="0">termsrv_t</string>
+    <string score="0">Winlogon</string>
+    <string score="0">nsocket</string>
+    <string score="0">repeat</string>
+    <string score="0">compression</string>
+    <string score="0">dictionary</string>
+    <string score="0">userprofile</string>
+    <string score="0">webkit</string>
+    <string score="0">command</string>
+    <string score="0">tracing</string>
+    <string score="0">sandbox</string>
+    <string score="0">keystroke</string>
+    <string score="0">scanning</string>
+    <string score="0">Callback</string>
+    <string score="0">torrent</string>
+    <string score="0">Outsanding</string>
+    <string score="0">proxy</string>
+    <string score="0">downspeed</string>
+    <string score="0">webseeds</string>
+    <string score="0">666</string>
+    <string score="0">POST</string>
+    <string score="0">fingerprint</string>
+    <string score="0">DNA_Proxy</string>
+    <string score="0">min_http_connections</string>
+    <string score="0">Unauthorized</string>
+    <string score="0">pairing</string>
+    <string score="0">TOKEN</string>
+    <string score="0">subscribe</string>
+    <string score="0">announce</string>
+    <string score="0">multicast</string>
+    <string score="0">payload</string>
+    <string score="0">UPnP</string>
+    <string score="0">channel</string>
+    <string score="0">tracker</string>
+    <string score="0">watchdog</string>
+    <string score="0">shared</string>
+    <string score="0">HHA Version 4.74.8702</string>
+    <string score="0">PrepareOurShit</string>
+    <string score="0">Exefiles</string>
+    <string score="0">Scanning</string>
+    <string score="0">ProgramFilesDir</string>
+    <string score="0">Install</string>
+    <string score="0">\Temp</string>
+    <string score="0">SHFOLDER</string>
+    <string score="0">NullsoftInst</string>
+    <string score="0">WinRAR SFX</string>
+    <string score="0">287333.dat</string>
+    <string score="0">\\cryptme\\</string>
+    <string score="0">run.vbs</string>
+    <string score="0">{0000054f-0000-0010-8000-00aa006d2ea4}</string>
+    <string score="0">username</string>
+    <string score="0">Password</string>
+    <string score="0">Username</string>
+    <string score="0">Expires</string>
+    <string score="0">User-Agent</string>
+    <string score="0">Cookie</string>
+    <string score="0">Windows Update Service</string>
+    <string score="0">serialNumber</string>
+    <string score="0">userPassword</string>
+    <string score="0">public_key</string>
+    <string score="0">serial</string>
+    <string score="0">Private-Key</string>
+    <string score="0">Seed:</string>
+    <string score="0">encryption</string>
+    <string score="0">PECompact2</string>
+    <string score="0">logFile</string>
+    <string score="0">application/pdf</string>
+    <string score="0">Run as a daemon</string>
+    <string score="0">127.0.0.1</string>
+    <string score="0">serverTimeout</string>
+    <string score="0">Server closed connection</string>
+    <string score="0">nameserver</string>
+    <string score="0">COMSPEC</string>
+    <string score="0">OLLYDBG</string>
+    <string score="0">WinDbgFrameClass</string>
+    <string score="0">BankID</string>
+    <string score="0">Mscomctl32.ocx</string>
+    <string score="0">WebBrowser</string>
+    <string score="0">Logout</string>
+    <string score="0">9368265E-85FE-11d1-8BE3-0000F8754DA1</string>
+    <string score="0">Scripting.FileSystemObject</string>
+    <string score="0">LoVein1</string>
+    <string score="0">downloader</string>
+    <string score="0">browser</string>
+    <string score="0">NETSCAPE2.0</string>
+    <string score="0">opera</string>
+    <string score="0">AuthenticationMode</string>
+    <string score="0">Downloader</string>
+    <string score="0">chromepref</string>
+    <string score="0">ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/</string>
+    <string score="0">pipedatacontinue</string>
+    <string score="0">Shell</string>
+    <string score="0">start</string>
+    <string score="0">whoami</string>
+    <string score="0">pidrun</string>
+    <string score="0">geturl</string>
+    <string score="0">Sometimes</string>
+    <string score="0">Destroy</string>
+    <string score="0">likubes</string>
+    <string score="0">SysUtils</string>
+    <string score="0">ActiveX</string>
+    <string score="0">Sitikat</string>
+    <string score="0">ping</string>
+    <string score="0">pkxm</string>
+    <string score="0">Reply from</string>
+    <string score="0">PROXY_TYPE_DIRECT</string>
+    <string score="0">PROXY_TYPE_AUTO_DETECT</string>
+    <string score="0">downfile</string>
+    <string score="0">upfile</string>
+    <string score="0">quitz</string>
+    <string score="0">debugmessage</string>
+    <string score="0">debugclient</string>
+    <string score="0">debugfile</string>
+    <string score="0">delfile</string>
+    <string score="0">delmessage</string>
+    <string score="0">delclient</string>
+    <string score="0">listfiles</string>
+    <string score="0">listmessages</string>
+    <string score="0">listclients</string>
+    <string score="0">POST</string>
+    <string score="0">CONNECT</string>
+    <string score="0">NetSubKey</string>
+    <string score="0">FileDescrsiption</string>
+    <string score="0">Accepted:</string>
+    <string score="0">sha256</string>
+    <string score="0">sinzy</string>
+    <string score="0">AckPacket</string>
+    <string score="0">Connection</string>
+    <string score="0">autoRunKeyPath</string>
+    <string score="0">SIGNATURE</string>
+    <string score="0">messageId</string>
+    <string score="0">HeartBeat</string>
+    <string score="0">Request</string>
+    <string score="0">Unload</string>
+    <string score="0">RequestLoop</string>
+    <string score="0">HeartBeatLoop</string>
+    <string score="0">TcpClient</string>
+    <string score="0">Connect</string>
+    <string score="0">Login</string>
+    <string score="0">CurrentUser</string>
+    <string score="0">CreateDomain</string>
+    <string score="0">ComputeHash</string>
+    <string score="0">cookies.*</string>
+    <string score="0">PROCMON_WINDOW_CLASS</string>
+    <string score="0">PROCEXPL</string>
+    <string score="0">WdcWindow</string>
+    <string score="0">ProcessHacker</string>
+    <string score="0">Dumper</string>
+    <string score="0">Dumper64</string>
+    <string score="0">APISpy32Class</string>
+    <string score="0">runas</string>
+    <string score="0">sysprep</string>
+    <string score="0">TokenPrivilege</string>
+    <string score="0">Shutdown</string>
+    <string score="0">WebKit2WebProcess</string>
+    <string score="0">Sleeping</string>
+    <string score="0">Ivan Medvedev</string>
+    <string score="0">Rijndael</string>
+    <string score="0">SystemBiosVersion</string>
+    <string score="0">VideoBiosVersion</string>
+    <string score="0">VirtualBox</string>
+    <string score="0">Identifier</string>
+    <string score="0"> deflate 1.2.3 Copyright 1995-2005 Jean-loup Gailly</string>
+    <string score="0"> deflate 1.1.4 Copyright 1995-2002 Jean-loup Gailly</string>
+    <string score="0"> inflate 1.2.3 Copyright 1995-2005 Mark Adler </string>
+    <string score="0"> inflate 1.1.4 Copyright 1995-2002 Mark Adler </string>
+    <string score="0">History</string>
+    <string score="0">ProductType</string>
+    <string score="0">RegisterRawInputDevices</string>
+    <string score="0">GetRawInputData</string>
+    <string score="0">protocol></string>
+    <string score="0">sqlite3_open</string>
+    <string score="0">sqlite3_close</string>
+    <string score="0">sqlite3_prepare_v2</string>
+    <string score="0">sqlite3_step</string>
+    <string score="0">sqlite3_column_text</string>
+    <string score="0">plugins</string>
+    <string score="0">Hibernating</string>
+    <string score="0">Valid</string>
+    <string score="0">Running</string>
+    <string score="0">downtime-started</string>
+    <string score="0">uptime-started</string>
+    <string score="0">Intel Hardware Cryptographic Service Provider</string>
+    <string score="0">lpAddress</string>
+    <string score="0">BeginInvoke</string>
+    <string score="0">EndInvoke</string>
+    <string score="0">StatusChecker</string>
+    <string score="0">Encoding</string>
+    <string score="0">semaphore</string>
+    <string score="0">stand by</string>
+    <string score="0">startime</string>
+    <string score="0">status</string>
+    <string score="0">throttle</string>
+    <string score="0">Mandatory Level</string>
+    <string score="0">_invoke_watson</string>
+    <string score="0">remove</string>
+    <string score="0">debug</string>
+    <string score="0">hostname</string>
+    <string score="0">clientkey</string>
+    <string score="0">reqfilepath</string>
+    <string score="0">reqfile</string>
+    <string score="0">postvalue</string>
+    <string score="0">postfile</string>
+    <string score="0">postdata</string>
+    <string score="0">mkdir</string>
+    <string score="0">rmdir</string>
+    <string score="0">chdir</string>
+    <string score="0">rpcsrv</string>
+    <string score="0">svchost</string>
+    <string score="0">Deleting Service...</string>
+    <string score="0">Service uninstall success.</string>
+    <string score="0">CompareString</string>
+    <string score="0">Engine started</string>
+    <string score="0">Running in background</string>
+    <string score="0">Stale thread</string>
+    <string score="0">Locking doors</string>
+    <string score="0">Rotors engaged</string>
+    <string score="0">Im going to start it</string>
+    <string score="0">\DosDevices\DKOM_Driver</string>
+    <string score="0">\Device\DKOM_Driver</string>
+    <string score="0">Process successfully hidden.</string>
+    <string score="0">Process ID: %d</string>
+    <string score="0">EPROCESS address: %#x</string>
+    <string score="0">ActiveProcessLinks offset: %#x</string>
+    <string score="0">Extracting %s</string>
+    <string score="0">Your message has been sended</string>
+    <string score="0">Couponserver</string>
+    <string score="0">xmlUrl</string>
+    <string score="0">yahoo</string>
+    <string score="0">LoadXml</string>
+    <string score="0">LocalMachine</string>
+    <string score="0">DownloadAll</string>
+    <string score="0">DownloadComplete</string>
+    <string score="0">DownloadFile</string>
+    <string score="0">DownloadFileAsync</string>
+    <string score="0">DownloadServer</string>
+    <string score="0">DownloadThreads</string>
+    <string score="0">DownloadUrl</string>
+    <string score="0">Downloaded</string>
+    <string score="0">DownloadedBrowser</string>
+    <string score="0">Downloading...</string>
+    <string score="0">CorruptedMachine</string>
+    <string score="0">HtmlGenerator</string>
+    <string score="0">MachineInfo</string>
+    <string score="0">MachineRestriction</string>
+    <string score="0">RegSAM</string>
+    <string score="0">Security</string>
+    <string score="0">MemoryManagement</string>
+    <string score="0">Trackingurls</string>
+    <string score="0">TypeChekDomain</string>
+    <string score="0">DownloadUrl</string>
+    <string score="0">QueueDownloader</string>
+    <string score="0">ZipManager</string>
+    <string score="0">ZipStorer</string>
+    <string score="0">Firefox</string>
+    <string score="0">Chrome</string>
+    <string score="0">InternetExplorer</string>
+    <string score="0">GetIEVersion</string>
+    <string score="0">GetWBVersion</string>
+    <string score="0">webBrowser1</string>
+    <string score="0">changeHtmlCode</string>
+    <string score="0">retries</string>
+    <string score="0">completed</string>
+    <string score="0">addextension</string>
+    <string score="0">DownloadComplete</string>
+    <string score="0">add_DownloadComplete</string>
+    <string score="0">remove_DownloadComplete</string>
+    <string score="0">DownloadThreads</string>
+    <string score="0">Monetizer</string>
+    <string score="0">yahoo</string>
+    <string score="0">internetTurbo</string>
+    <string score="0">strongvault</string>
+    <string score="0">amonetize</string>
+    <string score="0">Couponserver</string>
+    <string score="0">ShoppingChip</string>
+    <string score="0">UsedBrowser</string>
+    <string score="0">AndroidAPK</string>
+    <string score="0">IexplorerMinVersion</string>
+    <string score="0">checkMachineInfo</string>
+    <string score="0">checkYahooBug</string>
+    <string score="0">checkCouponserver</string>
+    <string score="0">checkInternet</string>
+    <string score="0">checkAOLbug</string>
+    <string score="0">hideWhenInstalling</string>
+    <string score="0">idPromo</string>
+    <string score="0">WebmasterId</string>
+    <string score="0">firewalls</string>
+    <string score="0">IsControlled</string>
+    <string score="0">Microsoft Network Monitoring Service</string>
+    <string score="0">Host Process for Windows Services</string>
+    <string score="0">MsNetMonitor</string>
+    <string score="0">HideWindow</string>
+    <string score="0">Windows Filter Driver</string>
+    <string score="0">firewall</string>
+    <string score="0">IsUserAdministrator</string>
+    <string score="0">EVERYONE</string>
+    <string score="0">CreateSubKey</string>
+    <string score="0">NotifyDownloading</string>
+    <string score="0">isvirtualMachine</string>
+    <string score="0">isdebugging</string>
+    <string score="0">HasDebugger</string>
+    <string score="0">debugging</string>
+    <string score="0">checkurls</string>
+    <string score="0">ListSoftwares</string>
+    <string score="0">CheckAdminPrivileges</string>
+    <string score="0">TrackOnDefaultBrowser</string>
+    <string score="0">GetDomain</string>
+    <string score="0">checkdomain</string>
+    <string score="0">bytesDownloaded</string>
+    <string score="0">God Mode</string>
+    <string score="0">logger</string>
+    <string score="0">This plugin is already loaded.</string>
+    <string score="0">The plugin you are trying to load does not exist</string>
+    <string score="0">Hook cleaning on</string>
+    <string score="0">PiD obfuscation on</string>
+    <string score="0">Code injection successful!</string>
+    <string score="0">Code injection failed!</string>
+    <string score="0">Injecting code ...</string>
+    <string score="0">Code Injection</string>
+    <string score="0">Creating a remote thread ...</string>
+    <string score="0">Keylogging disabled.</string>
+    <string score="0">Windows Registry Editor Version 5.00</string>
+    <string score="0">start</string>
+    <string score="0">stop</string>
+    <string score="0">DisallowRun</string>
+    <string score="0">NoDriveTypeAutoRun</string>
+    <string score="0">HideFileExt</string>
+    <string score="0">Hidden</string>
+    <string score="0">SuperHidden</string>
+    <string score="0">Logon User Name</string>
+    <string score="0">NoFolderOptions</string>
+    <string score="0">Happy BirthDay mys Boss</string>
+    <string score="0">Merry Christmas</string>
+
+    <string score="0">Starting Hide myself ...</string>
+    <string score="0">Starting Killing myself ...</string>
+    <string score="0">LZO real-time data compression library.</string>
+
+    <string score="0">Access denied!</string>
+    <string score="0">Total entries: %d</string>
+    <string score="0">Entries enumerated: %d</string>
+    <string score="0">Upload file ok!</string>
+    <string score="0">create remote file error!</string>
+    <string score="0">Download file ok!</string>
+    <string score="0">Reading remote file error!</string>
+    <string score="0">create pipe error!</string>
+    <string score="0">start cmd error!</string>
+    <string score="0">Logon user err!</string>
+    <string score="0">execute error!</string>
+    <string score="0">bind cmd frist!</string>
+    <string score="0">get user name error!</string>
+    <string score="0">cant get ver info!</string>
+    <string score="0">Windows?</string>
+    <string score="0">Remote</string>
+    <string score="0">Ramdisk</string>
+    <string score="0">Client process-%d-stoped!</string>
+    <string score="0">Create localfile error!</string>
+    <string score="0">DownloadEnd</string>
+    <string score="0">List domain server ok!#</string>
+    <string score="0">fileupload</string>
+    <string score="0">cruisenet</string>
+    <string score="0">chunked</string>
+    <string score="0">bankman</string>
+    <string score="0">javascript:</string>
+
+    <string score="0">All the important files on your computer were encrypted.</string>
+    <string score="0">All the important files on your disks were encrypted.</string>
+    <string score="0">Schedule service command line interface</string>
+    <string score="0">already running</string>
+    <string score="0">Botnet has been shutdown - restart bot?</string>
+    <string score="0">Botnet shutdown</string>
+    <string score="0">QUIT :Botnet shutdown</string>
+    <string score="0">PRIVMSG %s :bingo - botnet shutting down</string>
+    <string score="0">Resistance is futile</string>
+    <string score="0">No malware here honest guv!</string>
+    <string score="0">Anti-debug</string>
+    <string score="0">misery mystery</string>
+    <string score="0">Detoured</string>
+    <string score="0">Client hook allocation failure.</string>
+    <string score="0">silentpostback</string>
+    <string score="0">AlreadyRunning</string>
+    <string score="0">StubInfo</string>
+    <string score="0">wrapper</string>
+    <string score="0">keeplog</string>
+    <string score="0">pingdialog</string>
+    <string score="0">runonce</string>
+    <string score="0">noreq</string>
+    <string score="0">verifycookies</string>
+    <string score="0">account</string>
+    <string score="0">accountid</string>
+    <string score="0">selftest</string>
+    <string score="0">silenterr</string>
+    <string score="0">preload</string>
+    <string score="0">PostbackSent</string>
+    <string score="0">StubRun</string>
+    <string score="0">StubExtract</string>
+    <string score="0">WaitablePort</string>
+    <string score="0">Waiting</string>
+    <string score="0">Waiting Connections</string>
+    <string score="0">ServiceMain</string>
+    <string score="0">ServTestDos</string>
+    <string score="0">VBoxGuest</string>
+    <string score="0">Betabot</string>
+    <string score="0">Hashtable</string>
+    <string score="0">GetResourceString</string>
+    <string score="0">Monitor</string>
+    <string score="0">RegServer</string>
+    <string score="0">Send ack is successful.</string>
+    <string score="0">Get the right data.</string>
+    <string score="0">Receiving acknowledgment is successful.</string>
+    <string score="0">Receiving packet failed.</string>
+    <string score="0">Sending packet success...</string>
+    <string score="0">Cant get the right data</string>
+    <string score="0">Initialization is successful.</string>
+    <string score="0">Initialization is failed.</string>
+    <string score="0">tempPass.txt</string>
+    <string score="0">POP3 Password2</string>
+    <string score="0">POP3 Server</string>
+    <string score="0">POP3 User Name</string>
+    <string score="0">HTTPMail Password2</string>
+    <string score="0">Hotmail</string>
+    <string score="0">HTTPMail User Name</string>
+    <string score="0"> 2004 2005 Pierre le Riche / Professional Software Development</string>
+    <string score="0">Broadcast adress :</string>
+    <string score="0">Broadcasts : NO</string>
+    <string score="0">Broadcasts : YES</string>
+    <string score="0">SHELLEXECUTE</string>
+    <string score="0">SHELLEXECUTEWAIT</string>
+    <string score="0">#BOT#CloseServer</string>
+    <string score="0">#BOT#OpenUrl</string>
+    <string score="0">#BOT#RunPrompt</string>
+    <string score="0">#BOT#SvrUninstall</string>
+    <string score="0">#BOT#URLDownload</string>
+    <string score="0">#BOT#URLUpdate</string>
+    <string score="0">ActiveOfflineKeylogger</string>
+    <string score="0">ActiveOnlineKeyStrokes</string>
+    <string score="0">ActiveOnlineKeylogger</string>
+    <string score="0">AntiVirusDisableNotify</string>
+    <string score="0">BTMemoryLoadLibary: Cant attach library</string>
+    <string score="0">Be Right Back</string>
+    <string score="0">DownloadFail</string>
+    <string score="0">DownloadSuccess</string>
+    <string score="0">Progman</string>
+    <string score="0">Sender</string>
+    <string score="0">UPLOADEXEC</string>
+    <string score="0">UPLOADFILE</string>
+    <string score="0">UnActiveOfflineKeylogger</string>
+    <string score="0">UnActiveOnlineKeyStrokes</string>
+    <string score="0">UnBlockContact</string>
+    <string score="0">Video Capture</string>
+    <string score="0">WEBCAMLIVE</string>
+    <string score="0">WEBCAMSTOP</string>
+    <string score="0">drivers\etc\hosts</string>
+    <string score="0">unknown compression method</string>
+    <string score="0">wscsvc</string>
+    <string score="0">httpstop</string>
+    <string score="0">logstop</string>
+    <string score="0">ftfpstop</string>
+    <string score="0">procsstop</string>
+    <string score="0">securestop</string>
+    <string score="0">reconnect</string>
+    <string score="0">disconnect</string>
+    <string score="0">botid</string>
+    <string score="0">aliases</string>
+    <string score="0">flusharp</string>
+    <string score="0">flushdns</string>
+    <string score="0">crash</string>
+    <string score="0">killthreads</string>
+    <string score="0">killproc</string>
+    <string score="0">killid</string>
+    <string score="0">.download</string>
+    <string score="0">.update</string>
+    <string score="0">Kennwort</string>
+    <string score="0">Object dump complete.</string>
+    <string score="0">Ping flood</string>
+    <string score="0">ROOTED</string>
+    <string score="0">Rebooting system</string>
+    <string score="0">Reconnecting</string>
+    <string score="0">Referer: %s</string>
+    <string score="0">Remote Command Prompt</string>
+    <string score="0">Removing Bot</string>
+    <string score="0">[DDoS]</string>
+    <string score="0">[KEYLOG]: %s</string>
+    <string score="0">[PSNIFF]</string>
+    <string score="0">[PING]</string>
+    <string score="0">[TFTP]</string>
+    <string score="0">[UPD]</string>
+    <string score="0">administrador</string>
+    <string score="0">administrat</string>
+    <string score="0">administrateur</string>
+    <string score="0">Download complete</string>
+    <string score="0">ALIEN-Z</string>
+    <string score="0">\Google\Chrome\User Data</string>
+    <string score="0">VncSrvWndProc</string>
+    <string score="0">VncStopServer</string>
+    <string score="0">VncStartServer</string>
+    <string score="0">VNCCreateServer</string>
+    <string score="0">VNCServerThread</string>
+    <string score="0">VNCStartServer</string>
+    <string score="0">FPUMaskValue</string>
+    <string score="0">PhysicalDrive0</string>
+    <string score="0">Protection Error</string>
+    <string score="0">LOADER ERROR</string>
+    <string score="0">Host is down.</string>
+    <string score="0">No route to host.</string>
+    <string score="0">debugger</string>
+    <string score="0">emulat</string>
+    <string score="0">GetProcesses</string>
+    <string score="0">MemoryStream</string>
+    <string score="0">GZipStream</string>
+    <string score="0">0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/</string>
+    <string score="0">putfile:</string>
+    <string score="0">getfile:</string>
+    <string score="0">outlook</string>
+    <string score="0">iexplore</string>
+    <string score="0">source</string>
+    <string score="0">Connecting</string>
+    <string score="0">Downloading</string>
+    <string score="0">Cancelled</string>
+    <string score="0">Connecting</string>
+    <string score="0">Reconnect Pause</string>
+    <string score="0">Terminated</string>
+    <string score="0">Transfer Error</string>
+    <string score="0">Connection Error</string>
+    <string score="0">OpenRequest Error</string>
+    <string score="0">SendRequest Error</string>
+    <string score="0">URL Parts Error</string>
+    <string score="0">CreateThread Error</string>
+    <string score="0">Request Error</string>
+    <string score="0">Server Error</string>
+    <string score="0">Redirection</string>
+    <string score="0">TypeLib</string>
+    <string score="0">Hardware</string>
+    <string score="0">Interface</string>
+    <string score="0">FileType</string>
+    <string score="0">Delete</string>
+    <string score="0">NoRemove</string>
+    <string score="0">ForceRemove</string>
+    <string score="0">Keylogger</string>
+    <string score="0">crypter</string>
+    <string score="0">dump</string>
+    <string score="0">vbox</string>
+    <string score="0">NetKeyLogger</string>
+    <string score="0">TARGET</string>
+    <string score="0">pipeline</string>
+    <string score="0">miner</string>
+    <string score="0">Execute ERROR</string>
+    <string score="0">Download ERROR</string>
+    <string score="0">Executed As</string>
+    <string score="0">Execute ERROR</string>
+    <string score="0">Update ERROR</string>
+    <string score="0">Updating To</string>
+    <string score="0">Update ERROR</string>
+    <string score="0">ASPNET</string>
+    <string score="0">IUSR_</string>
+    <string score="0">IWAM_</string>
+    <string score="0">ASPNET</string>
+    <string score="0">POP3</string>
+    <string score="0">Admins</string>
+    <string score="0">Browsers</string>
+    <string score="0">Guests</string>
+    <string score="0">Users</string>
+    <string score="0">webBrowser2</string>
+    <string score="0">IEFrame</string>
+    <string score="0">\\.\pipe\</string>
+    <string score="0">permission denied</string>
+    <string score="0">permission_denied</string>
+    <string score="0">connection_already_in_progress</string>
+    <string score="0">connection_aborted</string>
+    <string score="0">connection_refused</string>
+    <string score="0">host_unreachable</string>
+    <string score="0">already_connected</string>
+    <string score="0">network_down</string>
+    <string score="0">network_reset</string>
+    <string score="0">network_unreachable</string>
+    <string score="0">not_connected</string>
+    <string score="0">wrong_protocol_type</string>
+    <string score="0">broken pipe</string>
+    <string score="0">connection aborted</string>
+    <string score="0">connection already in progress</string>
+    <string score="0">connection refused</string>
+    <string score="0">host unreachable</string>
+    <string score="0">network down</string>
+    <string score="0">network reset</string>
+    <string score="0">network unreachable</string>
+    <string score="0">owner dead</string>
+    <string score="0">protocol error</string>
+    <string score="0">wrong protocol type</string>
+    <string score="0">master</string>
+    <string score="0">mysql</string>
+    <string score="0">daemon</string>
+    <string score="0">backup</string>
+    <string score="0">marta</string>
+    <string score="0">oracle</string>
+    <string score="0">redhat</string>
+    <string score="0">exploitable</string>
+    <string score="0">passwd</string>
+    <string score="0">proxypasswd</string>
+    <string score="0">proxyuser</string>
+    <string score="0">Login denied</string>
+    <string score="0">Remote file not found</string>
+    <string score="0">RenameFile</string>
+    <string score="0">RunPrompt</string>
+    <string score="0">RunSelectedAsAdmin</string>
+    <string score="0">RunSelectedHidden</string>
+    <string score="0">RunSelectedShow</string>
+    <string score="0">RemoteMachineName</string>
+    <string score="0">AheadLib</string>
+    <string score="0">PlusDLL</string>
+    <string score="0">PLUSUNIT</string>
+    <string score="0">web-browser</string>
+    <string score="0">SetHook</string>
+    <string score="0">TMemoryScanner</string>
+    <string score="0">Protect</string>
+    <string score="0">TokenUser</string>
+    <string score="0">TokenGroups</string>
+    <string score="0">TokenPrivileges</string>
+    <string score="0">TokenOwner</string>
+    <string score="0">TokenPrimaryGroup</string>
+    <string score="0">TokenDefaultDacl</string>
+    <string score="0">TokenSource</string>
+    <string score="0">TokenType</string>
+    <string score="0">TokenImpersonationLevel</string>
+    <string score="0">TokenStatistics</string>
+    <string score="0">TokenRestrictedSids</string>
+    <string score="0">TokenSessionId</string>
+    <string score="0">TokenGroupsAndPrivileges</string>
+    <string score="0">TokenSessionReference</string>
+    <string score="0">TokenSandBoxInert</string>
+    <string score="0">TokenAuditPolicy</string>
+    <string score="0">TokenOrigin</string>
+    <string score="0">TokenElevationType</string>
+    <string score="0">TokenLinkedToken</string>
+    <string score="0">TokenElevation</string>
+    <string score="0">TokenHasRestrictions</string>
+    <string score="0">TokenAccessInformation</string>
+    <string score="0">TokenVirtualizationAllowed</string>
+    <string score="0">TokenVirtualizationEnabled</string>
+    <string score="0">TokenIntegrityLevel</string>
+    <string score="0">TokenUIAccess</string>
+    <string score="0">TokenMandatoryPolicy</string>
+    <string score="0">TokenLogonSid</string>
+    <string score="0">TokenPrimary</string>
+    <string score="0">TokenImpersonation</string>
+    <string score="0">SecurityAnonymous</string>
+    <string score="0">SecurityIdentification</string>
+    <string score="0">SecurityImpersonation</string>
+    <string score="0">SecurityDelegation</string>
+
+    <string score="0">\\.\PhysicalDrive0</string>
+
+    <!-- VM patterns -->
+    <string score="0">windowsupdate</string>
+    <string score="0">wilderssecurity</string>
+    <string score="0">castlecops</string>
+    <string score="0">spamhaus</string>
+    <string score="0">cpsecure</string>
+    <string score="0">arcabit</string>
+    <string score="0">emsisoft</string>
+    <string score="0">sunbelt</string>
+    <string score="0">securecomputing</string>
+    <string score="0">rising</string>
+    <string score="0">prevx</string>
+    <string score="0">computerassociates</string>
+    <string score="0">networkassociates</string>
+    <string score="0">etrust</string>
+    <string score="0">rootkit</string>
+    <string score="0">spyware</string>
+
+    <string score="0">vmdebug</string>
+    <string score="0">VMware Replay Debugging Helper</string>
+    <string score="0">VMware VMCI Bus Driver</string>
+    <string score="0">vmci</string>
+    <string score="0">VMware Pointing Device</string>
+    <string score="0">vmmouse</string>
+    <string score="0">Virtual Machine Additions Mouse Integration Filter Driver</string>
+    <string score="0">msvmmouf</string>
+    <string score="0">MS Virtual SCSI Disk Device</string>
+    <string score="0">VMware Workstation v10</string>
+    <string score="0">VMwareDragDetWndClass</string>
+    <string score="0">VMwareSwitchUserControlClass</string>
+    <string score="0">VMware</string>
+    <string score="0">VMware Pointing</string>
+    <string score="0">VMware server memory</string>
+    <string score="0">VMware Replay</string>
+    <string score="0">AntiVirtualBox</string>
+    <string score="0">AntiVmWare</string>
+    <string score="0">AntiVirtualPC</string>
+    <string score="0">AntiMalwarebytes</string>
+    <string score="0">AntiOllydbg</string>
+    <string score="0">AntiWireshark</string>
+    <string score="0">antiSpyware</string>
+    <string score="0">Anti-Virus</string>
+    <string score="0">avast!</string>
+    <string score="0">AntiVir</string>
+    <string score="0">Inspection</string>
+    <string score="0">Malware</string>
+    <string score="0">Norton Personal Firewall</string>
+    <string score="0">ZoneAlarm</string>
+    <string score="0">Comodo Firewall</string>
+    <string score="0">eTrust EZ Firewall</string>
+    <string score="0">F-Secure Internet Security</string>
+    <string score="0">McAfee Personal Firewall</string>
+    <string score="0">Outpost Personal Firewall</string>
+    <string score="0">Panda Internet Seciruty Suite</string>
+    <string score="0">Panda Anti-Virus/Firewall</string>
+    <string score="0">BitDefnder/Bull Guard Antivirus</string>
+    <string score="0">Rising Firewall</string>
+    <string score="0">360Safe AntiArp</string>
+    <string score="0">Kingsoft Safe</string>
+    <string score="0">Fiddler</string>
+    <string score="0">wireshark</string>
+    <string score="0">Chromium</string>
+    <string score="0">NEWGRAB</string>
+    <string score="0">SCREENSHOT</string>
+    <string score="0">AddressBook</string>
+    <string score="0">TrustedPeople</string>
+    <string score="0">TrustedPublisher</string>
+    <string score="0">RunProgram</string>
+    <string score="0">GUIMode</string>
+    <string score="0">protocol_not_supported</string>
+    <string score="0">network down</string>
+    <string score="0">network reset</string>
+    <string score="0">network unreachable</string>
+    <string score="0">network_down</string>
+    <string score="0">network_reset</string>
+    <string score="0">network_unreachable</string>
+    <string score="0">host unreachable</string>
+    <string score="0">host_unreachable</string>
+    <string score="0">PendingFileRenameOperations</string>
+    <string score="0">MyApplication.app</string>
+    <string score="0">Microsoft.Windows.MyCoolApp</string>
+    <string score="0">Application description here</string>
+    <string score="0">InstallHOOK</string>
+    <string score="0">InstallLocalHOOK</string>
+    <string score="0">UninstallHOOK</string>
+    <string score="0">ZLibEx</string>
+    <string score="0">PsAPI</string>
+    <string score="0">Xenocode Virtual Desktop</string>
+    <string score="0">start.spoon.net</string>
+    <string score="0">Spoon Virtual Machine</string>
+    <string score="0">Xenocode Virtual Appliance Runtime</string>
+    <string score="0">CPlApplet</string>
+    <string score="0">Java Security Plugin</string>
+    <string score="0">javaplugin</string>
+    <string score="0">Java Security Plugin</string>
+    <string score="0">Sun Java Security Plugin</string>
+    <string score="0">VMProtect begin</string>
+    <string score="0">VMProtect end</string>
+    <string score="0">[BeginChat]</string>
+    <string score="0">friend</string>
+    <string score="0">KernelUtil</string>
+    <string score="0">NETWORK SERVICE</string>
+    <string score="0">Cookies</string>
+    <string score="0">Administrative Tools</string>
+    <string score="0">WinFTP</string>
+    <string score="0">PortNumber</string>
+    <string score="0">CREATE_SUSPENDED</string>
+    <string score="0">VBScript.Encode</string>
+    <string score="0">JScript.Encode</string>
+    <string score="0">WScript</string>
+    <string score="0">ExeScriptPAD</string>
+    <string score="0">ExeScript</string>
+    <string score="0">silent</string>
+    <string score="0">ExeScript Host</string>
+    <string score="0">onbeforeunload</string>
+    <string score="0">onunload</string>
+    <string score="0">Godmode</string>
+    <string score="0">anonymous</string>
+    <string score="0">DECOMPRESSOR</string>
+    <string score="0">antivirus</string>
+    <string score="0">AntivirusProduct</string>
+    <string score="0">DefaultBrowser</string>
+    <string score="0">MemoryProtection</string>
+    <string score="0">Manager</string>
+    <string score="0">BaseScript</string>
+    <string score="0">Updater</string>
+    <string score="0">CreateProcessInternal</string>
+    <string score="0">IDetourHook</string>
+    <string score="0">DetourHook</string>
+
+    <!-- WMI-->
+    <string score="0">ScriptText</string>
+    <string score="0">ScriptingEngine</string>
+    <string score="0">ProbeScriptFint</string>
+    <string score="0">ActiveScriptEventConsumer</string>
+    <string score="0">root/cimv2</string>
+    <string score="0">WbemScripting.SWbemLocator</string>
+    <string score="0">ROOT\CIMV2</string>
+    <string score="0">SELECT * from Win32_BaseBoard</string>
+    <string score="0">Manufacturer</string>
+    <string score="0">Model</string>
+    <string score="0">SerialNumber</string>
+    <string score="0">ChassisTypes</string>
+    <string score="0">SMBIOSAssetTag</string>
+
+    <!-- SQL -->
+    <string score="0">CREATE %s %.*s</string>
+    <string score="0">CREATE TABLE</string>
+    <string score="0">CREATE TABLE %Q.%s(%s)</string>
+    <string score="0">CREATE TABLE sqlite_master(</string>
+    <string score="0">CREATE VIRTUAL TABLE %T</string>
+    <string score="0">CREATE%s INDEX %.*s</string>
+
+    <string score="0">WM_HTML_GETOBJECT</string>
+    <string score="0">WM_COPYDATA</string>
+
+    <string score="0">SE_PRIVILEGE_ENABLED_BY_DEFAULT</string>
+    <string score="0">SE_PRIVILEGE_ENABLED</string>
+    <string score="0">SE_PRIVILEGE_REMOVED</string>
+    <string score="0">SE_PRIVILEGE_USED_FOR_ACCESS</string>
+    <string score="0">SE_PRIVILEGE_VALID_ATTRIBUTES</string>
+
+    <string score="0">SE_CREATE_TOKEN_NAME</string>
+    <string score="0">SE_ASSIGNPRIMARYTOKEN_NAME</string>
+    <string score="0">SE_LOCK_MEMORY_NAME</string>
+    <string score="0">SE_INCREASE_QUOTA_NAME</string>
+    <string score="0">SE_UNSOLICITED_INPUT_NAME</string>
+    <string score="0">SE_MACHINE_ACCOUNT_NAME</string>
+    <string score="0">SE_TCB_NAME</string>
+    <string score="0">SE_SECURITY_NAME</string>
+    <string score="0">SE_TAKE_OWNERSHIP_NAME</string>
+    <string score="0">SE_LOAD_DRIVER_NAME</string>
+    <string score="0">SE_SYSTEM_PROFILE_NAME</string>
+    <string score="0">SE_SYSTEMTIME_NAME</string>
+    <string score="0">SE_PROF_SINGLE_PROCESS_NAME</string>
+    <string score="0">SE_INC_BASE_PRIORITY_NAME</string>
+    <string score="0">SE_CREATE_PAGEFILE_NAME</string>
+    <string score="0">SE_CREATE_PERMANENT_NAME</string>
+    <string score="0">SE_BACKUP_NAME</string>
+    <string score="0">SE_RESTORE_NAME</string>
+    <string score="0">SE_SHUTDOWN_NAME</string>
+    <string score="0">SE_DEBUG_NAME</string>
+    <string score="0">SE_AUDIT_NAME</string>
+    <string score="0">SE_SYSTEM_ENVIRONMENT_NAME</string>
+    <string score="0">SE_CHANGE_NOTIFY_NAME</string>
+    <string score="0">SE_REMOTE_SHUTDOWN_NAME</string>
+    <string score="0">SE_UNDOCK_NAME</string>
+    <string score="0">SE_SYNC_AGENT_NAME</string>
+    <string score="0">SE_ENABLE_DELEGATION_NAME</string>
+    <string score="0">SE_MANAGE_VOLUME_NAME</string>
+    <string score="0">SE_IMPERSONATE_NAME</string>
+    <string score="0">SE_CREATE_GLOBAL_NAME</string>
+    <string score="0">SE_TRUSTED_CREDMAN_ACCESS_NAME</string>
+    <string score="0">SE_RELABEL_NAME</string>
+    <string score="0">SE_INC_WORKING_SET_NAME</string>
+    <string score="0">SE_TIME_ZONE_NAME</string>
+    <string score="0">SE_CREATE_SYMBOLIC_LINK_NAME</string>
+
+    <string score="0">SE_GROUP_ENABLED_BY_DEFAULT</string>
+    <string score="0">SE_GROUP_ENABLED</string>
+    <string score="0">SE_GROUP_OWNER</string>
+    <string score="0">SE_GROUP_USE_FOR_DENY_ONLY</string>
+    <string score="0">SE_GROUP_INTEGRITY</string>
+    <string score="0">SE_GROUP_INTEGRITY_ENABLED</string>
+    <string score="0">SE_GROUP_LOGON_ID</string>
+    <string score="0">SE_GROUP_RESOURCE</string>
+    <string score="0">SE_GROUP_VALID_ATTRIBUTES</string>
+
+    <!-- DOT NET-->
+    <string score="0">System.Security</string>
+    <string score="0">System.Runtime.CompilerServices</string>
+    <string score="0">System.Security.Cryptography</string>
+    <string score="0">System.Reflection</string>
+    <string score="0">System.Security.Principal</string>
+    <string score="0">System.IO.Compression</string>
+    <string score="0">System.Net.Sockets</string>
+    <string score="0">Internet Explorer_Server</string>
+    <string score="0">vbscript</string>
+    <string score="0">javascript</string>
+    <string score="0">JavaScript</string>
+    <string score="0">execScript</string>
+    <string score="0">AutoRun</string>
+    <string score="0">CipherMode</string>
+    <string score="0">Twofish</string>
+    <string score="0">Wrong password</string>
+    <string score="0">Proxy-authenticate:</string>
+    <string score="0">Connection:</string>
+    <string score="0">Transfer-Encoding:</string>
+    <string score="0">Referer:</string>
+
+	
+    <!-- Well-known (local) directories -->
+    <string score="0">AppData\Local</string>
+    <string score="0">AppData\Local\Microsoft\Windows\History</string>
+    <string score="0">AppData\Local\Microsoft\Windows\Temporary Internet Files</string>
+    <string score="0">AppData\Roaming</string>
+    <string score="0">AppData\Roaming\Microsoft\Windows\Cookies</string>
+    <string score="0">AppData\Roaming\Microsoft\Windows\Network Shortcuts</string>
+    <string score="0">AppData\Roaming\Microsoft\Windows\Printer Shortcuts</string>
+    <string score="0">AppData\Roaming\Microsoft\Windows\Recent</string>
+    <string score="0">AppData\Roaming\Microsoft\Windows\SendTo</string>
+    <string score="0">AppData\Roaming\Microsoft\Windows\Start Menu</string>
+    <string score="0">AppData\Roaming\Microsoft\Windows\Start Menu\Programs</string>
+    <string score="0">AppData\Roaming\Microsoft\Windows\Templates</string>
+    <string score="0">Default</string>
+    <string score="0">Documents</string>
+    <string score="0">Microsoft\Windows\Start Menu</string>
+    <string score="0">Microsoft\Windows\Start Menu\Programs</string>
+    <string score="0">Microsoft\Windows\Templates</string>
+    <string score="0">Pictures</string>
+    <string score="0">Public\Desktop</string>
+    <string score="0">Public\Documents</string>
+    <string score="0">Public\Favorites</string>
+    <string score="0">Public\Music</string>
+    <string score="0">Public\Pictures</string>
+    <string score="0">Public\Videos</string>
+    <string score="0">System</string>
+    <string score="0">Videos</string>
+    <string score="0">Windows NT\Accessories</string>
+    <string score="0">Explorer\Shell Folders</string>
+
+    <!-- Borland -->
+    <string score="0">TCoreThread</string>
+    <string score="0">TFiler</string>
+    <string score="0">TWriter4</string>
+    <string score="0">TPersistent</string>
+    <string score="0">TFileStream</string>
+
+    <!-- AutoIt -->
+    <string score="0">/AutoIt3ExecuteLine</string>
+    <string score="0">/AutoIt3ExecuteScript</string>
+    <string score="0">/AutoIt3OutputDebug</string>
+    <string score="0">AutoIt3GUI</string>
+    <string score="0">AutoIt v3</string>
+    <string score="0">AutoIt script files (*.au3 *.a3x)</string>
+    <string score="0">AutoIt</string>
+    <string score="0">AUTOIT SCRIPT</string>
+    <string score="0">AUTOIT NO CMDEXECUTE</string>
+    <string score="0">AutoIt3ExecuteScript</string>
+    <string score="0">AutoIt3ExecuteLine</string>
+    <string score="0">Software\AutoIt v3\AutoIt</string>
+    <string score="0">*.au3;*.a3x</string>
+    <string score="0">AutoIt Error</string>
+    <string score="0">AutoIt has detected the stack has become corrupt.</string>
+    <string score="0">CompiledScript</string>
+    <string score="0">AutoIt v3 Script: 3 3 8 1</string>
+    <string score="0">AutoIt v3 Script: 3 3 8 0</string>
+    <string score="0">AutoIt3</string>
+    <string score="0">AUTOITEXE</string>
+
+    <string score="0">ConfuserEx</string>
+    <string score="0">ConfuserEx v0.1.1</string>
+    <string score="0">ConfuserEx v0.1.2</string>
+    <string score="0">ConfuserEx v0.2.0</string>
+    <string score="0">ConfuserEx v0.2.1</string>
+    <string score="0">ConfuserEx v0.2.2</string>
+    <string score="0">ConfuserEx v0.2.3</string>
+    <string score="0">ConfuserEx v0.3.0</string>
+    <string score="0">ConfuserEx v0.4.0</string>
+    <string score="0">ConfuserEx v0.5.0</string>
+    <string score="0">ConfuserEx v0.6.0</string>
+    <string score="0">Safengine Shielden v2.3.0.0</string>
+  </strings>
+
+</xml>
+
