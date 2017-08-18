@@ -1166,11 +1166,11 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 if low_scoring_strings > 0:
                     if low_scoring_strings > 10:
                         if high_scoring_strings > 0:
-                            cond_ls = "4 of ($s*)"
+                            cond_ls = "4 of them"
                         else:
-                            cond_ls = "8 of ($s*)"
+                            cond_ls = "8 of them"
                     else:
-                        cond_ls = "all of ($s*)"
+                        cond_ls = "all of them"
 
                 # If low scoring and high scoring
                 cond_combined = "all of them"
@@ -1316,11 +1316,11 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 if low_scoring_strings > 0:
                     if low_scoring_strings > 10:
                         if high_scoring_strings > 0:
-                            cond_ls = "4 of ($s*)"
+                            cond_ls = "4 of them"
                         else:
-                            cond_ls = "8 of ($s*)"
+                            cond_ls = "8 of them"
                     else:
-                        cond_ls = "all of ($s*)"
+                        cond_ls = "all of them"
 
                 # If low scoring and high scoring
                 cond_combined = "all of them"
