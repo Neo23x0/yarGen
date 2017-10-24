@@ -49,6 +49,10 @@ Warning: yarGen pulls the whole goodstring database to memory and uses at least 
 
 I've already tried to migrate the database to sqlite but the numerous string comparisons and lookups made the analysis painfully slow.
 
+# Post-Processing Video Tutorial
+
+[![YARA rule post-processing video tutorial](https://img.youtube.com/vi/y8oAjIjZMIg/0.jpg)](https://medium.com/@cyb3rops/how-to-post-process-yara-rules-generated-by-yargen-121d29322282)
+
 # Multiple Database Support
 
 yarGen allows creating multiple databases for opcodes or strings. You can easily create a new database by using "-c" for new database creation and "-i identifier" to give the new database a unique identifier as e.g. "office". It will the create two new database files named "good-strings-office.db" and "good-opcodes-office.db" that will from then on be initialized during startup with the built-in databases.
