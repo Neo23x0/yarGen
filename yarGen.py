@@ -3,7 +3,7 @@
 # -*- coding: utf-8 -*-
 #
 # yarGen
-# A rule generator for Yara rules
+# A Rule Generator for YARA Rules
 #
 # Florian Roth
 
@@ -25,6 +25,7 @@ from hashlib import sha256
 from naiveBayesClassifier import tokenizer
 from naiveBayesClassifier.trainer import Trainer
 from naiveBayesClassifier.classifier import Classifier
+import signal as signal_module
 
 try:
     from lxml import etree
@@ -436,7 +437,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
 
         # SUPER RULE GENERATION -----------------------------------------------
 
-        if not args.nosuper and not args.inverse:
+        if not nosuper and not args.inverse:
 
             # SUPER RULES GENERATOR	- preliminary work
             # If a string occurs more than once in different files
@@ -1211,7 +1212,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 traceback.print_exc()
 
     # GENERATE SUPER RULES --------------------------------------------
-    if not args.nosuper and not args.inverse:
+    if not nosuper and not args.inverse:
 
         rules += "/* Super Rules ------------------------------------------------------------- */\n\n"
         super_rule_names = []
@@ -1355,17 +1356,17 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
             except Exception, e:
                 traceback.print_exc()
 
-        try:
-            # WRITING RULES TO FILE
-            # PE Module -------------------------------------------------------
-            if not args.noextras:
-                if pe_module_necessary:
-                    fh.write('import "pe"\n\n')
-            # RULES -----------------------------------------------------------
-            if args.o:
-                fh.write(rules)
-        except Exception, e:
-            traceback.print_exc()
+    try:
+        # WRITING RULES TO FILE
+        # PE Module -------------------------------------------------------
+        if not args.noextras:
+            if pe_module_necessary:
+                fh.write('import "pe"\n\n')
+        # RULES -----------------------------------------------------------
+        if args.o:
+            fh.write(rules)
+    except Exception, e:
+        traceback.print_exc()
 
     # PROCESS INVERSE RULES ---------------------------------------------------
     # print inverse_stats.keys()
@@ -1749,6 +1750,14 @@ def processSampleDir(targetDir):
     (rule_count, inverse_rule_count, super_rule_count) = \
         generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_stats)
 
+    if args.inverse:
+        print "[=] Generated %s INVERSE rules." % str(inverse_rule_count)
+    else:
+        print "[=] Generated %s SIMPLE rules." % str(rule_count)
+        if not nosuper:
+            print "[=] Generated %s SUPER rules." % str(super_rule_count)
+        print "[=] All rules written to %s" % args.o
+
 
 def emptyFolder(dir):
     """
@@ -1759,10 +1768,16 @@ def emptyFolder(dir):
         filePath = os.path.join(dir, file)
         try:
             if os.path.isfile(filePath):
-                print "Removing %s ..." % filePath
+                print "[!] Removing %s ..." % filePath
                 os.unlink(filePath)
         except Exception as e:
             print(e)
+
+
+# CTRL+C Handler --------------------------------------------------------------
+def signal_handler(signal_name, frame):
+    print "> yarGen's work has been interrupted"
+    sys.exit(0)
 
 
 def print_welcome():
@@ -1784,6 +1799,10 @@ def print_welcome():
 
 # MAIN ################################################################
 if __name__ == '__main__':
+
+    # Signal handler for CTRL+C
+    signal_module.signal(signal_module.SIGINT, signal_handler)
+
     # Parse Arguments
     parser = argparse.ArgumentParser(description='yarGen')
 
@@ -1834,7 +1853,7 @@ if __name__ == '__main__':
 
     group_general = parser.add_argument_group('General Options')
     group_general.add_argument('--dropzone', action='store_true', default=False,
-                               help='Dropzone mode - monitors a directory [-m] for new samples to process '
+                               help='Dropzone mode - monitors a directory [-m] for new samples to process'
                                     'WARNING: Processed files will be deleted!')
     group_general.add_argument('--nr', action='store_true', default=False, help='Do not recursively scan directories')
     group_general.add_argument('--oe', action='store_true', default=False, help='Only scan executable extensions EXE, '
@@ -1882,6 +1901,9 @@ if __name__ == '__main__':
     # Read PEStudio string list
     pestudio_strings = {}
     pestudio_available = False
+
+    # Super Rule Generation
+    nosuper = args.nosuper
 
     if os.path.isfile(get_abs_path(PE_STRINGS_FILE)) and lxml_available:
         print "[+] Processing PEStudio strings ..."
@@ -2102,6 +2124,10 @@ if __name__ == '__main__':
         print "[+] Initializing Bayes Filter ..."
         stringTrainer = initialize_bayes_filter()
 
+        # Deactivate super rule generation if there's only a single file in the folder
+        if len(os.listdir(args.m)) < 2:
+            nosuper = True
+
         # Special strings
         base64strings = {}
         reversedStrings = {}
@@ -2114,7 +2140,14 @@ if __name__ == '__main__':
             print "Monitoring %s for new sample files (processed samples will be removed)" % args.m
             while(True):
                 if len(os.listdir(args.m)) > 0:
+                    # Deactivate super rule generation if there's only a single file in the folder
+                    if len(os.listdir(args.m)) < 2:
+                        nosuper = True
+                    else:
+                        nosuper = False
+                    # Process the samples
                     processSampleDir(args.m)
+                    # Delete all samples from the dropzone folder
                     emptyFolder(args.m)
                 time.sleep(5)
         else:
@@ -2122,10 +2155,4 @@ if __name__ == '__main__':
             print "[+] Processing malware files ..."
             processSampleDir(args.m)
 
-        if args.inverse:
-            print "[=] Generated %s INVERSE rules." % str(inverse_rule_count)
-        else:
-            print "[=] Generated %s SIMPLE rules." % str(rule_count)
-            if not args.nosuper:
-                print "[=] Generated %s SUPER rules." % str(super_rule_count)
-            print "[=] All rules written to %s" % args.o
+        print "[+] yarGen run finished"
