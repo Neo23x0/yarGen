@@ -20,7 +20,7 @@ The main principle is the creation of yara rules from strings found in malware f
 
 Since version 0.12.0 yarGen does not completely remove the goodware strings from the analysis process but includes them with a very low score depending on the number of occurences in goodware samples. The rules will be included if no
 better strings can be found and marked with a comment /* Goodware rule */.
-Force yarGen to remvoe all goodware strings with --excludegood. Also since version 0.12.0 yarGen allows to place the "strings.xml" from [PEstudio](https://winitor.com/) in the program directory in order to apply the blacklist definition during the string analysis process. You'll get better results.
+Force yarGen to remove all goodware strings with --excludegood. Also since version 0.12.0 yarGen allows to place the "strings.xml" from [PEstudio](https://winitor.com/) in the program directory in order to apply the blacklist definition during the string analysis process. You'll get better results.
 
 Since version 0.14.0 it uses naive-bayes-classifier by Mustafa Atik and Nejdet Yucesoy in order to classify the string and detect useful words instead of compression/encryption garbage.
 
@@ -33,7 +33,7 @@ database files named "good-strings-office.db" and "good-opcodes-office.db" that 
 
 Since version 0.18.0 yarGen supports extra conditions that make use of the `pe` module. This includes [imphash](https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html) values and the PE file's exports. We provide pre-generated imphash and export databases.
 
-Since version 0.19.0 yarGen support a 'dropzone' mode in which it initializes all strings/opcodes/imphashes/exports only once and queries a given folder for new samples. If it finds new samples dropped to the folder, it creates rules for these samples, writes the YARA rules to the set output file (default: yargen_rules.yar) and removes the dropped samples. 
+Since version 0.19.0 yarGen support a 'dropzone' mode in which it initializes all strings/opcodes/imphashes/exports only once and queries a given folder for new samples. If it finds new samples dropped to the folder, it creates rules for these samples, writes the YARA rules to the defined output file (default: yargen_rules.yar) and removes the dropped samples. You can specify a text file (`-b`) from which the identifier is read. The reference parameter (`-r`) has also been extended so that it can be a text file on disk from which the reference is read. E.g. drop two files named 'identifier.txt' and 'reference.txt' together with the samples to the folder and use the parameters `-b ./dropzone/identifier.txt` and `-r ./dropzone/reference.txt` to read the respective strings from the files each time an analysis starts.
 
 The rule generation process also tries to identify similarities between the files that get analyzed and then combines the strings to so called **super rules**. The super rule generation does not remove the simple rule for the files that have been combined in a single super rule. This means that there is some redundancy when super rules are created. You can supress a simple rule for a file that was already covered by super rule by using --nosimple.
 
@@ -59,7 +59,7 @@ I've already tried to migrate the database to sqlite but the numerous string com
 
 yarGen allows creating multiple databases for opcodes or strings. You can easily create a new database by using "-c" for new database creation and "-i identifier" to give the new database a unique identifier as e.g. "office". It will the create two new database files named "good-strings-office.db" and "good-opcodes-office.db" that will from then on be initialized during startup with the built-in databases.
 
-### Example
+### Database Creation / Update Example
 
 Create a new strings and opcodes database from an Office 2013 program directory:
 ```
@@ -109,10 +109,12 @@ Rule Creation:
 Rule Output:
   -o output_rule_file  Output rule file
   -a author            Author Name
-  -r ref               Reference
+  -r ref               Reference (can be string or text file)
   -l lic               License
   -p prefix            Prefix for the rule description
-  -b identifier        Identifier in the the rule set description
+  -b identifier        Text file from which the identifier is read (default:
+                       last folder name in the full path, e.g. "myRAT" if -m
+                       points to /mnt/mal/myRAT)
   --score              Show the string scores as comments in the rules
   --nosimple           Skip simple rule creation for files included in super
                        rules
@@ -231,13 +233,17 @@ The new databases will automatically be initialized during startup and are from 
 
 ```python yarGen.py -a "Florian Roth" -r "Internal Research" -m /opt/mal/apt_case_32```
 
-### Dropzone Mode
+### Dropzone Mode 
 
 Monitors a given folder (-m) for new samples, processes the samples, writes YARA rules to the set output file (default: yargen_rules.yar) and deletes the folder contents afterwards.
 
 ```python yarGen.py -a "yarGen Dropzone" --dropzone -m /opt/mal/dropzone```
 
 WARNING: All files dropped to the set dropzone will be removed! 
+
+In the following example two files named `identifier.txt` and `reference.txt` are read and used for the `reference` and as identifier in the YARA rule sets. The files are read at each iteration and not only during initialization. This way you can pass specific strings to each dropzone rule generation. 
+
+```python yarGen.py --dropzone -m /opt/mal/dropzone -b /opt/mal/dropzone/identifier.txt -r /opt/mal/dropzone/reference.txt```
 
 # db-lookup.py
 
