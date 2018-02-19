@@ -985,7 +985,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
     general_info += "   Yara Rule Set\n"
     general_info += "   Author: {0}\n".format(args.a)
     general_info += "   Date: {0}\n".format(get_timestamp_basic())
-    general_info += "   Identifier: {0}\n".format(os.path.basename(args.m))
+    general_info += "   Identifier: {0}\n".format(identifier)
     general_info += "   Reference: {0}\n".format(args.r)
     if args.l != "":
         general_info += "   License: {0}\n".format(args.l)
@@ -1820,11 +1820,13 @@ if __name__ == '__main__':
 
     group_output = parser.add_argument_group('Rule Output')
     group_output.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yargen_rules.yar')
-    group_output.add_argument('-a', help='Author Name', metavar='author', default='YarGen Rule Generator')
-    group_output.add_argument('-r', help='Reference', metavar='ref', default='not set')
+    group_output.add_argument('-a', help='Author Name', metavar='author', default='yarGen Rule Generator')
+    group_output.add_argument('-r', help='Reference', metavar='ref', default='https://github.com/Neo23x0/yarGen')
     group_output.add_argument('-l', help='License', metavar='lic', default='')
     group_output.add_argument('-p', help='Prefix for the rule description', metavar='prefix',
                               default='Auto-generated rule')
+    group_output.add_argument('-b', help='Identifier in the the rule set description', metavar='identifier',
+                              default='not set')
     group_output.add_argument('--score', help='Show the string scores as comments in the rules', action='store_true',
                               default=False)
     group_output.add_argument('--nosimple', help='Skip simple rule creation for files included in super rules',
@@ -1904,6 +1906,12 @@ if __name__ == '__main__':
 
     # Super Rule Generation
     nosuper = args.nosuper
+
+    # Identifier
+    identifier = args.b
+    if args.b == "not set":
+        # Identifier is the highest folder name
+        identifier = os.path.basename(args.m)
 
     if os.path.isfile(get_abs_path(PE_STRINGS_FILE)) and lxml_available:
         print "[+] Processing PEStudio strings ..."
