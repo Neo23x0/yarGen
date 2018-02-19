@@ -82,8 +82,7 @@ REPO_URLS = {
 
 PE_STRINGS_FILE = "./3rdparty/strings.xml"
 
-KNOWN_IMPHASHES = {'baa93d47220682c04d92f7797d9224ce': 'Themida Packer',
-                   'a04dd9f5ee88d7774203e0a0cfa1b941': 'PsExec',
+KNOWN_IMPHASHES = {'a04dd9f5ee88d7774203e0a0cfa1b941': 'PsExec',
                    '2b8c9d9ab6fefc247adaf927e83dcea6': 'RAR SFX variant'}
 
 
@@ -1717,13 +1716,53 @@ def update_databases():
             print "Downloading %s from %s ..." % (filename, repo_url)
             fileDownloader = urllib.URLopener()
             fileDownloader.retrieve(repo_url, "./dbs/%s" % filename)
-    except Exception, e:
+    except Exception as e:
         if args.debug:
             traceback.print_exc()
         print "Error while downloading the database file - check your Internet connection"
         print "Alterntive download link: https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28"
         print "Download the files and place them into the ./dbs/ folder"
         sys.exit(1)
+
+
+def processSampleDir(targetDir):
+    """
+    Processes samples in a given directory and creates a yara rule file
+    :param directory:
+    :return:
+    """
+    # Special strings
+    base64strings = {}
+    reversedStrings = {}
+    pestudioMarker = {}
+    stringScores = {}
+
+    # Extract all information
+    (sample_string_stats, sample_opcode_stats, file_info) = \
+        parse_sample_dir(targetDir, args.nr, generateInfo=True, onlyRelevantExtensions=args.oe)
+
+    # Evaluate Strings
+    (file_strings, file_opcodes, combinations, super_rules, inverse_stats) = \
+        sample_string_evaluation(sample_string_stats, sample_opcode_stats, file_info)
+
+    # Create Rule Files
+    (rule_count, inverse_rule_count, super_rule_count) = \
+        generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_stats)
+
+
+def emptyFolder(dir):
+    """
+    Removes all files from a given folder
+    :return:
+    """
+    for file in os.listdir(dir):
+        filePath = os.path.join(dir, file)
+        try:
+            if os.path.isfile(filePath):
+                print "Removing %s ..." % filePath
+                os.unlink(filePath)
+        except Exception as e:
+            print(e)
 
 
 def print_welcome():
@@ -1737,8 +1776,8 @@ def print_welcome():
     print "   "
     print "   Yara Rule Generator"
     print "   by Florian Roth"
-    print "   August 2017"
-    print "   Version 0.18.0"
+    print "   February 2018"
+    print "   Version 0.19.0"
     print "   "
     print "###############################################################################"
 
@@ -1794,6 +1833,9 @@ if __name__ == '__main__':
                                                  '(good-strings-identifier.db, good-opcodes-identifier.db)')
 
     group_general = parser.add_argument_group('General Options')
+    group_general.add_argument('--dropzone', action='store_true', default=False,
+                               help='Dropzone mode - monitors a directory [-m] for new samples to process '
+                                    'WARNING: Processed files will be deleted!')
     group_general.add_argument('--nr', action='store_true', default=False, help='Do not recursively scan directories')
     group_general.add_argument('--oe', action='store_true', default=False, help='Only scan executable extensions EXE, '
                                                                                 'DLL, ASP, JSP, PHP, BIN, INFECTED')
@@ -2060,26 +2102,25 @@ if __name__ == '__main__':
         print "[+] Initializing Bayes Filter ..."
         stringTrainer = initialize_bayes_filter()
 
-        # Scan malware files
-        print "[+] Processing malware files ..."
-
         # Special strings
         base64strings = {}
         reversedStrings = {}
         pestudioMarker = {}
         stringScores = {}
 
-        # Extract all information
-        (sample_string_stats, sample_opcode_stats, file_info) = \
-            parse_sample_dir(args.m, args.nr, generateInfo=True, onlyRelevantExtensions=args.oe)
-
-        # Evaluate Strings
-        (file_strings, file_opcodes, combinations, super_rules, inverse_stats) = \
-            sample_string_evaluation(sample_string_stats, sample_opcode_stats, file_info)
-
-        # Create Rule Files
-        (rule_count, inverse_rule_count, super_rule_count) = \
-            generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_stats)
+        # Dropzone mode
+        if args.dropzone:
+            # Monitoring folder for changes
+            print "Monitoring %s for new sample files (processed samples will be removed)" % args.m
+            while(True):
+                if len(os.listdir(args.m)) > 0:
+                    processSampleDir(args.m)
+                    emptyFolder(args.m)
+                time.sleep(5)
+        else:
+            # Scan malware files
+            print "[+] Processing malware files ..."
+            processSampleDir(args.m)
 
         if args.inverse:
             print "[=] Generated %s INVERSE rules." % str(inverse_rule_count)
