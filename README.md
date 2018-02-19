@@ -9,8 +9,8 @@
  
     Yara Rule Generator
     by Florian Roth
-    August 2017
-    Version 0.18.0
+    February 2018
+    Version 0.19.0
 
 ### What does yarGen do?
 
@@ -32,6 +32,8 @@ Since version 0.17.0 yarGen allows creating multiple databases for opcodes and s
 database files named "good-strings-office.db" and "good-opcodes-office.db" that will be initialized during startup with the built-in databases.
 
 Since version 0.18.0 yarGen supports extra conditions that make use of the `pe` module. This includes [imphash](https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html) values and the PE file's exports. We provide pre-generated imphash and export databases.
+
+Since version 0.19.0 yarGen support a 'dropzone' mode in which it initializes all strings/opcodes/imphashes/exports only once and queries a given folder for new samples. If it finds new samples dropped to the folder, it creates rules for these samples, writes the YARA rules to the set output file (default: yargen_rules.yar) and removes the dropped samples. 
 
 The rule generation process also tries to identify similarities between the files that get analyzed and then combines the strings to so called **super rules**. The super rule generation does not remove the simple rule for the files that have been combined in a single super rule. This means that there is some redundancy when super rules are created. You can supress a simple rule for a file that was already covered by super rule by using --nosimple.
 
@@ -82,10 +84,11 @@ This would update the "office" databases with new strings extracted from files i
 usage: yarGen.py [-h] [-m M] [-y min-size] [-z min-score] [-x high-scoring]
                  [-s max-size] [-rc maxstrings] [--excludegood]
                  [-o output_rule_file] [-a author] [-r ref] [-l lic]
-                 [-p prefix] [--score] [--nosimple] [--nomagic] [--nofilesize]
-                 [-fm FM] [--globalrule] [--nosuper] [--update] [-g G] [-u]
-                 [-c] [-i I] [--nr] [--oe] [-fs size-in-MB] [--noextras]
-                 [--debug] [--opcodes] [-n opcode-num]
+                 [-p prefix] [-b identifier] [--score] [--nosimple]
+                 [--nomagic] [--nofilesize] [-fm FM] [--globalrule]
+                 [--nosuper] [--update] [-g G] [-u] [-c] [-i I] [--dropzone]
+                 [--nr] [--oe] [-fs size-in-MB] [--noextras] [--debug]
+                 [--opcodes] [-n opcode-num]
 
 yarGen
 
@@ -109,6 +112,7 @@ Rule Output:
   -r ref               Reference
   -l lic               License
   -p prefix            Prefix for the rule description
+  -b identifier        Identifier in the the rule set description
   --score              Show the string scores as comments in the rules
   --nosimple           Skip simple rule creation for files included in super
                        rules
@@ -134,6 +138,9 @@ Database Operations:
                        identifier.db)
 
 General Options:
+  --dropzone           Dropzone mode - monitors a directory [-m] for new
+                       samples to processWARNING: Processed files will be
+                       deleted!
   --nr                 Do not recursively scan directories
   --oe                 Only scan executable extensions EXE, DLL, ASP, JSP,
                        PHP, BIN, INFECTED
@@ -223,6 +230,14 @@ The new databases will automatically be initialized during startup and are from 
 ### My Best Pratice Command Line
 
 ```python yarGen.py -a "Florian Roth" -r "Internal Research" -m /opt/mal/apt_case_32```
+
+### Dropzone Mode
+
+Monitors a given folder (-m) for new samples, processes the samples, writes YARA rules to the set output file (default: yargen_rules.yar) and deletes the folder contents afterwards.
+
+```python yarGen.py -a "yarGen Dropzone" --dropzone -m /opt/mal/dropzone```
+
+WARNING: All files dropped to the set dropzone will be removed! 
 
 # db-lookup.py
 
