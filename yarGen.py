@@ -125,6 +125,11 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
                     print "[-] EXTENSION %s - Skipping file %s" % (extension, filePath)
                 continue
 
+            # Info file check
+            if os.path.basename(filePath) == os.path.basename(args.b) or \
+                    os.path.basename(filePath) == os.path.basename(args.r):
+                continue
+
             # Size Check
             size = 0
             try:
@@ -986,7 +991,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
     general_info += "   Author: {0}\n".format(args.a)
     general_info += "   Date: {0}\n".format(get_timestamp_basic())
     general_info += "   Identifier: {0}\n".format(identifier)
-    general_info += "   Reference: {0}\n".format(args.r)
+    general_info += "   Reference: {0}\n".format(reference)
     if args.l != "":
         general_info += "   License: {0}\n".format(args.l)
     general_info += "*/\n\n"
@@ -1086,9 +1091,9 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 # Meta data -----------------------------------------------
                 rule += "   meta:\n"
-                rule += "      description = \"%s - file %s\"\n" % (args.p, file)
+                rule += "      description = \"%s - file %s\"\n" % (prefix, file)
                 rule += "      author = \"%s\"\n" % args.a
-                rule += "      reference = \"%s\"\n" % args.r
+                rule += "      reference = \"%s\"\n" % reference
                 rule += "      date = \"%s\"\n" % get_timestamp_basic()
                 rule += "      hash1 = \"%s\"\n" % file_info[filePath]["hash"]
                 rule += "   strings:\n"
@@ -1273,9 +1278,9 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 # Print rule title
                 rule += "rule %s {\n" % rule_name
                 rule += "   meta:\n"
-                rule += "      description = \"%s - from files %s\"\n" % (args.p, file_listing)
+                rule += "      description = \"%s - from files %s\"\n" % (prefix, file_listing)
                 rule += "      author = \"%s\"\n" % args.a
-                rule += "      reference = \"%s\"\n" % args.r
+                rule += "      reference = \"%s\"\n" % reference
                 rule += "      date = \"%s\"\n" % get_timestamp_basic()
                 for i, filePath in enumerate(super_rule["files"]):
                     rule += "      hash%s = \"%s\"\n" % (str(i + 1), file_info[filePath]["hash"])
@@ -1415,9 +1420,9 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 # Meta data -----------------------------------------------
                 rule += "   meta:\n"
-                rule += "      description = \"%s for anomaly detection - file %s\"\n" % (args.p, fileName)
+                rule += "      description = \"%s for anomaly detection - file %s\"\n" % (prefix, fileName)
                 rule += "      author = \"%s\"\n" % args.a
-                rule += "      reference = \"%s\"\n" % args.r
+                rule += "      reference = \"%s\"\n" % reference
                 rule += "      date = \"%s\"\n" % get_timestamp_basic()
                 for i, hash in enumerate(file_info[fileName]["hashes"]):
                     rule += "      hash%s = \"%s\"\n" % (str(i + 1), hash)
@@ -1774,6 +1779,65 @@ def emptyFolder(dir):
             print(e)
 
 
+def getReference(ref):
+    """
+    Get a reference string - if the provided string is the path to a text file, then read the contents and return it as
+    reference
+    :param ref:
+    :return:
+    """
+    if os.path.exists(ref):
+        reference = getFileContent(ref)
+        print "[+] Read reference from file %s > %s" % (ref, reference)
+        return reference
+    else:
+        return ref
+
+
+def getIdentifier(id, path):
+    """
+    Get a identifier string - if the provided string is the path to a text file, then read the contents and return it as
+    reference, otherwise use the last element of the full path
+    :param ref:
+    :return:
+    """
+    # Identifier
+    if id == "not set" or not os.path.exists(id):
+        # Identifier is the highest folder name
+        return os.path.basename(path)
+    else:
+        # Read identifier from file
+        identifier = getFileContent(id)
+        print "[+] Read identifier from file %s > %s" % (id, identifier)
+        return identifier
+
+
+def getPrefix(prefix, identifier):
+    """
+    Get a prefix string for the rule description based on the identifier
+    :param prefix:
+    :param identifier:
+    :return:
+    """
+    if prefix == "Auto-generated rule":
+        return identifier
+    else:
+        return prefix
+
+
+def getFileContent(file):
+    """
+    Gets the contents of a file (limited to 1024 characters)
+    :param file:
+    :return:
+    """
+    try:
+        with open(file) as f:
+            return f.read(1024)
+    except Exception as e:
+        return "not found"
+
+
 # CTRL+C Handler --------------------------------------------------------------
 def signal_handler(signal_name, frame):
     print "> yarGen's work has been interrupted"
@@ -1821,11 +1885,13 @@ if __name__ == '__main__':
     group_output = parser.add_argument_group('Rule Output')
     group_output.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yargen_rules.yar')
     group_output.add_argument('-a', help='Author Name', metavar='author', default='yarGen Rule Generator')
-    group_output.add_argument('-r', help='Reference', metavar='ref', default='https://github.com/Neo23x0/yarGen')
+    group_output.add_argument('-r', help='Reference (can be string or text file)', metavar='ref', default='https://github.com/Neo23x0/yarGen')
     group_output.add_argument('-l', help='License', metavar='lic', default='')
     group_output.add_argument('-p', help='Prefix for the rule description', metavar='prefix',
                               default='Auto-generated rule')
-    group_output.add_argument('-b', help='Identifier in the the rule set description', metavar='identifier',
+    group_output.add_argument('-b', help='Text file from which the identifier is read (default: last folder name in '
+                                         'the full path, e.g. "myRAT" if -m points to /mnt/mal/myRAT)',
+                              metavar='identifier',
                               default='not set')
     group_output.add_argument('--score', help='Show the string scores as comments in the rules', action='store_true',
                               default=False)
@@ -1908,10 +1974,13 @@ if __name__ == '__main__':
     nosuper = args.nosuper
 
     # Identifier
-    identifier = args.b
-    if args.b == "not set":
-        # Identifier is the highest folder name
-        identifier = os.path.basename(args.m)
+    identifier = getIdentifier(args.b, args.m)
+
+    # Reference
+    reference = getReference(args.r)
+
+    # Prefix
+    prefix = getPrefix(args.p, identifier)
 
     if os.path.isfile(get_abs_path(PE_STRINGS_FILE)) and lxml_available:
         print "[+] Processing PEStudio strings ..."
@@ -2153,11 +2222,17 @@ if __name__ == '__main__':
                         nosuper = True
                     else:
                         nosuper = False
+                    # Read a new identifier
+                    identifier = getIdentifier(args.b, args.m)
+                    # Read a new reference
+                    reference = getReference(args.r)
+                    # Generate a new description prefix
+                    prefix = getPrefix(args.p, identifier)
                     # Process the samples
                     processSampleDir(args.m)
                     # Delete all samples from the dropzone folder
                     emptyFolder(args.m)
-                time.sleep(5)
+                time.sleep(1)
         else:
             # Scan malware files
             print "[+] Processing malware files ..."
