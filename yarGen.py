@@ -1804,7 +1804,7 @@ def getIdentifier(id, path):
     # Identifier
     if id == "not set" or not os.path.exists(id):
         # Identifier is the highest folder name
-        return os.path.basename(path)
+        return os.path.basename(path.rstrip('/'))
     else:
         # Read identifier from file
         identifier = getFileContent(id)
@@ -1975,12 +1975,15 @@ if __name__ == '__main__':
 
     # Identifier
     identifier = getIdentifier(args.b, args.m)
+    print "[+] Using identifier '%s'" % identifier
 
     # Reference
     reference = getReference(args.r)
+    print "[+] Using reference '%s'" % reference
 
     # Prefix
     prefix = getPrefix(args.p, identifier)
+    print "[+] Using prefix '%s'" % prefix
 
     if os.path.isfile(get_abs_path(PE_STRINGS_FILE)) and lxml_available:
         print "[+] Processing PEStudio strings ..."
