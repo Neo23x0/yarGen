@@ -1974,7 +1974,10 @@ if __name__ == '__main__':
     nosuper = args.nosuper
 
     # Identifier
-    identifier = getIdentifier(args.b, args.g)
+    sourcepath = args.m
+    if args.g:
+        sourcepath = args.g
+    identifier = getIdentifier(args.b, sourcepath)
     print "[+] Using identifier '%s'" % identifier
 
     # Reference
