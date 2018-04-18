@@ -859,7 +859,7 @@ def filter_string_set(string_set):
             if re.search(r'(abcdefghijklmnopqsst|ABCDEFGHIJKLMNOPQRSTUVWXYZ|0123456789:;)', string, re.IGNORECASE):
                 localStringScores[string] -= 5
 
-            # BASE64 --------------------------------------------------------------
+            # ENCODING DETECTIONS --------------------------------------------------
             try:
                 if len(string) > 8:
                     # Try different ways - fuzz string
@@ -874,6 +874,23 @@ def filter_string_set(string_set):
                                 # print "match"
                                 localStringScores[string] += 10
                                 base64strings[string] = decoded_string
+                    # Hex Encoded string
+                    if args.trace:
+                        print("Starting Hex encoded string analysis ...")
+                    for m_string in ([string, re.sub('[^a-zA-Z0-9]', '', string)]):
+                        #print m_string
+                        if is_hex_encoded(m_string):
+                            #print("^ is HEX")
+                            decoded_string = m_string.decode('hex')
+                            #print removeNonAsciiDrop(decoded_string)
+                            if is_ascii_string(decoded_string, padding_allowed=True):
+                                # not too many 00s
+                                if '00' in m_string:
+                                    if len(m_string) / float(m_string.count('0')) <= 1.2:
+                                        continue
+                                #print("^ is ASCII / WIDE")
+                                localStringScores[string] += 7
+                                hexEncStrings[string] = decoded_string
             except Exception, e:
                 if args.debug:
                     traceback.print_exc()
@@ -1496,9 +1513,11 @@ def get_rule_strings(string_elements, opcode_elements):
     for i, string in enumerate(string_elements):
 
         # Collect the data
+        is_fullword = True
         initial_string = string
         enc = " ascii"
         base64comment = ""
+        hexEncComment = ""
         reversedComment = ""
         fullword = ""
         pestudio_comment = ""
@@ -1519,14 +1538,19 @@ def get_rule_strings(string_elements, opcode_elements):
             enc = " wide"
         if string in base64strings:
             base64comment = " /* base64 encoded string '%s' */" % base64strings[string]
+        if string in hexEncStrings:
+            hexEncComment = " /* hex encoded string '%s' */" % hexEncStrings[string]
         if string in pestudioMarker and args.score:
             pestudio_comment = " /* PEStudio Blacklist: %s */" % pestudioMarker[string]
         if string in reversedStrings:
             reversedComment = " /* reversed goodware string '%s' */" % reversedStrings[string]
 
+        # Extra checks
+        if is_hex_encoded(string, check_length=False):
+            is_fullword = False
+
         # Checking string length
-        is_fullword = True
-        if len(string) > args.s:
+        if len(string) >= args.s:
             # cut string
             string = string[:args.s].rstrip("\\")
             # not fullword anymore
@@ -1538,13 +1562,13 @@ def get_rule_strings(string_elements, opcode_elements):
         # No compose the rule line
         if float(stringScores[initial_string]) > score_highly_specific:
             high_scoring_strings += 1
-            rule_strings += "      $x%s = \"%s\"%s%s%s%s%s%s%s\n" % (
+            rule_strings += "      $x%s = \"%s\"%s%s%s%s%s%s%s%s\n" % (
             str(i + 1), string, fullword, enc, base64comment, reversedComment, pestudio_comment, score_comment,
-            goodware_comment)
+            goodware_comment, hexEncComment)
         else:
-            rule_strings += "      $s%s = \"%s\"%s%s%s%s%s%s%s\n" % (
+            rule_strings += "      $s%s = \"%s\"%s%s%s%s%s%s%s%s\n" % (
             str(i + 1), string, fullword, enc, base64comment, reversedComment, pestudio_comment, score_comment,
-            goodware_comment)
+            goodware_comment, hexEncComment)
 
         # If too many string definitions found - cut it at the
         # count defined via command line param -rc
@@ -1611,7 +1635,7 @@ def get_pestudio_score(string):
     for type in pestudio_strings:
         for elem in pestudio_strings[type]:
             # Full match
-            if elem.text.lower() in string.lower():
+            if elem.text.lower() == string.lower():
                 # Exclude the "extension" black list for now
                 if type != "ext":
                     return 5, type
@@ -1695,6 +1719,58 @@ def is_base_64(s):
     return (len(s) % 4 == 0) and re.match('^[A-Za-z0-9+/]+[=]{0,2}$', s)
 
 
+def is_hex_encoded(s, check_length=True):
+    if re.match('^[A-Fa-f0-9]+$', s):
+        if check_length:
+            if len(s) % 2 == 0:
+                return True
+        else:
+            return True
+    return False
+
+
+def extract_hex_strings(s):
+    strings = []
+    hex_strings = re.findall("([a-fA-F0-9]{10,})", s)
+    for string in list(hex_strings):
+        hex_strings += string.split('0000')
+        hex_strings += string.split('0d0a')
+        hex_strings += re.findall(r'((?:0000|002[a-f0-9]|00[3-9a-f][0-9a-f]){6,})', string, re.IGNORECASE)
+    hex_strings = list(set(hex_strings))
+    # ASCII Encoded Strings
+    for string in hex_strings:
+        for x in string.split('00'):
+            if len(x) > 10:
+                strings.append(x)
+    # WIDE Encoded Strings
+    for string in hex_strings:
+        try:
+            if len(string) % 2 != 0 or len(string) < 8:
+                continue
+            dec = string.replace('00', '').decode('hex')
+            #print("Testing: %s" % string)
+            #print("Decoded: %s" % dec)
+            if is_ascii_string(dec, padding_allowed=True):
+                #print("CAN USE >>>>>>>>>>>>>>>>>>>>>>>> %s"  % string)
+                strings.append(string)
+        except Exception as e:
+            traceback.print_exc()
+    #print len(hex_strings)
+    #sys.exit(0)
+    return strings
+
+
+def removeNonAsciiDrop(string):
+    nonascii = "error"
+    try:
+        # Generate a new string without disturbing characters
+        nonascii = "".join(i for i in string if ord(i)<127 and ord(i)>31)
+    except Exception, e:
+        traceback.print_exc()
+        pass
+    return nonascii
+
+
 def save(object, filename, protocol=0):
     file = gzip.GzipFile(filename, 'wb')
     file.write(pickle.dumps(object, protocol))
@@ -1750,6 +1826,7 @@ def processSampleDir(targetDir):
     """
     # Special strings
     base64strings = {}
+    hexEncStrings = {}
     reversedStrings = {}
     pestudioMarker = {}
     stringScores = {}
@@ -2226,6 +2303,7 @@ if __name__ == '__main__':
         # Special strings
         base64strings = {}
         reversedStrings = {}
+        hexEncStrings = {}
         pestudioMarker = {}
         stringScores = {}
 
