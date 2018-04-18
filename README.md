@@ -43,9 +43,9 @@ The rule generation process also tries to identify similarities between the file
 
 1. Make sure you have at least 4GB of RAM on the machine you plan to use yarGen (8GB if opcodes are included in rule generation, use with --opcodes)
 2. Download the latest release from the "release" section
-3. Install all dependencies with ```sudo pip install scandir lxml naiveBayesClassifier pefile``` (@twpDone reported that in case of errors try ```sudo pip install pefile``` and ```sudo pip install scandir lxml naiveBayesClassifier```)
-4. Run python ```yarGen.py --update``` to automatically download the built-in databases. The are saved into the  './dbs' sub folder. (Download: 913 MB)
-6. See help with ```python yarGen.py --help``` for more information on the command line parameters
+3. Install all dependencies with `sudo pip install scandir lxml naiveBayesClassifier pefile` (@twpDone reported that in case of errors try `sudo pip install pefile` and `sudo pip install scandir lxml naiveBayesClassifier`)
+4. Run `python yarGen.py --update` to automatically download the built-in databases. The are saved into the  './dbs' sub folder. (Download: 913 MB)
+5. See help with `python yarGen.py --help` for more information on the command line parameters
 
 ### Memory Requirements
 
