@@ -587,7 +587,7 @@ def filter_string_set(string_set):
         # PEStudio String Blacklist Evaluation
         if pestudio_available:
             (pescore, type) = get_pestudio_score(string)
-            # print string
+            # print("PE Match: %s" % string)
             # Reset score of goodware files to 5 if blacklisted in PEStudio
             if type != "":
                 pestudioMarker[string] = type
@@ -863,6 +863,9 @@ def filter_string_set(string_set):
             try:
                 if len(string) > 8:
                     # Try different ways - fuzz string
+                    # Base64
+                    if args.trace:
+                        print("Starting Base64 string analysis ...")
                     for m_string in (string, string[1:], string[1:] + "=", string + "=", string + "=="):
                         if is_base_64(m_string):
                             decoded_string = m_string.decode('base64')
@@ -872,6 +875,8 @@ def filter_string_set(string_set):
                                 localStringScores[string] += 10
                                 base64strings[string] = decoded_string
             except Exception, e:
+                if args.debug:
+                    traceback.print_exc()
                 pass
 
             # Reversed String -----------------------------------------------------
@@ -914,7 +919,7 @@ def filter_string_set(string_set):
         if c > int(args.rc):
             break
 
-    if args.debug:
+    if args.trace:
         print "RESULT SET:"
         print result_set
 
@@ -1937,6 +1942,7 @@ if __name__ == '__main__':
     group_general.add_argument('--noextras', action='store_true', default=False,
                               help='Don\'t use extras like Imphash or PE header specifics')
     group_general.add_argument('--debug', action='store_true', default=False, help='Debug output')
+    group_general.add_argument('--trace', action='store_true', default=False, help='Trace output')
 
     group_opcode = parser.add_argument_group('Other Features')
     group_opcode.add_argument('--opcodes', action='store_true', default=False, help='Do use the OpCode feature '
