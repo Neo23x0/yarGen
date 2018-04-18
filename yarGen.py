@@ -301,7 +301,10 @@ def extract_strings(fileData):
     # Read file data
     try:
         # Read strings
-        strings = re.findall("[\x1f-\x7e]{6,}", fileData)
+        strings_full = re.findall("[\x1f-\x7e]{6,}", fileData)
+        strings_limited = re.findall("[\x1f-\x7e]{6,%d}" % args.s, fileData)
+        strings_hex = extract_hex_strings(fileData)
+        strings = list(set(strings_full) | set(strings_limited) | set(strings_hex))
         strings += [str("UTF16LE:%s" % ws.decode("utf-16le")) for ws in re.findall("(?:[\x1f-\x7e][\x00]){6,}", fileData)]
 
         # Escape strings
