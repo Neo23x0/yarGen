@@ -9,8 +9,8 @@
  
     Yara Rule Generator
     by Florian Roth
-    February 2018
-    Version 0.19.0
+    April 2018
+    Version 0.20.0
 
 ### What does yarGen do?
 
@@ -34,6 +34,8 @@ database files named "good-strings-office.db" and "good-opcodes-office.db" that 
 Since version 0.18.0 yarGen supports extra conditions that make use of the `pe` module. This includes [imphash](https://www.fireeye.com/blog/threat-research/2014/01/tracking-malware-import-hashing.html) values and the PE file's exports. We provide pre-generated imphash and export databases.
 
 Since version 0.19.0 yarGen support a 'dropzone' mode in which it initializes all strings/opcodes/imphashes/exports only once and queries a given folder for new samples. If it finds new samples dropped to the folder, it creates rules for these samples, writes the YARA rules to the defined output file (default: yargen_rules.yar) and removes the dropped samples. You can specify a text file (`-b`) from which the identifier is read. The reference parameter (`-r`) has also been extended so that it can be a text file on disk from which the reference is read. E.g. drop two files named 'identifier.txt' and 'reference.txt' together with the samples to the folder and use the parameters `-b ./dropzone/identifier.txt` and `-r ./dropzone/reference.txt` to read the respective strings from the files each time an analysis starts.
+
+Since version 0.20.0 yarGen supports the extraction and use of hex encoded strings that often appear in weaponized RTF files.
 
 The rule generation process also tries to identify similarities between the files that get analyzed and then combines the strings to so called **super rules**. The super rule generation does not remove the simple rule for the files that have been combined in a single super rule. This means that there is some redundancy when super rules are created. You can supress a simple rule for a file that was already covered by super rule by using --nosimple.
 
