@@ -1943,8 +1943,8 @@ def print_welcome():
     print "   "
     print "   Yara Rule Generator"
     print "   by Florian Roth"
-    print "   February 2018"
-    print "   Version 0.19.0"
+    print "   April 2018"
+    print "   Version 0.20.0"
     print "   "
     print "###############################################################################"
 
