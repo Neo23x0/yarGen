@@ -615,8 +615,8 @@ def filter_string_set(string_set):
             length = len(string)
             if length > int(args.y) and length < int(args.s):
                 localStringScores[string] += round(len(string) / 8, 2)
-            if length >= int(args.s):
-                localStringScores[string] += 1
+            #if length >= int(args.s):
+            #    localStringScores[string] += 1
 
             # Reduction
             if ".." in string:
@@ -631,7 +631,7 @@ def filter_string_set(string_set):
                 localStringScores[string] -= 4
             # Chains of 00s
             if string.count('0000000000') > 2:
-                localStringScores[string] -= 3
+                localStringScores[string] -= 5
 
             # Certain strings add-ons ----------------------------------------------
             # Extensions - Drive
@@ -763,7 +763,8 @@ def filter_string_set(string_set):
             if re.search(r'(!\.$|!!!$| :\)$| ;\)$|fucked|[\w]\.\.\.\.$)', string):
                 localStringScores[string] += 4
             # Base64
-            if re.search(r'^(?:[A-Za-z0-9+/]{4}){30,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$', string):
+            if re.search(r'^(?:[A-Za-z0-9+/]{4}){30,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$', string) and \
+                    re.search(r'[A-Za-z]', string) and re.search(r'[0-9]', string):
                 localStringScores[string] += 6
             # Base64 Executables
             if re.search(r'(TVqQAAMAAAAEAAAA//8AALgAAAA|TVpQAAIAAAAEAA8A//8AALgAAAA|TVqAAAEAAAAEABAAAAAAAAAAAAA|'
@@ -841,7 +842,7 @@ def filter_string_set(string_set):
             if re.search(r'(isset\($post\[|isset\($get\[)', string, re.IGNORECASE):
                 localStringScores[string] += 2
             # Hash
-            if re.search(r'([a-f0-9]{32}|[a-f0-9]{40}|[a-f0-9]{64})', string, re.IGNORECASE):
+            if re.search(r'\b([a-f0-9]{32}|[a-f0-9]{40}|[a-f0-9]{64})\b', string, re.IGNORECASE):
                 localStringScores[string] += 2
             # Persistence
             if re.search(r'(sc.exe |schtasks|at \\\\|at [0-9]{2}:[0-9]{2})', string, re.IGNORECASE):
@@ -889,7 +890,7 @@ def filter_string_set(string_set):
                                     if len(m_string) / float(m_string.count('0')) <= 1.2:
                                         continue
                                 #print("^ is ASCII / WIDE")
-                                localStringScores[string] += 7
+                                localStringScores[string] += 8
                                 hexEncStrings[string] = decoded_string
             except Exception, e:
                 if args.debug:
