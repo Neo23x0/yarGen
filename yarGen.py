@@ -629,6 +629,9 @@ def filter_string_set(string_set):
             # US ASCII char
             if "\x1f" in string:
                 localStringScores[string] -= 4
+            # Chains of 00s
+            if string.count('0000000000') > 2:
+                localStringScores[string] -= 3
 
             # Certain strings add-ons ----------------------------------------------
             # Extensions - Drive
@@ -761,7 +764,7 @@ def filter_string_set(string_set):
                 localStringScores[string] += 4
             # Base64
             if re.search(r'^(?:[A-Za-z0-9+/]{4}){30,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$', string):
-                localStringScores[string] += 4
+                localStringScores[string] += 6
             # Base64 Executables
             if re.search(r'(TVqQAAMAAAAEAAAA//8AALgAAAA|TVpQAAIAAAAEAA8A//8AALgAAAA|TVqAAAEAAAAEABAAAAAAAAAAAAA|'
                          r'TVoAAAAAAAAAAAAAAAAAAAAAAAA|TVpTAQEAAAAEAAAA//8AALgAAAA)', string):
