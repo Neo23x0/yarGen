@@ -1206,7 +1206,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 condition1.append("( {0} ){1}".format(cond_combined, cond_op))
 
                 # Now add condition 1 to the conditions
-                conditions.append(" and\n        ".join(condition1))
+                conditions.append(" and\n         ".join(condition1))
 
                 # 2nd condition
                 # In memory detection base condition (no magic, no filesize)
