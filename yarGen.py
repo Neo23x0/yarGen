@@ -427,18 +427,18 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                     file_strings[filePath].append(string)
 
                 # INVERSE RULE GENERATION -------------------------------------
-
-                for fileName in string_stats[string]["files_basename"]:
-                    string_occurrance_count = string_stats[string]["files_basename"][fileName]
-                    total_count_basename = file_info[fileName]["count"]
-                    # print "string_occurance_count %s - total_count_basename %s" % ( string_occurance_count,
-                    # total_count_basename )
-                    if string_occurrance_count == total_count_basename:
-                        if fileName not in inverse_stats:
-                            inverse_stats[fileName] = []
-                        if args.debug:
-                            print "Appending %s to %s" % (string, fileName)
-                        inverse_stats[fileName].append(string)
+                if args.inverse:
+                    for fileName in string_stats[string]["files_basename"]:
+                        string_occurrance_count = string_stats[string]["files_basename"][fileName]
+                        total_count_basename = file_info[fileName]["count"]
+                        # print "string_occurance_count %s - total_count_basename %s" % ( string_occurance_count,
+                        # total_count_basename )
+                        if string_occurrance_count == total_count_basename:
+                            if fileName not in inverse_stats:
+                                inverse_stats[fileName] = []
+                            if args.trace:
+                                print "Appending %s to %s" % (string, fileName)
+                            inverse_stats[fileName].append(string)
 
         # SUPER RULE GENERATION -----------------------------------------------
 
