@@ -632,6 +632,9 @@ def filter_string_set(string_set):
             # Chains of 00s
             if string.count('0000000000') > 2:
                 localStringScores[string] -= 5
+            # Repeated characters
+            if re.search(r'(?!.* ([A-Fa-f0-9])\1{8,})', string):
+                localStringScores[string] -= 5
 
             # Certain strings add-ons ----------------------------------------------
             # Extensions - Drive
