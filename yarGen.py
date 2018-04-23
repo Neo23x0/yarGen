@@ -1543,7 +1543,7 @@ def get_rule_strings(string_elements, opcode_elements):
         if string in base64strings:
             base64comment = " /* base64 encoded string '%s' */" % base64strings[string]
         if string in hexEncStrings:
-            hexEncComment = " /* hex encoded string '%s' */" % hexEncStrings[string]
+            hexEncComment = " /* hex encoded string '%s' */" % removeNonAsciiDrop(hexEncStrings[string])
         if string in pestudioMarker and args.score:
             pestudio_comment = " /* PEStudio Blacklist: %s */" % pestudioMarker[string]
         if string in reversedStrings:
