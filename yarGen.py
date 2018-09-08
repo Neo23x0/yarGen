@@ -998,7 +998,7 @@ def generate_general_condition(file_info):
             pe_module_neccessary = True
 
         # If enough attributes were special
-        condition_string = " and\n        ".join(conditions)
+        condition_string = " and ".join(conditions)
 
     except Exception, e:
         if args.debug:
@@ -1019,7 +1019,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
     # General Info
     general_info = "/*\n"
-    general_info += "   Yara Rule Set\n"
+    general_info += "   YARA Rule Set\n"
     general_info += "   Author: {0}\n".format(args.a)
     general_info += "   Date: {0}\n".format(get_timestamp_basic())
     general_info += "   Identifier: {0}\n".format(identifier)
@@ -1138,10 +1138,8 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 # Condition -----------------------------------------------
                 # Conditions list (will later be joined with 'or')
-                conditions = []
-
-                # 1st condition
-                condition1 = []
+                conditions = []  # AND connected
+                subconditions = []  # OR connected
 
                 # Condition PE
                 # Imphash and Exports - applicable to PE files only
@@ -1169,28 +1167,34 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                             if e_count > 5:
                                 break
 
-                # Add extra PE conditions to condition 1
-                pe_conditions_added = False
-                if condition_pe_part1 or condition_pe_part2:
-                    if len(condition_pe_part1):
-                        condition_pe.append(" and ".join(condition_pe_part1))
-                    if len(condition_pe_part2):
-                        condition_pe.append(" and ".join(condition_pe_part2))
-
-                    # Add condition PE to condition 1
-                    condition1.append(" and ".join(condition_pe))
-
-                    # Marker that PE conditions have been added
-                    pe_conditions_added = True
-
                 # 1st Part of Condition 1
+                basic_conditions = []
                 # Filesize
                 if not args.nofilesize:
-                    condition1.insert(0, get_file_range(file_info[filePath]["size"]))
+                    basic_conditions.insert(0, get_file_range(file_info[filePath]["size"]))
                 # Magic
                 if file_info[filePath]["magic"] != "":
                     uint_string = get_uint_string(file_info[filePath]["magic"])
-                    condition1.insert(0, uint_string)
+                    basic_conditions.insert(0, uint_string)
+                # Basic Condition
+                if len(basic_conditions):
+                    conditions.append(" and ".join(basic_conditions))
+
+                # Add extra PE conditions to condition 1
+                pe_conditions_add = False
+                if condition_pe_part1 or condition_pe_part2:
+                    if len(condition_pe_part1) == 1:
+                        condition_pe.append(condition_pe_part1[0])
+                    elif len(condition_pe_part1) > 1:
+                        condition_pe.append("( %s )" % " or ".join(condition_pe_part1))
+                    if len(condition_pe_part2) == 1:
+                        condition_pe.append(condition_pe_part2[0])
+                    elif len(condition_pe_part2) > 1:
+                        condition_pe.append("( %s )" % " and ".join(condition_pe_part2))
+                    # Marker that PE conditions have been added
+                    pe_conditions_add = True
+                    # Add to sub condition
+                    subconditions.append(" and ".join(condition_pe))
 
                 # String combinations
                 cond_op = ""  # opcodes condition
@@ -1211,10 +1215,12 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 # If low scoring and high scoring
                 cond_combined = "all of them"
+                needs_brackets = False
                 if low_scoring_strings > 0 and high_scoring_strings > 0:
                     # If PE conditions have been added, don't be so strict with the strings
-                    if pe_conditions_added:
+                    if pe_conditions_add:
                         cond_combined = "{0} or {1}".format(cond_hs, cond_ls)
+                        needs_brackets = True
                     else:
                         cond_combined = "{0} and {1}".format(cond_hs, cond_ls)
                 elif low_scoring_strings > 0 and not high_scoring_strings > 0:
@@ -1224,21 +1230,23 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 if opcodes_included:
                     cond_op = " and all of ($op*)"
 
-                condition1.append("( {0} ){1}".format(cond_combined, cond_op))
+                # Opcodes (if needed)
+                if cond_op or needs_brackets:
+                    subconditions.append("( {0}{1} )".format(cond_combined, cond_op))
+                else:
+                    subconditions.append(cond_combined)
 
-                # Now add condition 1 to the conditions
-                conditions.append(" and\n         ".join(condition1))
-
-                # 2nd condition
-                # In memory detection base condition (no magic, no filesize)
-                condition2 = "all of them"
-                conditions.append(condition2)
+                # Now add string condition to the conditions
+                if len(subconditions) == 1:
+                    conditions.append(subconditions[0])
+                elif len(subconditions) > 1:
+                    conditions.append("( %s )" % " or ".join(subconditions))
 
                 # Create condition string
-                condition_string = "\n      ) or ( ".join(conditions)
+                condition_string = " and\n      ".join(conditions)
 
                 rule += "   condition:\n"
-                rule += "      ( %s )\n" % condition_string
+                rule += "      %s\n" % condition_string
                 rule += "}\n\n"
 
                 # Add to rules string
@@ -1337,7 +1345,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 file_info_super = {}
                 for filePath in super_rule["files"]:
                     file_info_super[filePath] = file_info[filePath]
-                condition1, pe_module_necessary_gen = generate_general_condition(file_info_super)
+                condition_strings, pe_module_necessary_gen = generate_general_condition(file_info_super)
                 if pe_module_necessary_gen:
                      pe_module_necessary = True
 
@@ -1371,7 +1379,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                     cond_op = " and all of ($op*)"
 
                 condition2 = "( {0} ){1}".format(cond_combined, cond_op)
-                conditions.append(" and ".join([condition1, condition2]))
+                conditions.append(" and ".join([condition_strings, condition2]))
 
                 # 3nd condition
                 # In memory detection base condition (no magic, no filesize)
@@ -1563,7 +1571,7 @@ def get_rule_strings(string_elements, opcode_elements):
         if is_fullword:
             fullword = " fullword"
 
-        # No compose the rule line
+        # Now compose the rule line
         if float(stringScores[initial_string]) > score_highly_specific:
             high_scoring_strings += 1
             rule_strings += "      $x%s = \"%s\"%s%s%s%s%s%s%s%s\n" % (
