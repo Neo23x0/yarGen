@@ -642,7 +642,7 @@ def filter_string_set(string_set):
                 localStringScores[string] += 2
             # Relevant file extensions
             if re.search(r'(\.exe|\.pdb|\.scr|\.log|\.cfg|\.txt|\.dat|\.msi|\.com|\.bat|\.dll|\.pdb|\.vbs|'
-                         r'\.tmp|\.sys|\.ps1)', string, re.IGNORECASE):
+                         r'\.tmp|\.sys|\.ps1|\.vbp|\.hta|\.lnk)', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # System keywords
             if re.search(r'(cmd.exe|system32|users|Documents and|SystemRoot|Grant|hello|password|process|log)',
@@ -835,7 +835,8 @@ def filter_string_set(string_set):
                          r'] token|] Token |] Firing | hashes | etc/passwd| SAM | NTML|unsupported target|'
                          r'race condition|Token system |LoaderConfig| add user |ile upload |ile download |'
                          r'Attaching to |ser has been successfully added|target system |LSA Secrets|DefaultPassword|'
-                         r'Password: |loading dll|.Execute\(|Shellcode|Loader|inject x86|inject x64)',
+                         r'Password: |loading dll|.Execute\(|Shellcode|Loader|inject x86|inject x64|bypass|katz|'
+                         r'sploit|ms[0-9][0-9][^0-9]|\bCVE[^a-zA-Z]|privilege::|lsadump)',
                          string, re.IGNORECASE):
                 localStringScores[string] += 4
             # Mutex / Named Pipes
@@ -862,6 +863,11 @@ def filter_string_set(string_set):
             # Strings with less value
             if re.search(r'(abcdefghijklmnopqsst|ABCDEFGHIJKLMNOPQRSTUVWXYZ|0123456789:;)', string, re.IGNORECASE):
                 localStringScores[string] -= 5
+            # VB Backdoors
+            if re.search(
+                    r'(kill|wscript|plugins|svr32|Select |)',
+                    string, re.IGNORECASE):
+                localStringScores[string] += 3
 
             # ENCODING DETECTIONS --------------------------------------------------
             try:
