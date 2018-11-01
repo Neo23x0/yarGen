@@ -31,8 +31,8 @@ try:
     from lxml import etree
 
     lxml_available = True
-except Exception, e:
-    print "[E] lxml not found - disabling PeStudio string check functionality"
+except Exception as e:
+    print("[E] lxml not found - disabling PeStudio string check functionality")
     lxml_available = False
 
 RELEVANT_EXTENSIONS = [".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".cmd", ".com", ".cpl",
@@ -116,13 +116,13 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
 
     for filePath in get_files(dir, notRecursive):
         try:
-            print "[+] Processing %s ..." % filePath
+            print("[+] Processing %s ..." % filePath)
 
             # Get Extension
             extension = os.path.splitext(filePath)[1].lower()
             if not extension in RELEVANT_EXTENSIONS and onlyRelevantExtensions:
                 if args.debug:
-                    print "[-] EXTENSION %s - Skipping file %s" % (extension, filePath)
+                    print("[-] EXTENSION %s - Skipping file %s" % (extension, filePath))
                 continue
 
             # Info file check
@@ -136,17 +136,17 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
                 size = os.stat(filePath).st_size
                 if size > (args.fs * 1024 * 1024):
                     if args.debug:
-                        print "[-] File is to big - Skipping file %s (use -fs to adjust this behaviour)" % (filePath)
+                        print("[-] File is to big - Skipping file %s (use -fs to adjust this behaviour)" % (filePath))
                     continue
-            except Exception, e:
+            except Exception as e:
                 pass
 
             # Check and read file
             try:
                 with open(filePath, 'rb') as f:
                     fileData = f.read()
-            except Exception, e:
-                print "[-] Cannot read file - skipping %s" % filePath
+            except Exception as e:
+                print("[-] Cannot read file - skipping %s" % filePath)
 
             # Extract strings from file
             strings = extract_strings(fileData)
@@ -154,7 +154,7 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
             # Extract opcodes from file
             opcodes = []
             if use_opcodes:
-                print "[-] Extracting OpCodes: %s" % filePath
+                print("[-] Extracting OpCodes: %s" % filePath)
                 opcodes = extract_opcodes(fileData)
 
             # Add sha256 value
@@ -167,7 +167,7 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
             # Skip if hash already known - avoid duplicate files
             if sha256sum in known_sha1sums:
                 # if args.debug:
-                print "[-] Skipping strings/opcodes from %s due to MD5 duplicate detection" % filePath
+                print("[-] Skipping strings/opcodes from %s due to MD5 duplicate detection" % filePath)
                 continue
             else:
                 known_sha1sums.append(sha256sum)
@@ -227,12 +227,12 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
                 opcode_stats[opcode]["files"].append(filePath)
 
             if args.debug:
-                print "[+] Processed " + filePath + " Size: " + str(size) + " Strings: " + str(len(string_stats)) + \
-                      " OpCodes: " + str(len(opcode_stats)) + " ... "
+                print("[+] Processed " + filePath + " Size: " + str(size) + " Strings: " + str(len(string_stats)) + \
+                      " OpCodes: " + str(len(opcode_stats)) + " ... ")
 
-        except Exception, e:
+        except Exception as e:
             traceback.print_exc()
-            print "[E] ERROR reading file: %s" % filePath
+            print("[E] ERROR reading file: %s" % filePath)
 
     return string_stats, opcode_stats, file_info
 
@@ -249,7 +249,7 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
         extension = os.path.splitext(filePath)[1].lower()
         if extension not in RELEVANT_EXTENSIONS and onlyRelevantExtensions:
             if args.debug:
-                print "[-] EXTENSION %s - Skipping file %s" % (extension, filePath)
+                print("[-] EXTENSION %s - Skipping file %s" % (extension, filePath))
             continue
 
         # Size Check
@@ -258,15 +258,15 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
             size = os.stat(filePath).st_size
             if size > (args.fs * 1024 * 1024):
                 continue
-        except Exception, e:
+        except Exception as e:
             pass
 
         # Check and read file
         try:
             with open(filePath, 'rb') as f:
                 fileData = f.read()
-        except Exception, e:
-            print "[-] Cannot read file - skipping %s" % filePath
+        except Exception as e:
+            print("[-] Cannot read file - skipping %s" % filePath)
 
         # Extract strings from file
         strings = extract_strings(fileData)
@@ -276,7 +276,7 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
         # Extract Opcodes from file
         opcodes = []
         if use_opcodes:
-            print "[-] Extracting OpCodes: %s" % filePath
+            print("[-] Extracting OpCodes: %s" % filePath)
             opcodes = extract_opcodes(fileData)
             # Append to all opcodes
             all_opcodes.update(opcodes)
@@ -287,9 +287,9 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
         all_imphashes.update([imphash])
 
         if args.debug:
-            print "[+] Processed %s - %d strings %d opcodes %d exports and imphash %s" % (filePath, len(strings),
+            print("[+] Processed %s - %d strings %d opcodes %d exports and imphash %s" % (filePath, len(strings),
                                                                                           len(opcodes), len(exports),
-                                                                                          imphash)
+                                                                                          imphash))
 
     # return it as a set (unique strings)
     return all_strings, all_opcodes, all_imphashes, all_exports
@@ -316,7 +316,7 @@ def extract_strings(fileData):
                 if string not in cleaned_strings:
                     cleaned_strings.append(string.lstrip(" "))
 
-    except Exception, e:
+    except Exception as e:
         if args.debug:
             traceback.print_exc()
         pass
@@ -353,7 +353,7 @@ def extract_opcodes(fileData):
                         continue
                     opcodes.append(text_part[:16].encode('hex'))
 
-    except Exception, e:
+    except Exception as e:
         #if args.debug:
         #    traceback.print_exc()
         pass
@@ -374,14 +374,14 @@ def get_pe_info(fileData):
         return imphash, exports
     try:
         if args.debug:
-            print "Extracting PE information"
+            print("Extracting PE information")
         p = pefile.PE(data=fileData)
         # Imphash
         imphash = p.get_imphash()
         # Exports (names)
         for exp in p.DIRECTORY_ENTRY_EXPORT.symbols:
             exports.append(exp.name)
-    except Exception, e:
+    except Exception as e:
         #if args.debug:
         #    traceback.print_exc()
         pass
@@ -390,7 +390,7 @@ def get_pe_info(fileData):
 
 def sample_string_evaluation(string_stats, opcode_stats, file_info):
     # Generate Stats -----------------------------------------------------------
-    print "[+] Generating statistical data ..."
+    print("[+] Generating statistical data ...")
     file_strings = {}
     file_opcodes = {}
     combinations = {}
@@ -440,7 +440,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                             if fileName not in inverse_stats:
                                 inverse_stats[fileName] = []
                             if args.trace:
-                                print "Appending %s to %s" % (string, fileName)
+                                print("Appending %s to %s" % (string, fileName))
                             inverse_stats[fileName].append(string)
 
         # SUPER RULE GENERATION -----------------------------------------------
@@ -452,13 +452,13 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
             # print sample_string_stats[string]["count"]
             if string_stats[string]["count"] > 1:
                 if args.debug:
-                    print "OVERLAP Count: %s\nString: \"%s\"%s" % (string_stats[string]["count"], string,
-                                                                   "\nFILE: ".join(string_stats[string]["files"]))
+                    print("OVERLAP Count: %s\nString: \"%s\"%s" % (string_stats[string]["count"], string,
+                                                                   "\nFILE: ".join(string_stats[string]["files"])))
                 # Create a combination string from the file set that matches to that string
                 combi = ":".join(sorted(string_stats[string]["files"]))
                 # print "STRING: " + string
                 if args.debug:
-                    print "COMBI: " + combi
+                    print("COMBI: " + combi)
                 # If combination not yet known
                 if combi not in combinations:
                     combinations[combi] = {}
@@ -474,7 +474,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                     max_combi_count = combinations[combi]["count"]
                     # print "Max Combi Count set to: %s" % max_combi_count
 
-    print "[+] Generating Super Rules ... (a lot of foo magic)"
+    print("[+] Generating Super Rules ... (a lot of foo magic)")
     for combi_count in range(max_combi_count, 1, -1):
         for combi in combinations:
             if combi_count == combinations[combi]["count"]:
@@ -500,7 +500,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                             if file in file_strings:
                                 del file_strings[file]
                     # Add it as a super rule
-                    print "[-] Adding Super Rule with %s strings." % str(len(combinations[combi]["strings"]))
+                    print("[-] Adding Super Rule with %s strings." % str(len(combinations[combi]["strings"])))
                     # if args.debug:
                     # print "Rule Combi: %s" % combi
                     super_rules.append(combinations[combi])
@@ -901,7 +901,7 @@ def filter_string_set(string_set):
                                 #print("^ is ASCII / WIDE")
                                 localStringScores[string] += 8
                                 hexEncStrings[string] = decoded_string
-            except Exception, e:
+            except Exception as e:
                 if args.debug:
                     traceback.print_exc()
                 pass
@@ -947,8 +947,8 @@ def filter_string_set(string_set):
         #    break
 
     if args.trace:
-        print "RESULT SET:"
-        print result_set
+        print("RESULT SET:")
+        print(result_set)
 
     # return the filtered set
     return result_set
@@ -1006,11 +1006,11 @@ def generate_general_condition(file_info):
         # If enough attributes were special
         condition_string = " and ".join(conditions)
 
-    except Exception, e:
+    except Exception as e:
         if args.debug:
             traceback.print_exc()
             exit(1)
-        print "[E] ERROR while generating general condition - check the global rule and remove it if it's faulty"
+        print("[E] ERROR while generating general condition - check the global rule and remove it if it's faulty")
 
     return condition_string, pe_module_neccessary
 
@@ -1020,7 +1020,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
     if args.o:
         try:
             fh = open(args.o, 'w')
-        except Exception, e:
+        except Exception as e:
             traceback.print_exc()
 
     # General Info
@@ -1065,12 +1065,12 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
     if not args.inverse:
         # PROCESS SIMPLE RULES ----------------------------------------------------
-        print "[+] Generating Simple Rules ..."
+        print("[+] Generating Simple Rules ...")
         # Apply intelligent filters
-        print "[-] Applying intelligent filters to string findings ..."
+        print("[-] Applying intelligent filters to string findings ...")
         for filePath in file_strings:
 
-            print "[-] Filtering string set for %s ..." % filePath
+            print("[-] Filtering string set for %s ..." % filePath)
 
             # Replace the original string set with the filtered one
             string_set = file_strings[filePath]
@@ -1081,7 +1081,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
             if filePath not in file_opcodes:
                 file_opcodes[filePath] = []
             else:
-                print "[-] Filtering opcode set for %s ..." % filePath
+                print("[-] Filtering opcode set for %s ..." % filePath)
             opcode_set = file_opcodes[filePath]
             file_opcodes[filePath] = []
             file_opcodes[filePath] = filter_opcode_set(opcode_set)
@@ -1093,12 +1093,12 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
             # Skip if there is nothing to do
             if len(file_strings[filePath]) == 0:
-                print "[W] Not enough high scoring strings to create a rule. " \
-                      "(Try -z 0 to reduce the min score or --opcodes to include opcodes) FILE: %s" % filePath
+                print("[W] Not enough high scoring strings to create a rule. "
+                      "(Try -z 0 to reduce the min score or --opcodes to include opcodes) FILE: %s" % filePath)
                 continue
             elif len(file_strings[filePath]) == 0 and len(file_opcodes[filePath]) == 0:
-                print "[W] Not enough high scoring strings and opcodes to create a rule. " \
-                      "(Try -z 0 to reduce the min score) FILE: %s" % filePath
+                print("[W] Not enough high scoring strings and opcodes to create a rule. " \
+                      "(Try -z 0 to reduce the min score) FILE: %s" % filePath)
                 continue
 
             # Create Rule
@@ -1264,7 +1264,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 rules += rule
 
                 rule_count += 1
-            except Exception, e:
+            except Exception as e:
                 traceback.print_exc()
 
     # GENERATE SUPER RULES --------------------------------------------
@@ -1273,7 +1273,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
         rules += "/* Super Rules ------------------------------------------------------------- */\n\n"
         super_rule_names = []
 
-        print "[+] Generating Super Rules ..."
+        print("[+] Generating Super Rules ...")
         printed_combi = {}
         for super_rule in super_rules:
             try:
@@ -1409,7 +1409,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 rules += rule
 
                 super_rule_count += 1
-            except Exception, e:
+            except Exception as e:
                 traceback.print_exc()
 
     try:
@@ -1421,19 +1421,19 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
         # RULES -----------------------------------------------------------
         if args.o:
             fh.write(rules)
-    except Exception, e:
+    except Exception as e:
         traceback.print_exc()
 
     # PROCESS INVERSE RULES ---------------------------------------------------
     # print inverse_stats.keys()
     if args.inverse:
-        print "[+] Generating inverse rules ..."
+        print("[+] Generating inverse rules ...")
         inverse_rules = ""
         # Apply intelligent filters -------------------------------------------
-        print "[+] Applying intelligent filters to string findings ..."
+        print("[+] Applying intelligent filters to string findings ...")
         for fileName in inverse_stats:
 
-            print "[-] Filtering string set for %s ..." % fileName
+            print("[-] Filtering string set for %s ..." % fileName)
 
             # Replace the original string set with the filtered one
             string_set = inverse_stats[fileName]
@@ -1502,7 +1502,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 # Add to rules string
                 inverse_rules += rule
 
-            except Exception, e:
+            except Exception as e:
                 traceback.print_exc()
 
         try:
@@ -1510,19 +1510,19 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
             if args.o:
                 fh.write(inverse_rules)
             inverse_rule_count += 1
-        except Exception, e:
+        except Exception as e:
             traceback.print_exc()
 
     # Close the rules file --------------------------------------------
     if args.o:
         try:
             fh.close()
-        except Exception, e:
+        except Exception as e:
             traceback.print_exc()
 
     # Print rules to command line -------------------------------------
     if args.debug:
-        print rules
+        print(rules)
 
     return (rule_count, inverse_rule_count, super_rule_count)
 
@@ -1554,7 +1554,7 @@ def get_rule_strings(string_elements, opcode_elements):
             if args.score:
                 score_comment += " /* score: '%.2f'*/" % (stringScores[string])
         else:
-            print "NO SCORE: %s" % string
+            print("NO SCORE: %s" % string)
 
         if string[:8] == "UTF16LE:":
             string = string[8:]
@@ -1610,7 +1610,7 @@ def get_rule_strings(string_elements, opcode_elements):
             opcodes_included = True
     else:
         if args.opcodes:
-            print "[-] Not enough unique opcodes found to include them"
+            print("[-] Not enough unique opcodes found to include them")
 
     return rule_strings, opcodes_included, string_rule_count, high_scoring_strings
 
@@ -1715,7 +1715,7 @@ def initialize_bayes_filter():
     stringTrainer = Trainer(tokenizer)
 
     # Read the sample files and train the algorithm
-    print "[-] Training filter with good strings from ./lib/good.txt"
+    print("[-] Training filter with good strings from ./lib/good.txt")
     with open(get_abs_path("./lib/good.txt"), "r") as fh_goodstrings:
         for line in fh_goodstrings:
             # print line.rstrip("\n")
@@ -1771,9 +1771,9 @@ def get_file_range(size):
             max_size = int(round(max_size, -3))
         size_string = "filesize < {0}KB".format(max_size)
         if args.debug:
-            print "File Size Eval: SampleSize (b): {0} SizeWithMultiplier (b/Kb): {1} / {2} RoundedSize: {3}".format(
-                str(size), str(max_size_b), str(max_size_kb), str(max_size))
-    except Exception, e:
+            print("File Size Eval: SampleSize (b): {0} SizeWithMultiplier (b/Kb): {1} / {2} RoundedSize: {3}".format(
+                str(size), str(max_size_b), str(max_size_kb), str(max_size)))
+    except Exception as e:
         if args.debug:
             traceback.print_exc()
         pass
@@ -1859,7 +1859,7 @@ def removeNonAsciiDrop(string):
     try:
         # Generate a new string without disturbing characters
         nonascii = "".join(i for i in string if ord(i)<127 and ord(i)>31)
-    except Exception, e:
+    except Exception as e:
         traceback.print_exc()
         pass
     return nonascii
@@ -1891,24 +1891,24 @@ def update_databases():
         dbDir = './dbs/'
         if not os.path.exists(dbDir):
             os.makedirs(dbDir)
-    except Exception, e:
+    except Exception as e:
         if args.debug:
             traceback.print_exc()
-        print "Error while creating the database directory ./dbs"
+        print("Error while creating the database directory ./dbs")
         sys.exit(1)
 
     # Downloading current repository
     try:
         for filename, repo_url in REPO_URLS.iteritems():
-            print "Downloading %s from %s ..." % (filename, repo_url)
+            print("Downloading %s from %s ..." % (filename, repo_url))
             fileDownloader = urllib.URLopener()
             fileDownloader.retrieve(repo_url, "./dbs/%s" % filename)
     except Exception as e:
         if args.debug:
             traceback.print_exc()
-        print "Error while downloading the database file - check your Internet connection"
-        print "Alterntive download link: https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28"
-        print "Download the files and place them into the ./dbs/ folder"
+        print("Error while downloading the database file - check your Internet connection")
+        print("Alterntive download link: https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28")
+        print("Download the files and place them into the ./dbs/ folder")
         sys.exit(1)
 
 
@@ -1938,12 +1938,12 @@ def processSampleDir(targetDir):
         generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_stats)
 
     if args.inverse:
-        print "[=] Generated %s INVERSE rules." % str(inverse_rule_count)
+        print("[=] Generated %s INVERSE rules." % str(inverse_rule_count))
     else:
-        print "[=] Generated %s SIMPLE rules." % str(rule_count)
+        print("[=] Generated %s SIMPLE rules." % str(rule_count))
         if not nosuper:
-            print "[=] Generated %s SUPER rules." % str(super_rule_count)
-        print "[=] All rules written to %s" % args.o
+            print("[=] Generated %s SUPER rules." % str(super_rule_count))
+        print("[=] All rules written to %s" % args.o)
 
 
 def emptyFolder(dir):
@@ -1955,7 +1955,7 @@ def emptyFolder(dir):
         filePath = os.path.join(dir, file)
         try:
             if os.path.isfile(filePath):
-                print "[!] Removing %s ..." % filePath
+                print("[!] Removing %s ..." % filePath)
                 os.unlink(filePath)
         except Exception as e:
             print(e)
@@ -1970,7 +1970,7 @@ def getReference(ref):
     """
     if os.path.exists(ref):
         reference = getFileContent(ref)
-        print "[+] Read reference from file %s > %s" % (ref, reference)
+        print("[+] Read reference from file %s > %s" % (ref, reference))
         return reference
     else:
         return ref
@@ -1990,7 +1990,7 @@ def getIdentifier(id, path):
     else:
         # Read identifier from file
         identifier = getFileContent(id)
-        print "[+] Read identifier from file %s > %s" % (id, identifier)
+        print("[+] Read identifier from file %s > %s" % (id, identifier))
         return identifier
 
 
@@ -2022,25 +2022,25 @@ def getFileContent(file):
 
 # CTRL+C Handler --------------------------------------------------------------
 def signal_handler(signal_name, frame):
-    print "> yarGen's work has been interrupted"
+    print("> yarGen's work has been interrupted")
     sys.exit(0)
 
 
 def print_welcome():
-    print "###############################################################################"
-    print "                        ______"
-    print "      __  ______ ______/ ____/__  ____"
-    print "     / / / / __ `/ ___/ / __/ _ \/ __ \\"
-    print "    / /_/ / /_/ / /  / /_/ /  __/ / / /"
-    print "    \__, /\__,_/_/   \____/\___/_/ /_/"
-    print "   /____/"
-    print "   "
-    print "   Yara Rule Generator"
-    print "   by Florian Roth"
-    print "   April 2018"
-    print "   Version 0.20.0"
-    print "   "
-    print "###############################################################################"
+    print("###############################################################################")
+    print("                        ______")
+    print("      __  ______ ______/ ____/__  ____")
+    print("     / / / / __ `/ ___/ / __/ _ \/ __ \\")
+    print("    / /_/ / /_/ / /  / /_/ /  __/ / / /")
+    print("    \__, /\__,_/_/   \____/\___/_/ /_/")
+    print("   /____/")
+    print("   ")
+    print("   Yara Rule Generator")
+    print("   by Florian Roth")
+    print("   November 2018")
+    print("   Version 0.21.0")
+    print("   ")
+    print("###############################################################################")
 
 
 # MAIN ################################################################
@@ -2066,8 +2066,10 @@ if __name__ == '__main__':
 
     group_output = parser.add_argument_group('Rule Output')
     group_output.add_argument('-o', help='Output rule file', metavar='output_rule_file', default='yargen_rules.yar')
+    group_output.add_argument('-e', help='Output directory for string exports', metavar='output_dir_strings', default='')
     group_output.add_argument('-a', help='Author Name', metavar='author', default='yarGen Rule Generator')
-    group_output.add_argument('-r', help='Reference (can be string or text file)', metavar='ref', default='https://github.com/Neo23x0/yarGen')
+    group_output.add_argument('-r', help='Reference (can be string or text file)', metavar='ref',
+                              default='https://github.com/Neo23x0/yarGen')
     group_output.add_argument('-l', help='License', metavar='lic', default='')
     group_output.add_argument('-p', help='Prefix for the rule description', metavar='prefix',
                               default='Auto-generated rule')
@@ -2137,13 +2139,13 @@ if __name__ == '__main__':
     # Update
     if args.update:
         update_databases()
-        print "[+] Updated databases - you can now start creating YARA rules"
+        print("[+] Updated databases - you can now start creating YARA rules")
         sys.exit(0)
 
     # Typical input erros
     if args.m:
         if os.path.isfile(args.m):
-            print "[E] Input is a file, please use a directory instead (-m path)"
+            print("[E] Input is a file, please use a directory instead (-m path)")
             sys.exit(0)
 
     # Opcodes evaluation or not
@@ -2163,24 +2165,24 @@ if __name__ == '__main__':
     if args.g:
         sourcepath = args.g
     identifier = getIdentifier(args.b, sourcepath)
-    print "[+] Using identifier '%s'" % identifier
+    print("[+] Using identifier '%s'" % identifier)
 
     # Reference
     reference = getReference(args.r)
-    print "[+] Using reference '%s'" % reference
+    print("[+] Using reference '%s'" % reference)
 
     # Prefix
     prefix = getPrefix(args.p, identifier)
-    print "[+] Using prefix '%s'" % prefix
+    print("[+] Using prefix '%s'" % prefix)
 
     if os.path.isfile(get_abs_path(PE_STRINGS_FILE)) and lxml_available:
-        print "[+] Processing PEStudio strings ..."
+        print("[+] Processing PEStudio strings ...")
         pestudio_strings = initialize_pestudio_strings()
         pestudio_available = True
     else:
         if lxml_available:
-            print "\nTo improve the analysis process please download the awesome PEStudio tool by marc @ochsenmeier " \
-                  "from http://winitor.com and place the file 'strings.xml' in the ./3rdparty directory.\n"
+            print("\nTo improve the analysis process please download the awesome PEStudio tool by marc @ochsenmeier " \
+                  "from http://winitor.com and place the file 'strings.xml' in the ./3rdparty directory.\n")
             time.sleep(5)
 
     # Highly specific string score
@@ -2188,14 +2190,14 @@ if __name__ == '__main__':
 
     # Scan goodware files
     if args.g:
-        print "[+] Processing goodware files ..."
+        print("[+] Processing goodware files ...")
         good_strings_db, good_opcodes_db, good_imphashes_db, good_exports_db = \
             parse_good_dir(args.g, args.nr, args.oe)
 
         # Update existing databases
         if args.u:
             try:
-                print "[+] Updating databases ..."
+                print("[+] Updating databases ...")
 
                 # Evaluate the database identifiers
                 db_identifier = ""
@@ -2207,43 +2209,43 @@ if __name__ == '__main__':
                 exports_db = "./dbs/good-exports%s.db" % db_identifier
 
                 # Strings -----------------------------------------------------
-                print "[+] Updating %s ..." % strings_db
+                print("[+] Updating %s ..." % strings_db)
                 good_pickle = load(get_abs_path(strings_db))
-                print "Old string database entries: %s" % len(good_pickle)
+                print("Old string database entries: %s" % len(good_pickle))
                 good_pickle.update(good_strings_db)
-                print "New string database entries: %s" % len(good_pickle)
+                print("New string database entries: %s" % len(good_pickle))
                 save(good_pickle, strings_db)
 
                 # Opcodes -----------------------------------------------------
-                print "[+] Updating %s ..." % opcodes_db
+                print("[+] Updating %s ..." % opcodes_db)
                 good_opcode_pickle = load(get_abs_path(opcodes_db))
-                print "Old opcode database entries: %s" % len(good_opcode_pickle)
+                print("Old opcode database entries: %s" % len(good_opcode_pickle))
                 good_opcode_pickle.update(good_opcodes_db)
-                print "New opcode database entries: %s" % len(good_opcode_pickle)
+                print("New opcode database entries: %s" % len(good_opcode_pickle))
                 save(good_opcode_pickle, opcodes_db)
 
                 # Imphashes ---------------------------------------------------
-                print "[+] Updating %s ..." % imphashes_db
+                print("[+] Updating %s ..." % imphashes_db)
                 good_imphashes_pickle = load(get_abs_path(imphashes_db))
-                print "Old opcode database entries: %s" % len(good_imphashes_pickle)
+                print("Old opcode database entries: %s" % len(good_imphashes_pickle))
                 good_imphashes_pickle.update(good_imphashes_db)
-                print "New opcode database entries: %s" % len(good_imphashes_pickle)
+                print("New opcode database entries: %s" % len(good_imphashes_pickle))
                 save(good_imphashes_pickle, imphashes_db)
 
                 # Exports -----------------------------------------------------
-                print "[+] Updating %s ..." % exports_db
+                print("[+] Updating %s ..." % exports_db)
                 good_exports_pickle = load(get_abs_path(exports_db))
-                print "Old opcode database entries: %s" % len(good_exports_pickle)
+                print("Old opcode database entries: %s" % len(good_exports_pickle))
                 good_exports_pickle.update(good_exports_db)
-                print "New opcode database entries: %s" % len(good_exports_pickle)
+                print("New opcode database entries: %s" % len(good_exports_pickle))
                 save(good_exports_pickle, exports_db)
 
-            except Exception, e:
+            except Exception as e:
                 traceback.print_exc()
 
         # Create new databases
         if args.c:
-            print "[+] Creating local database ..."
+            print("[+] Creating local database ...")
             # Evaluate the database identifiers
             db_identifier = ""
             if args.i != "":
@@ -2254,10 +2256,10 @@ if __name__ == '__main__':
             exports_db = "./dbs/good-exports%s.db" % db_identifier
 
             # Creating the databases
-            print "[+] Using '%s' as filename for newly created strings database" % strings_db
-            print "[+] Using '%s' as filename for newly created opcodes database" % opcodes_db
-            print "[+] Using '%s' as filename for newly created opcodes database" % imphashes_db
-            print "[+] Using '%s' as filename for newly created opcodes database" % exports_db
+            print("[+] Using '%s' as filename for newly created strings database" % strings_db)
+            print("[+] Using '%s' as filename for newly created opcodes database" % opcodes_db)
+            print("[+] Using '%s' as filename for newly created opcodes database" % imphashes_db)
+            print("[+] Using '%s' as filename for newly created opcodes database" % exports_db)
 
             try:
 
@@ -2293,20 +2295,20 @@ if __name__ == '__main__':
                 save(good_imphashes_pickle, imphashes_db)
                 save(good_exports_pickle, exports_db)
 
-                print "New database with %d string, %d opcode, %d imphash, %d export entries created. " \
+                print("New database with %d string, %d opcode, %d imphash, %d export entries created. " \
                       "(remember to use --opcodes to extract opcodes from the samples and create the opcode databases)"\
-                      % (len(good_strings_db), len(good_opcodes_db), len(good_imphashes_db), len(good_exports_db))
-            except Exception, e:
+                      % (len(good_strings_db), len(good_opcodes_db), len(good_imphashes_db), len(good_exports_db)))
+            except Exception as e:
                 traceback.print_exc()
 
     # Analyse malware samples and create rules
     else:
         if use_opcodes:
-            print "[+] Reading goodware strings from database 'good-strings.db' and 'good-opcodes.db' ..."
-            print "    (This could take some time and uses at least 6 GB of RAM)"
+            print("[+] Reading goodware strings from database 'good-strings.db' and 'good-opcodes.db' ...")
+            print("    (This could take some time and uses at least 6 GB of RAM)")
         else:
-            print "[+] Reading goodware strings from database 'good-strings.db' ..."
-            print "    (This could take some time and uses at least 3 GB of RAM)"
+            print("[+] Reading goodware strings from database 'good-strings.db' ...")
+            print("    (This could take some time and uses at least 3 GB of RAM)")
 
         good_strings_db = Counter()
         good_opcodes_db = Counter()
@@ -2326,70 +2328,70 @@ if __name__ == '__main__':
             # String databases
             if file.startswith("good-strings"):
                 try:
-                    print "[+] Loading %s ..." % filePath
+                    print("[+] Loading %s ..." % filePath)
                     good_pickle = load(get_abs_path(filePath))
                     good_strings_db.update(good_pickle)
-                    print "[+] Total: %s / Added %d entries" % (
-                    len(good_strings_db), len(good_strings_db) - strings_num)
+                    print("[+] Total: %s / Added %d entries" % (
+                    len(good_strings_db), len(good_strings_db) - strings_num))
                     strings_num = len(good_strings_db)
-                except Exception, e:
+                except Exception as e:
                     traceback.print_exc()
             # Opcode databases
             if file.startswith("good-opcodes"):
                 try:
                     if use_opcodes:
-                        print "[+] Loading %s ..." % filePath
+                        print("[+] Loading %s ..." % filePath)
                         good_op_pickle = load(get_abs_path(filePath))
                         good_opcodes_db.update(good_op_pickle)
-                        print "[+] Total: %s (removed duplicates) / Added %d entries" % (
-                        len(good_opcodes_db), len(good_opcodes_db) - opcodes_num)
+                        print("[+] Total: %s (removed duplicates) / Added %d entries" % (
+                        len(good_opcodes_db), len(good_opcodes_db) - opcodes_num))
                         opcodes_num = len(good_opcodes_db)
-                except Exception, e:
+                except Exception as e:
                     use_opcodes = False
                     traceback.print_exc()
             # Imphash databases
             if file.startswith("good-imphash"):
                 try:
-                    print "[+] Loading %s ..." % filePath
+                    print("[+] Loading %s ..." % filePath)
                     good_imphashes_pickle = load(get_abs_path(filePath))
                     good_imphashes_db.update(good_imphashes_pickle)
-                    print "[+] Total: %s / Added %d entries" % (
-                    len(good_imphashes_db), len(good_imphashes_db) - imphash_num)
+                    print("[+] Total: %s / Added %d entries" % (
+                    len(good_imphashes_db), len(good_imphashes_db) - imphash_num))
                     imphash_num = len(good_imphashes_db)
-                except Exception, e:
+                except Exception as e:
                     traceback.print_exc()
             # Export databases
             if file.startswith("good-exports"):
                 try:
-                    print "[+] Loading %s ..." % filePath
+                    print("[+] Loading %s ..." % filePath)
                     good_exports_pickle = load(get_abs_path(filePath))
                     good_exports_db.update(good_exports_pickle)
-                    print "[+] Total: %s / Added %d entries" % (
-                    len(good_exports_db), len(good_exports_db) - exports_num)
+                    print("[+] Total: %s / Added %d entries" % (
+                    len(good_exports_db), len(good_exports_db) - exports_num))
                     exports_num = len(good_exports_db)
-                except Exception, e:
+                except Exception as e:
                     traceback.print_exc()
 
         if use_opcodes and len(good_opcodes_db) < 1:
-            print "[E] Missing goodware opcode databases." \
-                  "    Please run 'yarGen.py --update' to retrieve the newest database set."
+            print("[E] Missing goodware opcode databases."
+                  "    Please run 'yarGen.py --update' to retrieve the newest database set.")
             use_opcodes = False
 
         if len(good_exports_db) < 1 and len(good_imphashes_db) < 1:
-            print "[E] Missing goodware imphash/export databases. " \
-                  "    Please run 'yarGen.py --update' to retrieve the newest database set."
+            print("[E] Missing goodware imphash/export databases. "
+                  "    Please run 'yarGen.py --update' to retrieve the newest database set.")
             use_opcodes = False
 
         if len(good_strings_db) < 1 and not args.c:
-            print "[E] Error - no goodware databases found. " \
-                  "    Please run 'yarGen.py --update' to retrieve the newest database set."
+            print("[E] Error - no goodware databases found. "
+                  "    Please run 'yarGen.py --update' to retrieve the newest database set.")
             sys.exit(1)
 
     # If malware directory given
     if args.m:
 
         # Initialize Bayes Trainer (we will use the goodware string database for this)
-        print "[+] Initializing Bayes Filter ..."
+        print("[+] Initializing Bayes Filter ...")
         stringTrainer = initialize_bayes_filter()
 
         # Deactivate super rule generation if there's only a single file in the folder
@@ -2406,7 +2408,7 @@ if __name__ == '__main__':
         # Dropzone mode
         if args.dropzone:
             # Monitoring folder for changes
-            print "Monitoring %s for new sample files (processed samples will be removed)" % args.m
+            print("Monitoring %s for new sample files (processed samples will be removed)" % args.m)
             while(True):
                 if len(os.listdir(args.m)) > 0:
                     # Deactivate super rule generation if there's only a single file in the folder
@@ -2427,7 +2429,7 @@ if __name__ == '__main__':
                 time.sleep(1)
         else:
             # Scan malware files
-            print "[+] Processing malware files ..."
+            print("[+] Processing malware files ...")
             processSampleDir(args.m)
 
-        print "[+] yarGen run finished"
+        print("[+] yarGen run finished")
