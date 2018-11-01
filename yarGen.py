@@ -942,9 +942,9 @@ def filter_string_set(string_set):
         else:
             result_set.append(string[0])
 
-        c += 1
-        if c > int(args.rc):
-            break
+        #c += 1
+        #if c > int(args.rc):
+        #    break
 
     if args.trace:
         print "RESULT SET:"
@@ -1141,6 +1141,11 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 (rule_strings, opcodes_included, string_rule_count, high_scoring_strings) = \
                     get_rule_strings(file_strings[filePath], file_opcodes[filePath])
                 rule += rule_strings
+
+                # Extract rul strings
+                if args.strings:
+                    strings = get_strings(file_strings[filePath])
+                    write_strings(filePath, strings, args.e, args.score)
 
                 # Condition -----------------------------------------------
                 # Conditions list (will later be joined with 'or')
@@ -1610,6 +1615,77 @@ def get_rule_strings(string_elements, opcode_elements):
     return rule_strings, opcodes_included, string_rule_count, high_scoring_strings
 
 
+def get_strings(string_elements):
+    """
+    Get a dictionary of all string types
+    :param string_elements:
+    :return:
+    """
+    strings = {
+        "ascii": [],
+        "wide": [],
+        "base64 encoded": [],
+        "hex encoded": [],
+        "reversed": []
+    }
+
+    # Adding the strings --------------------------------------
+    for i, string in enumerate(string_elements):
+
+        if string[:8] == "UTF16LE:":
+            string = string[8:]
+            strings["wide"].append(string)
+        elif string in base64strings:
+            strings["base64 encoded"].append(string)
+        elif string in hexEncStrings:
+            strings["hex encoded"].append(string)
+        elif string in reversedStrings:
+            strings["reversed"].append(string)
+        else:
+            strings["ascii"].append(string)
+
+    return strings
+
+
+def write_strings(filePath, strings, output_dir, scores):
+    """
+    Writes string information to an output file
+    :param filePath:
+    :param strings:
+    :param output_dir:
+    :param scores:
+    :return:
+    """
+    SECTIONS = ["ascii", "wide", "base64 encoded", "hex encoded", "reversed"]
+    # File
+    filename = os.path.basename(filePath)
+    strings_filename = os.path.join(output_dir, "%s_strings.txt" % filename)
+    print("[+] Writing strings to file %s" % strings_filename)
+    # Strings
+    output_string = []
+    for key in SECTIONS:
+        # Skip empty
+        if len(strings[key]) < 1:
+            continue
+        # Section
+        output_string.append("%s Strings" % key.upper())
+        output_string.append("------------------------------------------------------------------------")
+        for string in strings[key]:
+            if scores:
+                score = "unknown"
+                if key == "wide":
+                    score = stringScores["UTF16LE:%s" % string]
+                else:
+                    score = stringScores[string]
+                output_string.append("%d;%s" % score, string)
+            else:
+                output_string.append(string)
+        # Empty line between sections
+        output_string.append("\n")
+    with open(strings_filename, "w") as fh:
+        fh.write("\n".join(output_string))
+
+
 def initialize_pestudio_strings():
     pestudio_strings = {}
 
@@ -2000,6 +2076,8 @@ if __name__ == '__main__':
                               metavar='identifier',
                               default='not set')
     group_output.add_argument('--score', help='Show the string scores as comments in the rules', action='store_true',
+                              default=False)
+    group_output.add_argument('--strings', help='Show the string scores as comments in the rules', action='store_true',
                               default=False)
     group_output.add_argument('--nosimple', help='Skip simple rule creation for files included in super rules',
                               action='store_true', default=False)
