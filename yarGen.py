@@ -2141,6 +2141,14 @@ if __name__ == '__main__':
     # Print Welcome
     print_welcome()
 
+    if not args.update and not args.m and not args.g:
+        parser.print_help()
+        print("")
+        print("[E] You have to select --update to update yarGens database or -m for signature generation or -g for the "
+              "creation of goodware string collections "
+              "(see https://github.com/Neo23x0/yarGen#examples for more details)")
+        sys.exit(1)
+
     # Update
     if args.update:
         update_databases()
