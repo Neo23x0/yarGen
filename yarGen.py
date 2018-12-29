@@ -842,7 +842,7 @@ def filter_string_set(string_set):
                          r'race condition|Token system |LoaderConfig| add user |ile upload |ile download |'
                          r'Attaching to |ser has been successfully added|target system |LSA Secrets|DefaultPassword|'
                          r'Password: |loading dll|.Execute\(|Shellcode|Loader|inject x86|inject x64|bypass|katz|'
-                         r'sploit|ms[0-9][0-9][^0-9]|\bCVE[^a-zA-Z]|privilege::|lsadump)',
+                         r'sploit|ms[0-9][0-9][^0-9]|\bCVE[^a-zA-Z]|privilege::|lsadump|door)',
                          string, re.IGNORECASE):
                 localStringScores[string] += 4
             # Mutex / Named Pipes
@@ -874,6 +874,26 @@ def filter_string_set(string_set):
                     r'(kill|wscript|plugins|svr32|Select |)',
                     string, re.IGNORECASE):
                 localStringScores[string] += 3
+            # Suspicious strings - combo / special characters
+            if re.search(
+                    r'([a-z]{4,}[!\?]|\[[!+\-]\] |[a-zA-Z]{4,}...)',
+                    string, re.IGNORECASE):
+                localStringScores[string] += 3
+            if re.search(
+                    r'(-->|!!!| <<< | >>> )',
+                    string, re.IGNORECASE):
+                localStringScores[string] += 5
+            # Swear words
+            if re.search(
+                    r'\b(fuck|damn|shit|penis)\b',
+                    string, re.IGNORECASE):
+                localStringScores[string] += 5
+            # Scripting Strings
+            if re.search(
+                    r'(%APPDATA%|%USERPROFILE%|Public|Roaming|& del|& rm| && )',
+                    string, re.IGNORECASE):
+                localStringScores[string] += 3
+
 
             # ENCODING DETECTIONS --------------------------------------------------
             try:
