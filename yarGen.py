@@ -7,8 +7,14 @@
 #
 # Florian Roth
 
+__version__ = "0.21.1"
+
 import os
 import sys
+
+if sys.version_info[0] > 2:
+    raise Exception("Some modules require Python 2, so please use that version instead of Python 3")
+
 import argparse
 import re
 import traceback
@@ -2035,10 +2041,9 @@ def print_welcome():
     print("    \__, /\__,_/_/   \____/\___/_/ /_/")
     print("   /____/")
     print("   ")
-    print("   Yara Rule Generator")
-    print("   by Florian Roth")
-    print("   November 2018")
-    print("   Version 0.21.0")
+    print("   Yara Rule Generator by Florian Roth")
+    print("   December 2018")
+    print("   Version %s" % __version__)
     print("   ")
     print("###############################################################################")
 
