@@ -740,7 +740,7 @@ def filter_string_set(string_set):
             if re.search(r'%[A-Z_]+%', string, re.IGNORECASE):
                 localStringScores[string] += 4
             # RATs / Malware
-            if re.search(r'(spy|logger|dark|cryptor|RAT\b|eye|comet|evil|xtreme|poison|meterpreter|metasploit)',
+            if re.search(r'(spy|logger|dark|cryptor|RAT\b|eye|comet|evil|xtreme|poison|meterpreter|metasploit|/veil|Blood)',
                          string, re.IGNORECASE):
                 localStringScores[string] += 5
             # Missed user profiles
@@ -890,10 +890,14 @@ def filter_string_set(string_set):
                 localStringScores[string] += 5
             # Scripting Strings
             if re.search(
-                    r'(%APPDATA%|%USERPROFILE%|Public|Roaming|& del|& rm| && )',
+                    r'(%APPDATA%|%USERPROFILE%|Public|Roaming|& del|& rm| && |script)',
                     string, re.IGNORECASE):
                 localStringScores[string] += 3
-
+            # UACME Bypass
+            if re.search(
+                    r'(Elevation|pwnd|pawn|elevate to)',
+                    string, re.IGNORECASE):
+                localStringScores[string] += 3
 
             # ENCODING DETECTIONS --------------------------------------------------
             try:
