@@ -499,7 +499,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                 # print "String count after filtering: %s" % str(len(combinations[combi]["strings"]))
 
                 # If the string set of the combination has a required size
-                if len(combinations[combi]["strings"]) >= int(args.rc):
+                if len(combinations[combi]["strings"]) >= int(args.w):
                     # Remove the files in the combi rule from the simple set
                     if args.nosimple:
                         for file in combinations[combi]["files"]:
@@ -2085,8 +2085,11 @@ if __name__ == '__main__':
     group_creation.add_argument('-m', help='Path to scan for malware')
     group_creation.add_argument('-y', help='Minimum string length to consider (default=8)', metavar='min-size',
                                 default=8)
-    group_creation.add_argument('-z', help='Minimum score to consider (default=5)', metavar='min-score', default=5)
-    group_creation.add_argument('-x', help='Score required to set string as \'highly specific string\' (default: 30)', metavar='high-scoring', default=30)
+    group_creation.add_argument('-z', help='Minimum score to consider (default=0)', metavar='min-score', default=0)
+    group_creation.add_argument('-x', help='Score required to set string as \'highly specific string\' (default: 30)',
+                                metavar='high-scoring', default=30)
+    group_creation.add_argument('-w', help='Minimum number of strings that overlap to create a super rule (default: 5)',
+                                metavar='superrule-overlap', default=5)
     group_creation.add_argument('-s', help='Maximum length to consider (default=128)', metavar='max-size', default=128)
     group_creation.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering '
                                             'will be applied)', metavar='maxstrings', default=20)
