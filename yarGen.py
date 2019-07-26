@@ -618,9 +618,9 @@ def filter_string_set(string_set):
             localStringScores[string] += classification[0][1]
 
             # Length Score
-            length = len(string)
-            if length > int(args.y) and length < int(args.s):
-                localStringScores[string] += round(len(string) / 8, 2)
+            #length = len(string)
+            #if length > int(args.y) and length < int(args.s):
+            #    localStringScores[string] += round(len(string) / 8, 2)
             #if length >= int(args.s):
             #    localStringScores[string] += 1
 
