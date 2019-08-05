@@ -47,6 +47,20 @@ The rule generation process also tries to identify similarities between the file
 4. Run `python yarGen.py --update` to automatically download the built-in databases. The are saved into the  './dbs' sub folder. (Download: 913 MB)
 5. See help with `python yarGen.py --help` for more information on the command line parameters
 
+### Docker
+
+- Build the image
+
+`docker build -t yargen .`
+
+- Update Datebases (make the dbs directory persistent)
+
+`docker run --rm -v /ABSPATH/TO/dbs:/app/dbs yargen --update`
+
+- Run yarGen
+
+`docker run --rm -v /ABSPATH/TO/dbs:/app/dbs yargen -a "Florian Roth" -r "Internal Research" -m /opt/mal/apt_case_32`
+
 ### Memory Requirements
 
 Warning: yarGen pulls the whole goodstring database to memory and uses at least 3 GB of memory for a few seconds - 6 GB if opcodes evaluation is activated (--opcodes).
