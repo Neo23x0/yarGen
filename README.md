@@ -84,79 +84,85 @@ This would update the "office" databases with new strings extracted from files i
 
 ```
 usage: yarGen.py [-h] [-m M] [-y min-size] [-z min-score] [-x high-scoring]
-                 [-s max-size] [-rc maxstrings] [--excludegood]
-                 [-o output_rule_file] [-a author] [-r ref] [-l lic]
-                 [-p prefix] [-b identifier] [--score] [--nosimple]
-                 [--nomagic] [--nofilesize] [-fm FM] [--globalrule]
-                 [--nosuper] [--update] [-g G] [-u] [-c] [-i I] [--dropzone]
-                 [--nr] [--oe] [-fs size-in-MB] [--noextras] [--debug]
-                 [--opcodes] [-n opcode-num]
+                 [-w superrule-overlap] [-s max-size] [-rc maxstrings]
+                 [--excludegood] [-o output_rule_file] [-e output_dir_strings]
+                 [-a author] [-r ref] [-l lic] [-p prefix] [-b identifier]
+                 [--score] [--strings] [--nosimple] [--nomagic] [--nofilesize]
+                 [-fm FM] [--globalrule] [--nosuper] [--update] [-g G] [-u]
+                 [-c] [-i I] [--dropzone] [--nr] [--oe] [-fs size-in-MB]
+                 [--noextras] [--debug] [--trace] [--opcodes] [-n opcode-num]
 
 yarGen
 
 optional arguments:
-  -h, --help           show this help message and exit
+  -h, --help            show this help message and exit
 
 Rule Creation:
-  -m M                 Path to scan for malware
-  -y min-size          Minimum string length to consider (default=8)
-  -z min-score         Minimum score to consider (default=5)
-  -x high-scoring      Score required to set string as 'highly specific
-                       string' (default: 30)
-  -s max-size          Maximum length to consider (default=128)
-  -rc maxstrings       Maximum number of strings per rule (default=20,
-                       intelligent filtering will be applied)
-  --excludegood        Force the exclude all goodware strings
+  -m M                  Path to scan for malware
+  -y min-size           Minimum string length to consider (default=8)
+  -z min-score          Minimum score to consider (default=0)
+  -x high-scoring       Score required to set string as 'highly specific
+                        string' (default: 30)
+  -w superrule-overlap  Minimum number of strings that overlap to create a
+                        super rule (default: 5)
+  -s max-size           Maximum length to consider (default=128)
+  -rc maxstrings        Maximum number of strings per rule (default=20,
+                        intelligent filtering will be applied)
+  --excludegood         Force the exclude all goodware strings
 
 Rule Output:
-  -o output_rule_file  Output rule file
-  -a author            Author Name
-  -r ref               Reference (can be string or text file)
-  -l lic               License
-  -p prefix            Prefix for the rule description
-  -b identifier        Text file from which the identifier is read (default:
-                       last folder name in the full path, e.g. "myRAT" if -m
-                       points to /mnt/mal/myRAT)
-  --score              Show the string scores as comments in the rules
-  --nosimple           Skip simple rule creation for files included in super
-                       rules
-  --nomagic            Don't include the magic header condition statement
-  --nofilesize         Don't include the filesize condition statement
-  -fm FM               Multiplier for the maximum 'filesize' condition value
-                       (default: 3)
-  --globalrule         Create global rules (improved rule set speed)
-  --nosuper            Don't try to create super rules that match against
-                       various files
+  -o output_rule_file   Output rule file
+  -e output_dir_strings
+                        Output directory for string exports
+  -a author             Author Name
+  -r ref                Reference (can be string or text file)
+  -l lic                License
+  -p prefix             Prefix for the rule description
+  -b identifier         Text file from which the identifier is read (default:
+                        last folder name in the full path, e.g. "myRAT" if -m
+                        points to /mnt/mal/myRAT)
+  --score               Show the string scores as comments in the rules
+  --strings             Show the string scores as comments in the rules
+  --nosimple            Skip simple rule creation for files included in super
+                        rules
+  --nomagic             Don't include the magic header condition statement
+  --nofilesize          Don't include the filesize condition statement
+  -fm FM                Multiplier for the maximum 'filesize' condition value
+                        (default: 3)
+  --globalrule          Create global rules (improved rule set speed)
+  --nosuper             Don't try to create super rules that match against
+                        various files
 
 Database Operations:
-  --update             Update the local strings and opcodes dbs from the
-                       online repository
-  -g G                 Path to scan for goodware (dont use the database
-                       shipped with yaraGen)
-  -u                   Update local standard goodware database with a new
-                       analysis result (used with -g)
-  -c                   Create new local goodware database (use with -g and
-                       optionally -i "identifier")
-  -i I                 Specify an identifier for the newly created databases
-                       (good-strings-identifier.db, good-opcodes-
-                       identifier.db)
+  --update              Update the local strings and opcodes dbs from the
+                        online repository
+  -g G                  Path to scan for goodware (dont use the database
+                        shipped with yaraGen)
+  -u                    Update local standard goodware database with a new
+                        analysis result (used with -g)
+  -c                    Create new local goodware database (use with -g and
+                        optionally -i "identifier")
+  -i I                  Specify an identifier for the newly created databases
+                        (good-strings-identifier.db, good-opcodes-
+                        identifier.db)
 
 General Options:
-  --dropzone           Dropzone mode - monitors a directory [-m] for new
-                       samples to processWARNING: Processed files will be
-                       deleted!
-  --nr                 Do not recursively scan directories
-  --oe                 Only scan executable extensions EXE, DLL, ASP, JSP,
-                       PHP, BIN, INFECTED
-  -fs size-in-MB       Max file size in MB to analyze (default=10)
-  --noextras           Don't use extras like Imphash or PE header specifics
-  --debug              Debug output
+  --dropzone            Dropzone mode - monitors a directory [-m] for new
+                        samples to processWARNING: Processed files will be
+                        deleted!
+  --nr                  Do not recursively scan directories
+  --oe                  Only scan executable extensions EXE, DLL, ASP, JSP,
+                        PHP, BIN, INFECTED
+  -fs size-in-MB        Max file size in MB to analyze (default=10)
+  --noextras            Don't use extras like Imphash or PE header specifics
+  --debug               Debug output
+  --trace               Trace output
 
 Other Features:
-  --opcodes            Do use the OpCode feature (use this if not enough high
-                       scoring strings can be found)
-  -n opcode-num        Number of opcodes to add if not enough high scoring
-                       string could be found (default=3)
+  --opcodes             Do use the OpCode feature (use this if not enough high
+                        scoring strings can be found)
+  -n opcode-num         Number of opcodes to add if not enough high scoring
+                        string could be found (default=3)
 ```
 
 ## Best Practice
