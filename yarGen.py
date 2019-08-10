@@ -7,7 +7,7 @@
 #
 # Florian Roth
 
-__version__ = "0.21.1"
+__version__ = "0.22.0"
 
 import os
 import sys
@@ -23,7 +23,7 @@ import datetime
 import time
 import scandir
 import pefile
-import pickle
+import cPickle as pickle
 import gzip
 import urllib
 from collections import Counter
