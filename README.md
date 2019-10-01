@@ -18,7 +18,7 @@ yarGen is a generator for [YARA](https://github.com/plusvic/yara/) rules
 
 The main principle is the creation of yara rules from strings found in malware files while removing all strings that also appear in goodware files. Therefore yarGen includes a big goodware strings and opcode database as ZIP archives that have to be extracted before the first use.
 
-Since version 0.12.0 yarGen does not completely remove the goodware strings from the analysis process but includes them with a very low score depending on the number of occurences in goodware samples. The rules will be included if no
+Since version 0.12.0 yarGen does not completely remove the goodware strings from the analysis process but includes them with a very low score depending on the number of occurrences in goodware samples. The rules will be included if no
 better strings can be found and marked with a comment /* Goodware rule */.
 Force yarGen to remove all goodware strings with --excludegood. Also since version 0.12.0 yarGen allows to place the "strings.xml" from [PEstudio](https://winitor.com/) in the program directory in order to apply the blacklist definition during the string analysis process. You'll get better results.
 
