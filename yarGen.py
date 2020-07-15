@@ -2271,16 +2271,16 @@ if __name__ == '__main__':
             try:
 
                 if os.path.isfile(strings_db):
-                    raw_input("File %s alread exists. Press enter to proceed or CTRL+C to exit." % strings_db)
+                    input("File %s alread exists. Press enter to proceed or CTRL+C to exit." % strings_db)
                     os.remove(strings_db)
                 if os.path.isfile(opcodes_db):
-                    raw_input("File %s alread exists. Press enter to proceed or CTRL+C to exit." % opcodes_db)
+                    input("File %s alread exists. Press enter to proceed or CTRL+C to exit." % opcodes_db)
                     os.remove(opcodes_db)
                 if os.path.isfile(imphashes_db):
-                    raw_input("File %s alread exists. Press enter to proceed or CTRL+C to exit." % imphashes_db)
+                    input("File %s alread exists. Press enter to proceed or CTRL+C to exit." % imphashes_db)
                     os.remove(imphashes_db)
                 if os.path.isfile(exports_db):
-                    raw_input("File %s alread exists. Press enter to proceed or CTRL+C to exit." % exports_db)
+                    input("File %s alread exists. Press enter to proceed or CTRL+C to exit." % exports_db)
                     os.remove(exports_db)
 
                 # Strings
