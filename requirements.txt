@@ -1,3 +1,5 @@
 scandir
 pefile
-naiveBayesClassifier
+lxml
+binascii
+base64

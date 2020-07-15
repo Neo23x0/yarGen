@@ -7,13 +7,10 @@
 #
 # Florian Roth
 
-__version__ = "0.22.0"
+__version__ = "0.23.0"
 
 import os
 import sys
-
-if sys.version_info[0] > 2:
-    raise Exception("Some modules require Python 2, so please use that version instead of Python 3")
 
 import argparse
 import re
@@ -23,20 +20,15 @@ import datetime
 import time
 import scandir
 import pefile
-import cPickle as pickle
+import json
 import gzip
 import urllib
+import binascii
+import base64
 from collections import Counter
 from hashlib import sha256
 import signal as signal_module
-
-try:
-    from lxml import etree
-
-    lxml_available = True
-except Exception as e:
-    print("[E] lxml not found - disabling PeStudio string check functionality")
-    lxml_available = False
+from lxml import etree
 
 RELEVANT_EXTENSIONS = [".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".cmd", ".com", ".cpl",
                        ".crt", ".dll", ".exe", ".msc", ".scr", ".sys", ".vb", ".vbe", ".vbs", ".wsc",
@@ -177,7 +169,7 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
 
             # Magic evaluation
             if not args.nomagic:
-                file_info[filePath]["magic"] = fileData[:2]
+                file_info[filePath]["magic"] = binascii.hexlify(fileData[:2]).decode('ascii')
             else:
                 file_info[filePath]["magic"] = ""
 
@@ -272,7 +264,7 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
             print("[-] Cannot read file - skipping %s" % filePath)
 
         # Extract strings from file
-        strings = extract_strings(fileData)
+        strings = extract_strings(str(fileData))
         # Append to all strings
         all_strings.update(strings)
 
@@ -304,20 +296,28 @@ def extract_strings(fileData):
     # Read file data
     try:
         # Read strings
-        strings_full = re.findall("[\x1f-\x7e]{6,}", fileData)
-        strings_limited = re.findall("[\x1f-\x7e]{6,%d}" % args.s, fileData)
+        strings_full = re.findall(b"[\x1f-\x7e]{6,}", fileData)
+        strings_limited = re.findall(b"[\x1f-\x7e]{6,%d}" % args.s, fileData)
         strings_hex = extract_hex_strings(fileData)
         strings = list(set(strings_full) | set(strings_limited) | set(strings_hex))
-        strings += [str("UTF16LE:%s" % ws.decode("utf-16le")) for ws in re.findall("(?:[\x1f-\x7e][\x00]){6,}", fileData)]
+        strings += [str("UTF16LE:%s" % ws.decode('utf-16-le')) for ws in re.findall(b"(?:[\x1f-\x7e][\x00]){6,}", fileData)]
 
         # Escape strings
         for string in strings:
             # Check if last bytes have been string and not yet saved to list
-            if len(string) > 0:
-                string = string.replace('\\', '\\\\')
-                string = string.replace('"', '\\"')
-                if string not in cleaned_strings:
-                    cleaned_strings.append(string.lstrip(" "))
+            #if len(string) > 0:
+            #    string = string.replace('\\', '\\\\')
+            #    string = string.replace('"', '\\"')
+            #    if string not in cleaned_strings:
+            #        cleaned_strings.append(string.lstrip(" "))
+            try:
+                if isinstance(string, str):
+                    cleaned_strings.append(string)
+                else:
+                    cleaned_strings.append(string.decode('utf-8'))
+            except AttributeError as e:
+                traceback.print_exc()
+                print(string)
 
     except Exception as e:
         if args.debug:
@@ -354,7 +354,7 @@ def extract_opcodes(fileData):
                 for text_part in text_parts:
                     if text_part == '' or len(text_part) < 8:
                         continue
-                    opcodes.append(text_part[:16].encode('hex'))
+                    opcodes.append(binascii.hexlify(text_part[:16]))
 
     except Exception as e:
         #if args.debug:
@@ -890,7 +890,7 @@ def filter_string_set(string_set):
                         print("Starting Base64 string analysis ...")
                     for m_string in (string, string[1:], string[1:] + "=", string + "=", string + "=="):
                         if is_base_64(m_string):
-                            decoded_string = m_string.decode('base64')
+                            decoded_string = base64.b64decode(m_string)
                             # print decoded_string
                             if is_ascii_string(decoded_string, padding_allowed=True):
                                 # print "match"
@@ -903,7 +903,7 @@ def filter_string_set(string_set):
                         #print m_string
                         if is_hex_encoded(m_string):
                             #print("^ is HEX")
-                            decoded_string = m_string.decode('hex')
+                            decoded_string = bytes.fromhex(m_string)
                             #print removeNonAsciiDrop(decoded_string)
                             if is_ascii_string(decoded_string, padding_allowed=True):
                                 # not too many 00s
@@ -937,7 +937,7 @@ def filter_string_set(string_set):
                 is_utf = False
                 # print "SCORE: %s\tUTF: %s\tSTRING: %s" % ( localStringScores[string], is_utf, string )
 
-    sorted_set = sorted(localStringScores.iteritems(), key=operator.itemgetter(1), reverse=True)
+    sorted_set = sorted(localStringScores.items(), key=operator.itemgetter(1), reverse=True)
 
     # Only the top X strings
     c = 0
@@ -1739,10 +1739,9 @@ def get_opcode_string(opcode):
 
 def get_uint_string(magic):
     if len(magic) == 2:
-        return "uint16(0) == 0x{1}{0}".format(magic[0].encode('hex'), magic[1].encode('hex'))
+        return "uint8(0) == 0x{0}{1}".format(magic[0], magic[1])
     if len(magic) == 4:
-        return "uint32(0) == 0x{3}{2}{1}{0}".format(magic[0].encode('hex'), magic[1].encode('hex'),
-                                                    magic[2].encode('hex'), magic[3].encode('hex'))
+        return "uint16(0) == 0x{2}{3}{0}{1}".format(magic[0], magic[1], magic[2], magic[3])
     return ""
 
 
@@ -1755,7 +1754,7 @@ def get_file_range(size):
         if max_size_b < 1024:
             max_size_b = 1024
         # in KB
-        max_size = max_size_b / 1024
+        max_size = int(max_size_b / 1024)
         max_size_kb = max_size
         # Round
         if len(str(max_size)) == 2:
@@ -1764,16 +1763,15 @@ def get_file_range(size):
             max_size = int(round(max_size, -2))
         elif len(str(max_size)) == 4:
             max_size = int(round(max_size, -3))
-        elif len(str(max_size)) == 5:
+        elif len(str(max_size)) >= 5:
             max_size = int(round(max_size, -3))
+        print(max_size)
         size_string = "filesize < {0}KB".format(max_size)
         if args.debug:
             print("File Size Eval: SampleSize (b): {0} SizeWithMultiplier (b/Kb): {1} / {2} RoundedSize: {3}".format(
                 str(size), str(max_size_b), str(max_size_kb), str(max_size)))
     except Exception as e:
-        if args.debug:
-            traceback.print_exc()
-        pass
+        traceback.print_exc()
     finally:
         return size_string
 
@@ -1796,7 +1794,7 @@ def is_ascii_char(b, padding_allowed=False):
 
 
 def is_ascii_string(string, padding_allowed=False):
-    for b in string:
+    for b in [i.to_bytes(1, sys.byteorder) for i in string]:
         if padding_allowed:
             if not ((ord(b) < 127 and ord(b) > 31) or ord(b) == 0):
                 return 0
@@ -1822,15 +1820,15 @@ def is_hex_encoded(s, check_length=True):
 
 def extract_hex_strings(s):
     strings = []
-    hex_strings = re.findall("([a-fA-F0-9]{10,})", s)
+    hex_strings = re.findall(b"([a-fA-F0-9]{10,})", s)
     for string in list(hex_strings):
-        hex_strings += string.split('0000')
-        hex_strings += string.split('0d0a')
-        hex_strings += re.findall(r'((?:0000|002[a-f0-9]|00[3-9a-f][0-9a-f]){6,})', string, re.IGNORECASE)
+        hex_strings += string.split(b'0000')
+        hex_strings += string.split(b'0d0a')
+        hex_strings += re.findall(b'((?:0000|002[a-f0-9]|00[3-9a-f][0-9a-f]){6,})', string, re.IGNORECASE)
     hex_strings = list(set(hex_strings))
     # ASCII Encoded Strings
     for string in hex_strings:
-        for x in string.split('00'):
+        for x in string.split(b'00'):
             if len(x) > 10:
                 strings.append(x)
     # WIDE Encoded Strings
@@ -1838,10 +1836,10 @@ def extract_hex_strings(s):
         try:
             if len(string) % 2 != 0 or len(string) < 8:
                 continue
-            dec = string.replace('00', '').decode('hex')
+            dec = string.replace(b'00', b'')
             #print("Testing: %s" % string)
             #print("Decoded: %s" % dec)
-            if is_ascii_string(dec, padding_allowed=True):
+            if is_ascii_string(dec, padding_allowed=False):
                 #print("CAN USE >>>>>>>>>>>>>>>>>>>>>>>> %s"  % string)
                 strings.append(string)
         except Exception as e:
@@ -1854,30 +1852,24 @@ def extract_hex_strings(s):
 def removeNonAsciiDrop(string):
     nonascii = "error"
     try:
+        byte_list = [i.to_bytes(1, sys.byteorder) for i in string]
         # Generate a new string without disturbing characters
-        nonascii = "".join(i for i in string if ord(i)<127 and ord(i)>31)
+        nonascii = b"".join(i for i in byte_list if ord(i)<127 and ord(i)>31)
     except Exception as e:
         traceback.print_exc()
         pass
     return nonascii
 
 
-def save(object, filename, protocol=0):
+def save(object, filename):
     file = gzip.GzipFile(filename, 'wb')
-    file.write(pickle.dumps(object, protocol))
+    file.write(json.dumps(object))
     file.close()
 
 
 def load(filename):
     file = gzip.GzipFile(filename, 'rb')
-    buffer = ""
-    while 1:
-        data = file.read()
-        if data == "":
-            break
-        buffer += data
-    object = pickle.loads(buffer)
-    del (buffer)
+    object = json.loads(file.read())
     file.close()
     return object
 
@@ -1896,7 +1888,7 @@ def update_databases():
 
     # Downloading current repository
     try:
-        for filename, repo_url in REPO_URLS.iteritems():
+        for filename, repo_url in REPO_URLS.items():
             print("Downloading %s from %s ..." % (filename, repo_url))
             fileDownloader = urllib.URLopener()
             fileDownloader.retrieve(repo_url, "./dbs/%s" % filename)
@@ -2033,7 +2025,7 @@ def print_welcome():
     print("   /____/")
     print("   ")
     print("   Yara Rule Generator by Florian Roth")
-    print("   December 2018")
+    print("   July 2020")
     print("   Version %s" % __version__)
     print("   ")
     print("###############################################################################")
@@ -2182,15 +2174,10 @@ if __name__ == '__main__':
     prefix = getPrefix(args.p, identifier)
     print("[+] Using prefix '%s'" % prefix)
 
-    if os.path.isfile(get_abs_path(PE_STRINGS_FILE)) and lxml_available:
+    if os.path.isfile(get_abs_path(PE_STRINGS_FILE)):
         print("[+] Processing PEStudio strings ...")
         pestudio_strings = initialize_pestudio_strings()
         pestudio_available = True
-    else:
-        if lxml_available:
-            print("\nTo improve the analysis process please download the awesome PEStudio tool by marc @ochsenmeier " \
-                  "from http://winitor.com and place the file 'strings.xml' in the ./3rdparty directory.\n")
-            time.sleep(5)
 
     # Highly specific string score
     score_highly_specific = int(args.x)
@@ -2284,23 +2271,23 @@ if __name__ == '__main__':
                     os.remove(exports_db)
 
                 # Strings
-                good_pickle = Counter()
-                good_pickle = good_strings_db
+                good_json = Counter()
+                good_json = good_strings_db
                 # Opcodes
-                good_op_pickle = Counter()
-                good_op_pickle = good_opcodes_db
+                good_op_json = Counter()
+                good_op_json = good_opcodes_db
                 # Imphashes
-                good_imphashes_pickle = Counter()
-                good_imphashes_pickle = good_imphashes_db
+                good_imphashes_json = Counter()
+                good_imphashes_json = good_imphashes_db
                 # Exports
-                good_exports_pickle = Counter()
-                good_exports_pickle = good_exports_db
+                good_exports_json = Counter()
+                good_exports_json = good_exports_db
 
                 # Save
-                save(good_pickle, strings_db)
-                save(good_op_pickle, opcodes_db)
-                save(good_imphashes_pickle, imphashes_db)
-                save(good_exports_pickle, exports_db)
+                save(good_json, strings_db)
+                save(good_op_json, opcodes_db)
+                save(good_imphashes_json, imphashes_db)
+                save(good_exports_json, exports_db)
 
                 print("New database with %d string, %d opcode, %d imphash, %d export entries created. " \
                       "(remember to use --opcodes to extract opcodes from the samples and create the opcode databases)"\
@@ -2310,12 +2297,8 @@ if __name__ == '__main__':
 
     # Analyse malware samples and create rules
     else:
-        if use_opcodes:
-            print("[+] Reading goodware strings from database 'good-strings.db' and 'good-opcodes.db' ...")
-            print("    (This could take some time and uses at least 6 GB of RAM)")
-        else:
-            print("[+] Reading goodware strings from database 'good-strings.db' ...")
-            print("    (This could take some time and uses at least 3 GB of RAM)")
+        print("[+] Reading goodware strings from database 'good-strings.db' ...")
+        print("    (This could take some time and uses several Gigabytes of RAM depending on your db size)")
 
         good_strings_db = Counter()
         good_opcodes_db = Counter()
@@ -2336,8 +2319,8 @@ if __name__ == '__main__':
             if file.startswith("good-strings"):
                 try:
                     print("[+] Loading %s ..." % filePath)
-                    good_pickle = load(get_abs_path(filePath))
-                    good_strings_db.update(good_pickle)
+                    good_json = load(get_abs_path(filePath))
+                    good_strings_db.update(good_json)
                     print("[+] Total: %s / Added %d entries" % (
                     len(good_strings_db), len(good_strings_db) - strings_num))
                     strings_num = len(good_strings_db)
@@ -2348,8 +2331,8 @@ if __name__ == '__main__':
                 try:
                     if use_opcodes:
                         print("[+] Loading %s ..." % filePath)
-                        good_op_pickle = load(get_abs_path(filePath))
-                        good_opcodes_db.update(good_op_pickle)
+                        good_op_json = load(get_abs_path(filePath))
+                        good_opcodes_db.update(good_op_json)
                         print("[+] Total: %s (removed duplicates) / Added %d entries" % (
                         len(good_opcodes_db), len(good_opcodes_db) - opcodes_num))
                         opcodes_num = len(good_opcodes_db)
@@ -2360,8 +2343,8 @@ if __name__ == '__main__':
             if file.startswith("good-imphash"):
                 try:
                     print("[+] Loading %s ..." % filePath)
-                    good_imphashes_pickle = load(get_abs_path(filePath))
-                    good_imphashes_db.update(good_imphashes_pickle)
+                    good_imphashes_json = load(get_abs_path(filePath))
+                    good_imphashes_db.update(good_imphashes_json)
                     print("[+] Total: %s / Added %d entries" % (
                     len(good_imphashes_db), len(good_imphashes_db) - imphash_num))
                     imphash_num = len(good_imphashes_db)
@@ -2371,8 +2354,8 @@ if __name__ == '__main__':
             if file.startswith("good-exports"):
                 try:
                     print("[+] Loading %s ..." % filePath)
-                    good_exports_pickle = load(get_abs_path(filePath))
-                    good_exports_db.update(good_exports_pickle)
+                    good_exports_json = load(get_abs_path(filePath))
+                    good_exports_db.update(good_exports_json)
                     print("[+] Total: %s / Added %d entries" % (
                     len(good_exports_db), len(good_exports_db) - exports_num))
                     exports_num = len(good_exports_db)
@@ -2396,10 +2379,6 @@ if __name__ == '__main__':
 
     # If malware directory given
     if args.m:
-
-        # Initialize Bayes Trainer (we will use the goodware string database for this)
-        print("[+] Initializing Bayes Filter ...")
-        stringTrainer = initialize_bayes_filter()
 
         # Deactivate super rule generation if there's only a single file in the folder
         if len(os.listdir(args.m)) < 2:
