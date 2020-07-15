@@ -756,7 +756,7 @@ def filter_string_set(string_set):
             # Base64
             if re.search(r'^(?:[A-Za-z0-9+/]{4}){30,}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$', string) and \
                     re.search(r'[A-Za-z]', string) and re.search(r'[0-9]', string):
-                localStringScores[string] += 6
+                localStringScores[string] += 7
             # Base64 Executables
             if re.search(r'(TVqQAAMAAAAEAAAA//8AALgAAAA|TVpQAAIAAAAEAA8A//8AALgAAAA|TVqAAAEAAAAEABAAAAAAAAAAAAA|'
                          r'TVoAAAAAAAAAAAAAAAAAAAAAAAA|TVpTAQEAAAAEAAAA//8AALgAAAA)', string):
@@ -888,10 +888,12 @@ def filter_string_set(string_set):
                     # Base64
                     if args.trace:
                         print("Starting Base64 string analysis ...")
-                    for m_string in (string, string[1:], string[1:] + "=", string + "=", string + "=="):
+                    for m_string in (string, string[1:], string[:-1], string[1:] + "=", string + "=", string + "=="):
                         if is_base_64(m_string):
-                            decoded_string = base64.b64decode(m_string)
-                            # print decoded_string
+                            try:
+                                decoded_string = base64.b64decode(m_string, validate=False)
+                            except binascii.Error as e:
+                                continue
                             if is_ascii_string(decoded_string, padding_allowed=True):
                                 # print "match"
                                 localStringScores[string] += 10
@@ -1572,9 +1574,9 @@ def get_rule_strings(string_elements, opcode_elements):
             string = string[8:]
             enc = " wide"
         if string in base64strings:
-            base64comment = " /* base64 encoded string '%s' */" % base64strings[string]
+            base64comment = " /* base64 encoded string '%s' */" % base64strings[string].decode()
         if string in hexEncStrings:
-            hexEncComment = " /* hex encoded string '%s' */" % removeNonAsciiDrop(hexEncStrings[string])
+            hexEncComment = " /* hex encoded string '%s' */" % removeNonAsciiDrop(hexEncStrings[string]).decode()
         if string in pestudioMarker and args.score:
             pestudio_comment = " /* PEStudio Blacklist: %s */" % pestudioMarker[string]
         if string in reversedStrings:
@@ -1765,7 +1767,6 @@ def get_file_range(size):
             max_size = int(round(max_size, -3))
         elif len(str(max_size)) >= 5:
             max_size = int(round(max_size, -3))
-        print(max_size)
         size_string = "filesize < {0}KB".format(max_size)
         if args.debug:
             print("File Size Eval: SampleSize (b): {0} SizeWithMultiplier (b/Kb): {1} / {2} RoundedSize: {3}".format(
@@ -1818,6 +1819,7 @@ def is_hex_encoded(s, check_length=True):
     return False
 
 
+# TODO: Still buggy after port to Python3
 def extract_hex_strings(s):
     strings = []
     hex_strings = re.findall(b"([a-fA-F0-9]{10,})", s)
@@ -1836,16 +1838,14 @@ def extract_hex_strings(s):
         try:
             if len(string) % 2 != 0 or len(string) < 8:
                 continue
+            # Skip
+            if b'0000' in string:
+                continue
             dec = string.replace(b'00', b'')
-            #print("Testing: %s" % string)
-            #print("Decoded: %s" % dec)
             if is_ascii_string(dec, padding_allowed=False):
-                #print("CAN USE >>>>>>>>>>>>>>>>>>>>>>>> %s"  % string)
                 strings.append(string)
         except Exception as e:
             traceback.print_exc()
-    #print len(hex_strings)
-    #sys.exit(0)
     return strings
 
 
