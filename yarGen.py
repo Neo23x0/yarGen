@@ -22,9 +22,10 @@ import scandir
 import pefile
 import json
 import gzip
-import urllib
+import urllib.request
 import binascii
 import base64
+import shutil
 from collections import Counter
 from hashlib import sha256
 import signal as signal_module
@@ -1890,8 +1891,8 @@ def update_databases():
     try:
         for filename, repo_url in REPO_URLS.items():
             print("Downloading %s from %s ..." % (filename, repo_url))
-            fileDownloader = urllib.URLopener()
-            fileDownloader.retrieve(repo_url, "./dbs/%s" % filename)
+            with urllib.request.urlopen(repo_url) as response, open("./dbs/%s" % filename, 'wb') as out_file:
+                shutil.copyfileobj(response, out_file)
     except Exception as e:
         if args.debug:
             traceback.print_exc()
