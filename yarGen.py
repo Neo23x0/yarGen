@@ -28,9 +28,6 @@ import gzip
 import urllib
 from collections import Counter
 from hashlib import sha256
-from naiveBayesClassifier import tokenizer
-from naiveBayesClassifier.trainer import Trainer
-from naiveBayesClassifier.classifier import Classifier
 import signal as signal_module
 
 try:
@@ -553,9 +550,6 @@ def filter_string_set(string_set):
     # This is the only set we have - even if it's a weak one
     useful_set = []
 
-    # Bayes Classificator (new method)
-    stringClassifier = Classifier(stringTrainer.data, tokenizer)
-
     # Local string scores
     localStringScores = {}
 
@@ -604,18 +598,6 @@ def filter_string_set(string_set):
                 localStringScores[string] = pescore
 
         if not goodstring:
-
-            # Bayes Classifier
-            classification = stringClassifier.classify(string)
-            if classification[0][1] == 0 and len(string) > 10:
-                # Try to split the string into words and then check again
-                modified_string = re.sub(r'[\\\/\-\.\_<>="\']', ' ', string).rstrip(" ").lstrip(" ")
-                # print "Checking instead: %s" % modified_string
-                classification = stringClassifier.classify(modified_string)
-
-            #if args.debug:
-            #    print "[D] Bayes Score: %s %s" % (str(classification), string)
-            localStringScores[string] += classification[0][1]
 
             # Length Score
             #length = len(string)
@@ -1738,21 +1720,6 @@ def initialize_pestudio_strings():
     #    strings.append(elem.text)
 
     return pestudio_strings
-
-
-def initialize_bayes_filter():
-    # BayesTrainer
-    stringTrainer = Trainer(tokenizer)
-
-    # Read the sample files and train the algorithm
-    print("[-] Training filter with good strings from ./lib/good.txt")
-    with open(get_abs_path("./lib/good.txt"), "r") as fh_goodstrings:
-        for line in fh_goodstrings:
-            # print line.rstrip("\n")
-            stringTrainer.train(line.rstrip("\n"), "string")
-            modified_line = re.sub(r'(\\\\|\/|\-|\.|\_)', ' ', line)
-            stringTrainer.train(modified_line, "string")
-    return stringTrainer
 
 
 def get_pestudio_score(string):
