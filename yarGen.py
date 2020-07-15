@@ -1896,9 +1896,8 @@ def update_databases():
     except Exception as e:
         if args.debug:
             traceback.print_exc()
-        print("Error while downloading the database file - check your Internet connection")
-        print("Alterntive download link: https://drive.google.com/drive/folders/0B2S_IOa0MiOHS0xmekR6VWRhZ28")
-        print("Download the files and place them into the ./dbs/ folder")
+        print("Error while downloading the database file - check your Internet connection "
+              "(try to run it with --debug to see the full error message)")
         sys.exit(1)
 
 
