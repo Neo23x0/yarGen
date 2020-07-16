@@ -1,16 +1,13 @@
 # yarGen
-
-                         ______
-       __  ______ ______/ ____/__  ____
-      / / / / __ `/ ___/ / __/ _ \/ __ \
-     / /_/ / /_/ / /  / /_/ /  __/ / / /
-     \__, /\__,_/_/   \____/\___/_/ /_/
-    /____/
- 
-    Yara Rule Generator
-    by Florian Roth
-    July 2020
-    Version 0.23.0
+                       _____
+        __ _____ _____/ ___/__ ___
+       / // / _ `/ __/ (_ / -_) _ \
+       \_, /\_,_/_/  \___/\__/_//_/
+      /___/  Yara Rule Generator
+             Florian Roth, July 2020, Version 0.23.2
+    
+      Note: Rules have to be post-processed
+      See this post for details: https://medium.com/@cyb3rops/121d29322282
 
 ### What does yarGen do?
 
