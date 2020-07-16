@@ -2014,19 +2014,17 @@ def signal_handler(signal_name, frame):
 
 
 def print_welcome():
-    print("###############################################################################")
-    print("                        ______")
-    print("      __  ______ ______/ ____/__  ____")
-    print("     / / / / __ `/ ___/ / __/ _ \/ __ \\")
-    print("    / /_/ / /_/ / /  / /_/ /  __/ / / /")
-    print("    \__, /\__,_/_/   \____/\___/_/ /_/")
-    print("   /____/")
+    print("------------------------------------------------------------------------")
+    print("                   _____            ")
+    print("    __ _____ _____/ ___/__ ___      ")
+    print("   / // / _ `/ __/ (_ / -_) _ \\     ")
+    print("   \\_, /\\_,_/_/  \\___/\\__/_//_/     ")
+    print("  /___/  Yara Rule Generator        ")
+    print("         Florian Roth, July 2020, Version %s" % __version__)
     print("   ")
-    print("   Yara Rule Generator by Florian Roth")
-    print("   July 2020")
-    print("   Version %s" % __version__)
-    print("   ")
-    print("###############################################################################")
+    print("  Note: Rules have to be post-processed")
+    print("  See this post for details: https://medium.com/@cyb3rops/121d29322282")
+    print("------------------------------------------------------------------------")
 
 
 # MAIN ################################################################
