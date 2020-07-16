@@ -306,11 +306,9 @@ def extract_strings(fileData):
         # Escape strings
         for string in strings:
             # Check if last bytes have been string and not yet saved to list
-            #if len(string) > 0:
-            #    string = string.replace('\\', '\\\\')
-            #    string = string.replace('"', '\\"')
-            #    if string not in cleaned_strings:
-            #        cleaned_strings.append(string.lstrip(" "))
+            if len(string) > 0:
+                string = string.replace(b'\\', b'\\\\')
+                string = string.replace(b'"', b'\\"')
             try:
                 if isinstance(string, str):
                     cleaned_strings.append(string)

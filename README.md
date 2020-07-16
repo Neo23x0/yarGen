@@ -18,6 +18,8 @@ yarGen is a generator for [YARA](https://github.com/plusvic/yara/) rules
 
 The main principle is the creation of yara rules from strings found in malware files while removing all strings that also appear in goodware files. Therefore yarGen includes a big goodware strings and opcode database as ZIP archives that have to be extracted before the first use.
 
+With version 0.23.0 yarGen has been ported to Python3. If you'd like to use a version using Python 2, try a previous release. (Note that the download location for the pre-built databases has changed, since the database format has been changed from the outdated `pickle` to `json`. The old databases are still available but in an old location on our web server only used in the old yarGen version <0.23) 
+
 Since version 0.12.0 yarGen does not completely remove the goodware strings from the analysis process but includes them with a very low score depending on the number of occurences in goodware samples. The rules will be included if no
 better strings can be found and marked with a comment /* Goodware rule */.
 Force yarGen to remove all goodware strings with --excludegood. Also since version 0.12.0 yarGen allows to place the "strings.xml" from [PEstudio](https://winitor.com/) in the program directory in order to apply the blacklist definition during the string analysis process. You'll get better results.
@@ -42,7 +44,7 @@ The rule generation process also tries to identify similarities between the file
 ### Installation
 
 1. Make sure you have at least 4GB of RAM on the machine you plan to use yarGen (8GB if opcodes are included in rule generation, use with --opcodes)
-2. Download the latest release from the "release" section
+2. Download the latest release from the `release` section
 3. Install all dependencies with `pip install -r requirements.txt`
 4. Run `python yarGen.py --update` to automatically download the built-in databases. The are saved into the  './dbs' sub folder. (Download: 913 MB)
 5. See help with `python yarGen.py --help` for more information on the command line parameters
