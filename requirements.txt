@@ -1,5 +1,3 @@
 scandir
 pefile
 lxml
-binascii
-base64
