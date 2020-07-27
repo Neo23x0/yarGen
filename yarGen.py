@@ -301,11 +301,15 @@ def extract_strings(fileData):
         strings_limited = re.findall(b"[\x1f-\x7e]{6,%d}" % args.s, fileData)
         strings_hex = extract_hex_strings(fileData)
         strings = list(set(strings_full) | set(strings_limited) | set(strings_hex))
-        strings += [str("UTF16LE:%s" % ws.decode('utf-16-le')) for ws in re.findall(b"(?:[\x1f-\x7e][\x00]){6,}", fileData)]
+        wide_strings = [ws for ws in re.findall(b"(?:[\x1f-\x7e][\x00]){6,}", fileData)]
 
-        # Escape strings
+        # Post-process
+        # WIDE
+        for ws in wide_strings:
+            # Decode UTF16 and prepend a marker (facilitates handling)
+            strings.append(("UTF16LE:%s" % ws.decode('utf-16')).encode('utf-8'))
         for string in strings:
-            # Check if last bytes have been string and not yet saved to list
+            # Escape strings
             if len(string) > 0:
                 string = string.replace(b'\\', b'\\\\')
                 string = string.replace(b'"', b'\\"')
@@ -315,11 +319,12 @@ def extract_strings(fileData):
                 else:
                     cleaned_strings.append(string.decode('utf-8'))
             except AttributeError as e:
-                traceback.print_exc()
                 print(string)
+                traceback.print_exc()
 
     except Exception as e:
         if args.debug:
+            print(string)
             traceback.print_exc()
         pass
 
@@ -1690,7 +1695,7 @@ def write_strings(filePath, strings, output_dir, scores):
                     score = stringScores["UTF16LE:%s" % string]
                 else:
                     score = stringScores[string]
-                output_string.append("%d;%s" % score, string)
+                output_string.append("%d;%s" % (score, string))
             else:
                 output_string.append(string)
         # Empty line between sections
