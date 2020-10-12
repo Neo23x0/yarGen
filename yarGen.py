@@ -7,7 +7,7 @@
 #
 # Florian Roth
 
-__version__ = "0.23.2"
+__version__ = "0.23.3"
 
 import os
 import sys
@@ -265,7 +265,7 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
             print("[-] Cannot read file - skipping %s" % filePath)
 
         # Extract strings from file
-        strings = extract_strings(str(fileData))
+        strings = extract_strings(fileData)
         # Append to all strings
         all_strings.update(strings)
 
@@ -1867,7 +1867,7 @@ def removeNonAsciiDrop(string):
 
 def save(object, filename):
     file = gzip.GzipFile(filename, 'wb')
-    file.write(json.dumps(object))
+    file.write(bytes(json.dumps(object), 'utf-8'))
     file.close()
 
 
