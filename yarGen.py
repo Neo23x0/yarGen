@@ -525,8 +525,12 @@ def filter_opcode_set(opcode_set):
     useful_set = []
     pref_set = []
 
-    for opcode in opcode_set:
+    for opcode_bytes in opcode_set:
+        # Get string from bytes object
+        opcode = opcode_bytes.decode('ascii')
+        # Exclude all opcodes found in goodware
         if opcode in good_opcodes_db:
+            #print("skipping %s" % opcode)
             continue
 
         # Format the opcode
@@ -1741,8 +1745,7 @@ def get_pestudio_score(string):
 
 
 def get_opcode_string(opcode):
-    opcode_string = opcode.decode('ascii')
-    return ' '.join(opcode_string[i:i + 2] for i in range(0, len(opcode_string), 2))
+    return ' '.join(opcode[i:i + 2] for i in range(0, len(opcode), 2))
 
 
 def get_uint_string(magic):
