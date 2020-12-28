@@ -344,25 +344,26 @@ def extract_opcodes(fileData):
         for sec in pe.sections:
             if (ep >= sec.VirtualAddress) and \
                     (ep < (sec.VirtualAddress + sec.Misc_VirtualSize)):
-                name = sec.Name.replace('\x00', '')
+                name = sec.Name.replace(b'\x00', b'')
                 break
             else:
                 pos += 1
 
         for section in pe.sections:
-            if section.Name.rstrip("\x00") == name:
+            if section.Name.rstrip(b"\x00") == name:
                 text = section.get_data()
                 # Split text into subs
-                text_parts = re.split("[\x00]{3,}", text)
+                text_parts = re.split(b"[\x00]{3,}", text)
                 # Now truncate and encode opcodes
                 for text_part in text_parts:
                     if text_part == '' or len(text_part) < 8:
                         continue
                     opcodes.append(binascii.hexlify(text_part[:16]))
+                    print(binascii.hexlify(text_part[:16]))
 
     except Exception as e:
-        #if args.debug:
-        #    traceback.print_exc()
+        if args.debug:
+            traceback.print_exc()
         pass
 
     return opcodes
@@ -1740,7 +1741,8 @@ def get_pestudio_score(string):
 
 
 def get_opcode_string(opcode):
-    return ' '.join(opcode[i:i + 2] for i in range(0, len(opcode), 2))
+    opcode_string = opcode.decode('ascii')
+    return ' '.join(opcode_string[i:i + 2] for i in range(0, len(opcode_string), 2))
 
 
 def get_uint_string(magic):
