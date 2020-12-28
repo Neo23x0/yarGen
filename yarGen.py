@@ -359,7 +359,7 @@ def extract_opcodes(fileData):
                     if text_part == '' or len(text_part) < 8:
                         continue
                     opcodes.append(binascii.hexlify(text_part[:16]))
-                    print(binascii.hexlify(text_part[:16]))
+                    #print(binascii.hexlify(text_part[:16]))
 
     except Exception as e:
         if args.debug:
