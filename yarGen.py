@@ -309,7 +309,9 @@ def extract_strings(fileData):
         # WIDE
         for ws in wide_strings:
             # Decode UTF16 and prepend a marker (facilitates handling)
-            strings.append(("UTF16LE:%s" % ws.decode('utf-16')).encode('utf-8'))
+            wide_string = ("UTF16LE:%s" % ws.decode('utf-16')).encode('utf-8')
+            if wide_string not in strings:
+                strings.append(wide_string)
         for string in strings:
             # Escape strings
             if len(string) > 0:
