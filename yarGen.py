@@ -204,7 +204,8 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
                 if fileName not in string_stats[string]["files_basename"]:
                     string_stats[string]["files_basename"][fileName] = 0
                 string_stats[string]["files_basename"][fileName] += 1
-                string_stats[string]["files"].append(filePath)
+                if filePath not in string_stats[string]["files"]:
+                    string_stats[string]["files"].append(filePath)
 
             # Add opcods to statistics
             for opcode in opcodes:
@@ -220,7 +221,8 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
                 if fileName not in opcode_stats[opcode]["files_basename"]:
                     opcode_stats[opcode]["files_basename"][fileName] = 0
                 opcode_stats[opcode]["files_basename"][fileName] += 1
-                opcode_stats[opcode]["files"].append(filePath)
+                if filePath not in opcode_stats[opcode]["files"]:
+                    opcode_stats[opcode]["files"].append(filePath)
 
             if args.debug:
                 print("[+] Processed " + filePath + " Size: " + str(size) + " Strings: " + str(len(string_stats)) + \
@@ -482,7 +484,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                     max_combi_count = combinations[combi]["count"]
                     # print "Max Combi Count set to: %s" % max_combi_count
 
-    print("[+] Generating Super Rules ... (a lot of foo magic)")
+    print("[+] Generating Super Rules ... (a lot of magic)")
     for combi_count in range(max_combi_count, 1, -1):
         for combi in combinations:
             if combi_count == combinations[combi]["count"]:
