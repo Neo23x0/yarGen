@@ -456,7 +456,6 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                             inverse_stats[fileName].append(string)
 
         # SUPER RULE GENERATION -----------------------------------------------
-
         if not nosuper and not args.inverse:
 
             # SUPER RULES GENERATOR	- preliminary work
@@ -1365,7 +1364,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 rule += "   strings:\n"
 
-                # Adding the strings
+                # Adding the opcodes
                 if file_opcodes.get(filePath) is None:
                     tmp_file_opcodes = {}
                 else:
@@ -1627,8 +1626,7 @@ def get_rule_strings(string_elements, opcode_elements):
 
         string_rule_count += 1
 
-    # If too few strings - add opcodes
-    # Adding the strings --------------------------------------
+    # Adding the opcodes --------------------------------------
     opcodes_included = False
     if len(opcode_elements) > 0:
         rule_strings += "\n"
