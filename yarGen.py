@@ -30,6 +30,7 @@ from collections import Counter
 from hashlib import sha256
 import signal as signal_module
 from lxml import etree
+import requests
 
 RELEVANT_EXTENSIONS = [".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".cmd", ".com", ".cpl",
                        ".crt", ".dll", ".exe", ".msc", ".scr", ".sys", ".vb", ".vbe", ".vbs", ".wsc",
@@ -456,6 +457,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                             inverse_stats[fileName].append(string)
 
         # SUPER RULE GENERATION -----------------------------------------------
+
         if not nosuper and not args.inverse:
 
             # SUPER RULES GENERATOR	- preliminary work
@@ -1364,7 +1366,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 rule += "   strings:\n"
 
-                # Adding the opcodes
+                # Adding the strings
                 if file_opcodes.get(filePath) is None:
                     tmp_file_opcodes = {}
                 else:
@@ -1626,7 +1628,8 @@ def get_rule_strings(string_elements, opcode_elements):
 
         string_rule_count += 1
 
-    # Adding the opcodes --------------------------------------
+    # If too few strings - add opcodes
+    # Adding the strings --------------------------------------
     opcodes_included = False
     if len(opcode_elements) > 0:
         rule_strings += "\n"
@@ -1901,8 +1904,9 @@ def update_databases():
     try:
         for filename, repo_url in REPO_URLS.items():
             print("Downloading %s from %s ..." % (filename, repo_url))
-            with urllib.request.urlopen(repo_url) as response, open("./dbs/%s" % filename, 'wb') as out_file:
-                shutil.copyfileobj(response, out_file)
+            with requests.get(repo_url,stream=True) as response, open("./dbs/%s" % filename, 'wb') as out_file:
+                response.raw.decode_content = True
+                shutil.copyfileobj(response.raw, out_file)
     except Exception as e:
         if args.debug:
             traceback.print_exc()
