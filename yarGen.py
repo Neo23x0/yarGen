@@ -2057,7 +2057,7 @@ if __name__ == '__main__':
                                 metavar='high-scoring', default=30)
     group_creation.add_argument('-w', help='Minimum number of strings that overlap to create a super rule (default: 5)',
                                 metavar='superrule-overlap', default=5)
-    group_creation.add_argument('-s', help='Maximum length to consider (default=128)', metavar='max-size', default=128)
+    group_creation.add_argument('-s', help='Maximum length to consider (default=128)', metavar='max-size', default=128, type=int)
     group_creation.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering '
                                             'will be applied)', metavar='maxstrings', default=20)
     group_creation.add_argument('--excludegood', help='Force the exclude all goodware strings', action='store_true',

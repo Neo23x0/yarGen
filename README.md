@@ -19,7 +19,7 @@ The main principle is the creation of yara rules from strings found in malware f
 
 With version 0.23.0 yarGen has been ported to Python3. If you'd like to use a version using Python 2, try a previous release. (Note that the download location for the pre-built databases has changed, since the database format has been changed from the outdated `pickle` to `json`. The old databases are still available but in an old location on our web server only used in the old yarGen version <0.23) 
 
-Since version 0.12.0 yarGen does not completely remove the goodware strings from the analysis process but includes them with a very low score depending on the number of occurences in goodware samples. The rules will be included if no
+Since version 0.12.0 yarGen does not completely remove the goodware strings from the analysis process but includes them with a very low score depending on the number of occurrences in goodware samples. The rules will be included if no
 better strings can be found and marked with a comment /* Goodware rule */.
 Force yarGen to remove all goodware strings with --excludegood. Also since version 0.12.0 yarGen allows to place the "strings.xml" from [PEstudio](https://winitor.com/) in the program directory in order to apply the blacklist definition during the string analysis process. You'll get better results.
 
@@ -38,7 +38,7 @@ Since version 0.19.0 yarGen support a 'dropzone' mode in which it initializes al
 
 Since version 0.20.0 yarGen supports the extraction and use of hex encoded strings that often appear in weaponized RTF files.
 
-The rule generation process also tries to identify similarities between the files that get analyzed and then combines the strings to so called **super rules**. The super rule generation does not remove the simple rule for the files that have been combined in a single super rule. This means that there is some redundancy when super rules are created. You can supress a simple rule for a file that was already covered by super rule by using --nosimple.
+The rule generation process also tries to identify similarities between the files that get analyzed and then combines the strings to so called **super rules**. The super rule generation does not remove the simple rule for the files that have been combined in a single super rule. This means that there is some redundancy when super rules are created. You can suppress a simple rule for a file that was already covered by super rule by using --nosimple.
 
 ### Installation
 
