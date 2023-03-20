@@ -18,7 +18,10 @@ import traceback
 import operator
 import datetime
 import time
-import scandir
+try:
+    from os import walk
+except ImportError:
+    from scandir import walk
 import pefile
 import json
 import gzip
@@ -97,7 +100,7 @@ def get_files(dir, notRecursive):
             yield filePath
     # Recursive
     else:
-        for root, directories, files in scandir.walk(dir, followlinks=False):
+        for root, directories, files in walk(dir, followlinks=False):
             for filename in files:
                 filePath = os.path.join(root, filename)
                 yield filePath
