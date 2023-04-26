@@ -2106,7 +2106,7 @@ if __name__ == '__main__':
 
     group_general = parser.add_argument_group('General Options')
     group_general.add_argument('--dropzone', action='store_true', default=False,
-                               help='Dropzone mode - monitors a directory [-m] for new samples to process'
+                               help='Dropzone mode - monitors a directory [-m] for new samples to process. '
                                     'WARNING: Processed files will be deleted!')
     group_general.add_argument('--nr', action='store_true', default=False, help='Do not recursively scan directories')
     group_general.add_argument('--oe', action='store_true', default=False, help='Only scan executable extensions EXE, '
