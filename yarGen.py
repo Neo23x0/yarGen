@@ -7,7 +7,7 @@
 #
 # Florian Roth
 
-__version__ = "0.23.3"
+__version__ = "0.24.0"
 
 import os
 import sys
@@ -18,7 +18,6 @@ import traceback
 import operator
 import datetime
 import time
-import scandir
 import pefile
 import json
 import gzip
@@ -34,6 +33,11 @@ from lxml import etree
 RELEVANT_EXTENSIONS = [".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".cmd", ".com", ".cpl",
                        ".crt", ".dll", ".exe", ".msc", ".scr", ".sys", ".vb", ".vbe", ".vbs", ".wsc",
                        ".wsf", ".wsh", ".input", ".war", ".jsp", ".php", ".asp", ".aspx", ".psd1", ".psm1", ".py"]
+
+AI_COMMENT = """
+The provided rule is a YARA rule, encompassing a wide range of suspicious strings. Kindly review the list and pinpoint the twenty strings that are most distinctive or appear most suited for a YARA rule focused on malware detection. Arrange them in descending order based on their level of suspicion. Then, swap out the current list of strings in the YARA rule with your chosen set and supply the revised rule.
+---
+"""
 
 REPO_URLS = {
     'good-opcodes-part1.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part1.db',
@@ -87,19 +91,19 @@ def get_abs_path(filename):
     return os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
 
 
-def get_files(dir, notRecursive):
+def get_files(folder, notRecursive):
     # Not Recursive
     if notRecursive:
-        for filename in os.listdir(dir):
-            filePath = os.path.join(dir, filename)
+        for filename in os.listdir(folder):
+            filePath = os.path.join(folder, filename)
             if os.path.isdir(filePath):
                 continue
             yield filePath
     # Recursive
     else:
-        for root, directories, files in scandir.walk(dir, followlinks=False):
-            for filename in files:
-                filePath = os.path.join(root, filename)
+        for root, dirs, files in os.walk(folder, topdown = False):
+            for name in files:
+                filePath = os.path.join(root, name)
                 yield filePath
 
 
@@ -1060,7 +1064,10 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
         general_info += "   License: {0}\n".format(args.l)
     general_info += "*/\n\n"
 
-    fh.write(general_info)
+    if args.ai: 
+        fh.write(AI_COMMENT)
+    else:
+        fh.write(general_info)
 
     # GLOBAL RULES ----------------------------------------------------
     if args.globalrule:
@@ -1621,7 +1628,7 @@ def get_rule_strings(string_elements, opcode_elements):
 
         # If too many string definitions found - cut it at the
         # count defined via command line param -rc
-        if (i + 1) >= int(args.rc):
+        if (i + 1) >= strings_per_rule:
             break
 
         string_rule_count += 1
@@ -2032,7 +2039,7 @@ def print_welcome():
     print("   / // / _ `/ __/ (_ / -_) _ \\     ")
     print("   \\_, /\\_,_/_/  \\___/\\__/_//_/     ")
     print("  /___/  Yara Rule Generator        ")
-    print("         Florian Roth, July 2020, Version %s" % __version__)
+    print("         Florian Roth, August 2023, Version %s" % __version__)
     print("   ")
     print("  Note: Rules have to be post-processed")
     print("  See this post for details: https://medium.com/@cyb3rops/121d29322282")
@@ -2115,6 +2122,7 @@ if __name__ == '__main__':
                                default=10)
     group_general.add_argument('--noextras', action='store_true', default=False,
                               help='Don\'t use extras like Imphash or PE header specifics')
+    group_general.add_argument('--ai', action='store_true', default=False, help='Create output to be used as ChatGPT4 input')
     group_general.add_argument('--debug', action='store_true', default=False, help='Debug output')
     group_general.add_argument('--trace', action='store_true', default=False, help='Trace output')
 
@@ -2138,9 +2146,13 @@ if __name__ == '__main__':
     if not args.update and not args.m and not args.g:
         parser.print_help()
         print("")
-        print("[E] You have to select --update to update yarGens database or -m for signature generation or -g for the "
-              "creation of goodware string collections "
-              "(see https://github.com/Neo23x0/yarGen#examples for more details)")
+        print("""
+[E] You have to select --update to update yarGens database or -m for signature generation or -g for the 
+creation of goodware string collections 
+(see https://github.com/Neo23x0/yarGen#examples for more details)
+
+Recommended command line:
+   python yarGen.py -a 'Your Name' --opcodes --dropzone -m ./dropzone""")
         sys.exit(1)
 
     # Update
@@ -2391,6 +2403,11 @@ if __name__ == '__main__':
         # Deactivate super rule generation if there's only a single file in the folder
         if len(os.listdir(args.m)) < 2:
             nosuper = True
+
+        # AI input generation
+        strings_per_rule = int(args.rc)
+        if args.ai:
+            strings_per_rule = 200
 
         # Special strings
         base64strings = {}

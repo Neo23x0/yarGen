@@ -17,6 +17,8 @@ yarGen is a generator for [YARA](https://github.com/plusvic/yara/) rules
 
 The main principle is the creation of yara rules from strings found in malware files while removing all strings that also appear in goodware files. Therefore yarGen includes a big goodware strings and opcode database as ZIP archives that have to be extracted before the first use.
 
+In version 0.24.0, yarGen introduces an output option (`--ai`). This feature generates a YARA rule with an expanded set of strings and includes instructions tailored for an AI. I suggest employing ChatGPT Plus with model 4 to refine these rules. Activating the `--ai` flag appends the instruction text to the `yargen_rules.yar` output file, which can subsequently be fed into your AI for processing.
+
 With version 0.23.0 yarGen has been ported to Python3. If you'd like to use a version using Python 2, try a previous release. (Note that the download location for the pre-built databases has changed, since the database format has been changed from the outdated `pickle` to `json`. The old databases are still available but in an old location on our web server only used in the old yarGen version <0.23) 
 
 Since version 0.12.0 yarGen does not completely remove the goodware strings from the analysis process but includes them with a very low score depending on the number of occurrences in goodware samples. The rules will be included if no
@@ -43,14 +45,13 @@ The rule generation process also tries to identify similarities between the file
 ### Installation
 
 1. Make sure you have at least 4GB of RAM on the machine you plan to use yarGen (8GB if opcodes are included in rule generation, use with --opcodes)
-2. Download the latest release from the `release` section
-3. Install all dependencies with `pip install -r requirements.txt`
-4. Run `python yarGen.py --update` to automatically download the built-in databases. The are saved into the  './dbs' sub folder. (Download: 913 MB)
-5. See help with `python yarGen.py --help` for more information on the command line parameters
+2. Install all dependencies with `pip install -r requirements.txt` (or `pip3 install -r requirements.txt`)
+3. Run `python yarGen.py --update` to automatically download the built-in databases. The are saved into the  './dbs' sub folder. (Download: 913 MB)
+4. See help with `python yarGen.py --help` for more information on the command line parameters
 
 ### Memory Requirements
 
-Warning: yarGen pulls the whole goodstring database to memory and uses at least 3 GB of memory for a few seconds - 6 GB if opcodes evaluation is activated (--opcodes).
+Warning: yarGen pulls the whole `goodstring` database to memory and uses at least 3 GB of memory for a few seconds - 6 GB if opcodes evaluation is activated (--opcodes).
 
 I've already tried to migrate the database to sqlite but the numerous string comparisons and lookups made the analysis painfully slow.
 
@@ -184,11 +185,23 @@ See the following blog posts for a more detailed description on how to use yarGe
 
 As you can see in the screenshot above you'll get a rule that contains strings, which are not found in the goodware strings database. 
 
-You should clean up the rules afterwards. In the example above, remove the strings $s14, $s17, $s19, $s20 that look like random code to get a cleaner rule that is more likely to match on other samples of the same family. 
+You should clean up the rules afterwards. In the example above, remove the strings $s14, $s17, $s19, $s20 that look like random code to get a cleaner rule that is more likely to match on other samples of the same family.
 
-To get a more generic rule, remove string $s5, which is very specific for this compiled executable. 
+To get a more generic rule, remove string $s5, which is very specific for this compiled executable.
  
 ## Examples
+
+### Dropzone Mode (Recommended)
+
+Monitors a given folder (-m) for new samples, processes the samples, writes YARA rules to the set output file (default: yargen_rules.yar) and deletes the folder contents afterwards.
+
+```python yarGen.py -a "yarGen Dropzone" --dropzone -m /opt/mal/dropzone```
+
+WARNING: All files dropped to the set dropzone will be removed!
+
+In the following example two files named `identifier.txt` and `reference.txt` are read and used for the `reference` and as identifier in the YARA rule sets. The files are read at each iteration and not only during initialization. This way you can pass specific strings to each dropzone rule generation.
+
+```python yarGen.py --dropzone -m /opt/mal/dropzone -b /opt/mal/dropzone/identifier.txt -r /opt/mal/dropzone/reference.txt```
 
 ### Use the shipped database (FAST) to create some rules
 
@@ -241,18 +254,6 @@ The new databases will automatically be initialized during startup and are from 
 ### My Best Pratice Command Line
 
 ```python yarGen.py -a "Florian Roth" -r "Internal Research" -m /opt/mal/apt_case_32```
-
-### Dropzone Mode 
-
-Monitors a given folder (-m) for new samples, processes the samples, writes YARA rules to the set output file (default: yargen_rules.yar) and deletes the folder contents afterwards.
-
-```python yarGen.py -a "yarGen Dropzone" --dropzone -m /opt/mal/dropzone```
-
-WARNING: All files dropped to the set dropzone will be removed! 
-
-In the following example two files named `identifier.txt` and `reference.txt` are read and used for the `reference` and as identifier in the YARA rule sets. The files are read at each iteration and not only during initialization. This way you can pass specific strings to each dropzone rule generation. 
-
-```python yarGen.py --dropzone -m /opt/mal/dropzone -b /opt/mal/dropzone/identifier.txt -r /opt/mal/dropzone/reference.txt```
 
 # db-lookup.py
 
