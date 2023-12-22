@@ -377,7 +377,7 @@ def extract_opcodes(fileData):
     return opcodes
 
 
-def get_pe_info(fileData):
+def get_pe_info(fileData: bytes):
     """
     Get different PE attributes and hashes
     :param fileData:
@@ -386,7 +386,7 @@ def get_pe_info(fileData):
     imphash = ""
     exports = []
     # Check for MZ header (speed improvement)
-    if fileData[:2] != "MZ":
+    if fileData[:2] != b"MZ":
         return imphash, exports
     try:
         if args.debug:
