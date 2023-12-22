@@ -18,7 +18,7 @@ import traceback
 import operator
 import datetime
 import time
-import pefile
+import lief
 import json
 import gzip
 import urllib.request
@@ -343,32 +343,36 @@ def extract_opcodes(fileData):
     # String list
     opcodes = []
 
-    # Read file data
     try:
-        pe = pefile.PE(data=fileData)
-        name = ""
-        ep = pe.OPTIONAL_HEADER.AddressOfEntryPoint
-        pos = 0
-        for sec in pe.sections:
-            if (ep >= sec.VirtualAddress) and \
-                    (ep < (sec.VirtualAddress + sec.Misc_VirtualSize)):
-                name = sec.Name.replace(b'\x00', b'')
-                break
-            else:
-                pos += 1
+        # Read file data
+        binary = lief.parse(fileData)
+        ep = binary.entrypoint
 
-        for section in pe.sections:
-            if section.Name.rstrip(b"\x00") == name:
-                text = section.get_data()
-                # Split text into subs
-                text_parts = re.split(b"[\x00]{3,}", text)
-                # Now truncate and encode opcodes
-                for text_part in text_parts:
-                    if text_part == '' or len(text_part) < 8:
-                        continue
-                    opcodes.append(binascii.hexlify(text_part[:16]))
-                    #print(binascii.hexlify(text_part[:16]))
-
+        # Locate .text section and perform splitting
+        text = None
+        if isinstance(binary, lief.PE.Binary):
+            for sec in binary.sections:
+                if ep >= sec.virtual_address + binary.imagebase and ep < sec.virtual_address + binary.imagebase + sec.virtual_size:
+                    if args.debug:
+                        print(f'EP is located at {sec.name} section')
+                    text = sec.content.tobytes()
+                    break
+        elif isinstance(binary, lief.ELF.Binary):
+            for sec in binary.sections:
+                if ep >= sec.virtual_address and ep < sec.virtual_address + sec.size:
+                    if args.debug:
+                        print(f'EP is located at {sec.name} section')
+                    text = sec.content.tobytes()
+                    break
+        
+        if text is not None:
+            # Split text into subs
+            text_parts = re.split(b"[\x00]{3,}", text)
+            # Now truncate and encode opcodes
+            for text_part in text_parts:
+                if text_part == '' or len(text_part) < 8:
+                    continue
+                opcodes.append(binascii.hexlify(text_part[:16]))
     except Exception as e:
         if args.debug:
             traceback.print_exc()
@@ -379,7 +383,7 @@ def extract_opcodes(fileData):
 
 def get_pe_info(fileData: bytes):
     """
-    Get different PE attributes and hashes
+    Get different PE attributes and hashes by lief
     :param fileData:
     :return:
     """
@@ -391,16 +395,18 @@ def get_pe_info(fileData: bytes):
     try:
         if args.debug:
             print("Extracting PE information")
-        p = pefile.PE(data=fileData)
+        binary = lief.parse(fileData)
+        assert isinstance(binary, lief.PE.Binary)
         # Imphash
-        imphash = p.get_imphash()
+        imphash = lief.PE.get_imphash(binary, lief.PE.IMPHASH_MODE.PEFILE)
         # Exports (names)
-        for exp in p.DIRECTORY_ENTRY_EXPORT.symbols:
-            exports.append(exp.name)
+        for exp in binary.get_export().entries:
+            exports.append(bytes(exp.name, encoding='ascii'))
     except Exception as e:
-        #if args.debug:
-        #    traceback.print_exc()
+        if args.debug:
+            traceback.print_exc()
         pass
+
     return imphash, exports
 
 
