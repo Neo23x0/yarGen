@@ -211,15 +211,15 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
                 if filePath not in string_stats[string]["files"]:
                     string_stats[string]["files"].append(filePath)
 
-            # Add opcods to statistics
+            # Add opcodes to statistics
             for opcode in opcodes:
-                # String is not already known
+                # Opcode is not already known
                 if opcode not in opcode_stats:
                     opcode_stats[opcode] = {}
                     opcode_stats[opcode]["count"] = 0
                     opcode_stats[opcode]["files"] = []
                     opcode_stats[opcode]["files_basename"] = {}
-                # opcode count
+                # Opcode count
                 opcode_stats[opcode]["count"] += 1
                 # Add file information
                 if fileName not in opcode_stats[opcode]["files_basename"]:
@@ -285,9 +285,9 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
 
         # Imphash and Exports
         (imphash, exports) = get_pe_info(fileData)
+        if imphash != "":
+            all_imphashes.update([imphash])
         all_exports.update(exports)
-        all_imphashes.update([imphash])
-
         if args.debug:
             print("[+] Processed %s - %d strings %d opcodes %d exports and imphash %s" % (filePath, len(strings),
                                                                                           len(opcodes), len(exports),
@@ -297,7 +297,7 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
     return all_strings, all_opcodes, all_imphashes, all_exports
 
 
-def extract_strings(fileData):
+def extract_strings(fileData) -> list[str]:
     # String list
     cleaned_strings = []
     # Read file data
@@ -339,8 +339,8 @@ def extract_strings(fileData):
     return cleaned_strings
 
 
-def extract_opcodes(fileData):
-    # String list
+def extract_opcodes(fileData) -> list[str]:
+    # Opcode list
     opcodes = []
 
     try:
@@ -348,18 +348,18 @@ def extract_opcodes(fileData):
         binary = lief.parse(fileData)
         ep = binary.entrypoint
 
-        # Locate .text section and perform splitting
+        # Locate .text section
         text = None
         if isinstance(binary, lief.PE.Binary):
             for sec in binary.sections:
-                if ep >= sec.virtual_address + binary.imagebase and ep < sec.virtual_address + binary.imagebase + sec.virtual_size:
+                if sec.virtual_address + binary.imagebase <= ep < sec.virtual_address + binary.imagebase + sec.virtual_size:
                     if args.debug:
                         print(f'EP is located at {sec.name} section')
                     text = sec.content.tobytes()
                     break
         elif isinstance(binary, lief.ELF.Binary):
             for sec in binary.sections:
-                if ep >= sec.virtual_address and ep < sec.virtual_address + sec.size:
+                if sec.virtual_address <= ep < sec.virtual_address + sec.size:
                     if args.debug:
                         print(f'EP is located at {sec.name} section')
                     text = sec.content.tobytes()
@@ -372,7 +372,7 @@ def extract_opcodes(fileData):
             for text_part in text_parts:
                 if text_part == '' or len(text_part) < 8:
                     continue
-                opcodes.append(binascii.hexlify(text_part[:16]))
+                opcodes.append(binascii.hexlify(text_part[:16]).decode(encoding='ascii'))
     except Exception as e:
         if args.debug:
             traceback.print_exc()
@@ -381,7 +381,7 @@ def extract_opcodes(fileData):
     return opcodes
 
 
-def get_pe_info(fileData: bytes):
+def get_pe_info(fileData: bytes) -> tuple[str, list[str]]:
     """
     Get different PE attributes and hashes by lief
     :param fileData:
@@ -395,13 +395,13 @@ def get_pe_info(fileData: bytes):
     try:
         if args.debug:
             print("Extracting PE information")
-        binary = lief.parse(fileData)
-        assert isinstance(binary, lief.PE.Binary)
+        binary: lief.PE.Binary = lief.parse(fileData)
         # Imphash
         imphash = lief.PE.get_imphash(binary, lief.PE.IMPHASH_MODE.PEFILE)
         # Exports (names)
         for exp in binary.get_export().entries:
-            exports.append(bytes(exp.name, encoding='ascii'))
+            exp: lief.PE.ExportEntry
+            exports.append(str(exp.name))
     except Exception as e:
         if args.debug:
             traceback.print_exc()
@@ -430,7 +430,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                     # Append string
                     file_opcodes[filePath].append(opcode)
                 else:
-                    # Create list and than add the first string to the file
+                    # Create list and then add the first string to the file
                     file_opcodes[filePath] = []
                     file_opcodes[filePath].append(opcode)
 
@@ -447,7 +447,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                     # Append string
                     file_strings[filePath].append(string)
                 else:
-                    # Create list and than add the first string to the file
+                    # Create list and then add the first string to the file
                     file_strings[filePath] = []
                     file_strings[filePath].append(string)
 
@@ -530,7 +530,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
     return (file_strings, file_opcodes, combinations, super_rules, inverse_stats)
 
 
-def filter_opcode_set(opcode_set):
+def filter_opcode_set(opcode_set: list[str]) -> list[str]:
     # Preferred Opcodes
     pref_opcodes = [' 34 ', 'ff ff ff ']
 
@@ -538,12 +538,12 @@ def filter_opcode_set(opcode_set):
     useful_set = []
     pref_set = []
 
-    for opcode_bytes in opcode_set:
-        # Get string from bytes object
-        opcode = opcode_bytes.decode('ascii')
+    for opcode in opcode_set:
+        opcode: str
         # Exclude all opcodes found in goodware
         if opcode in good_opcodes_db:
-            #print("skipping %s" % opcode)
+            if args.debug:
+                print("skipping %s" % opcode)
             continue
 
         # Format the opcode
@@ -1112,18 +1112,12 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
             print("[-] Filtering string set for %s ..." % filePath)
 
             # Replace the original string set with the filtered one
-            string_set = file_strings[filePath]
-            file_strings[filePath] = []
-            file_strings[filePath] = filter_string_set(string_set)
+            file_strings[filePath] = filter_string_set(file_strings[filePath])
 
-            # Replace the original string set with the filtered one
-            if filePath not in file_opcodes:
-                file_opcodes[filePath] = []
-            else:
-                print("[-] Filtering opcode set for %s ..." % filePath)
-            opcode_set = file_opcodes[filePath]
-            file_opcodes[filePath] = []
-            file_opcodes[filePath] = filter_opcode_set(opcode_set)
+            print("[-] Filtering opcode set for %s ..." % filePath)
+
+            # Replace the original opcode set with the filtered one
+            file_opcodes[filePath] = filter_opcode_set(file_opcodes[filePath]) if filePath in file_opcodes else []
 
         # GENERATE SIMPLE RULES -------------------------------------------
         fh.write("/* Rule Set ----------------------------------------------------------------- */\n\n")
@@ -1339,7 +1333,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 # Imphash usable
                 if len(imphashes) == 1:
-                    unique_imphash = imphashes.items()[0][0]
+                    unique_imphash = list(imphashes.items())[0][0]
                     if unique_imphash in good_imphashes_db:
                         unique_imphash = ""
 
@@ -2158,7 +2152,7 @@ creation of goodware string collections
 (see https://github.com/Neo23x0/yarGen#examples for more details)
 
 Recommended command line:
-   python yarGen.py -a 'Your Name' --opcodes --dropzone -m ./dropzone""")
+    python yarGen.py -a 'Your Name' --opcodes --dropzone -m ./dropzone""")
         sys.exit(1)
 
     # Update
