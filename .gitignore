@@ -1,14 +1,17 @@
+# IDE & Virtual Environment
 .idea/
 venv/
-samples/
-dbs/
-# General
+
+# MacOS
 .DS_Store
 .AppleDouble
 .LSOverride
 
 # Thumbnails
 ._*
+
+# Prebuilt Database
+dbs/
 
 # YARA Rules
 yargen_rules.yar
