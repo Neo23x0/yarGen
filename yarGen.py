@@ -2390,7 +2390,6 @@ Recommended command line:
         if len(good_exports_db) < 1 and len(good_imphashes_db) < 1:
             print("[E] Missing goodware imphash/export databases. "
                   "    Please run 'yarGen.py --update' to retrieve the newest database set.")
-            use_opcodes = False
 
         if len(good_strings_db) < 1 and not args.c:
             print("[E] Error - no goodware databases found. "
