@@ -1,0 +1,14 @@
+.idea/
+venv/
+samples/
+dbs/
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# YARA Rules
+yargen_rules.yar
