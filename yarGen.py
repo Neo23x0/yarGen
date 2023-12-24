@@ -1423,7 +1423,8 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                     cond_op = " and all of ($op*)"
 
                 condition2 = "( {0} ){1}".format(cond_combined, cond_op)
-                conditions.append(" and ".join([condition_strings, condition2]))
+                # condition_strings could be ""
+                conditions.append(" and ".join(filter(lambda x: x != "", [condition_strings, condition2])))
 
                 # 3nd condition
                 # In memory detection base condition (no magic, no filesize)
