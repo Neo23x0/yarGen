@@ -1190,7 +1190,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 condition_pe = []
                 condition_pe_part1 = []
                 condition_pe_part2 = []
-                if not args.noextras and file_info[filePath]["magic"] == "MZ":
+                if not args.noextras and file_info[filePath]["magic"] == binascii.hexlify(b"MZ").decode('ascii'):
                     # Add imphash - if certain conditions are met
                     if file_info[filePath]["imphash"] not in good_imphashes_db and file_info[filePath]["imphash"] != "":
                         # Comment to imphash
