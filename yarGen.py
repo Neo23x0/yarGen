@@ -589,7 +589,7 @@ def filter_string_set(string_set):
             goodstring = True
             goodcount = good_strings_db[string]
             # print "%s - %s" % ( goodstring, good_strings[string] )
-            if args.excludegood:
+            if args.excludegood and string in reversedStrings:
                 continue
 
         # UTF
