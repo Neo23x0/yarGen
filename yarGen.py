@@ -585,7 +585,7 @@ def filter_string_set(string_set):
         goodcount = 0
 
         # Goodware Strings
-        if string in good_strings_db and string in reversedStrings:
+        if string in good_strings_db:
             goodstring = True
             goodcount = good_strings_db[string]
             # print "%s - %s" % ( goodstring, good_strings[string] )
@@ -944,6 +944,7 @@ def filter_string_set(string_set):
 
             # Reversed String -----------------------------------------------------
             if string[::-1] in good_strings_db:
+              if not args.excludegood:
                 localStringScores[string] += 10
                 reversedStrings[string] = string[::-1]
 
