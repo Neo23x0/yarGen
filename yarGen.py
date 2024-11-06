@@ -29,6 +29,21 @@ from collections import Counter
 from hashlib import sha256
 import signal as signal_module
 from lxml import etree
+import nltk
+from nltk.corpus import words
+from nltk.tokenize import word_tokenize
+
+# Ensure that necessary NLTK resources are available
+nltk.download('punkt')
+nltk.download('words')
+
+# A simple filter function to consider only meaningful words (ignoring non-English or arbitrary symbols)
+def filter_meaningful_words(word_list):
+    # Only allow alphabetic, lowercase words
+    return [word for word in word_list if word.isalpha() and word.islower()]
+
+# Load NLTK word corpus
+nltk_words = set(words.words())
 
 RELEVANT_EXTENSIONS = [".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".cmd", ".com", ".cpl",
                        ".crt", ".dll", ".exe", ".msc", ".scr", ".sys", ".vb", ".vbe", ".vbs", ".wsc",
@@ -579,6 +594,15 @@ def filter_string_set(string_set):
     utfstrings = []
 
     for string in string_set:
+        # Filter meaningful words based on the flag
+        if args.meaningful_words_only:
+            # Tokenize the string and check if it contains any meaningful word
+            tokens = word_tokenize(string)
+            contains_meaningful_word = any(word.lower() in nltk_words for word in tokens)
+            
+            # If no meaningful word is found, skip this string
+            if not contains_meaningful_word:
+                continue       
 
         # Goodware string marker
         goodstring = False
@@ -2139,6 +2163,9 @@ if __name__ == '__main__':
     group_inverse.add_argument('--nodirname', help=argparse.SUPPRESS, action='store_true', default=False)
     group_inverse.add_argument('--noscorefilter', help=argparse.SUPPRESS, action='store_true', default=False)
 
+    group_creation.add_argument('--meaningful-words-only', help='Only include strings containing meaningful words (default: False)',
+                             action='store_true', default=False)
+
     args = parser.parse_args()
 
     # Print Welcome
@@ -2161,6 +2188,10 @@ Recommended command line:
         update_databases()
         print("[+] Updated databases - you can now start creating YARA rules")
         sys.exit(0)
+
+    # Check if the meaningful-words-only flag is set and handle accordingly
+    if args.meaningful_words_only:
+        print("[+] Only including strings containing meaningful words (non-trivial, dictionary-based).")
 
     # Typical input erros
     if args.m:
