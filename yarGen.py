@@ -599,11 +599,13 @@ def filter_string_set(string_set):
         if args.meaningful_words_only:
             # Tokenize the string and check if it contains any meaningful word
             tokens = word_tokenize(string)
-            contains_meaningful_word = any(word.lower() in nltk_words for word in tokens)
+            contains_meaningful_word = any(
+                word.lower() in nltk_words and len(word) >= 4 for word in tokens
+            )
             
             # If no meaningful word is found, skip this string
             if not contains_meaningful_word:
-                continue       
+                continue
 
         # Goodware string marker
         goodstring = False
