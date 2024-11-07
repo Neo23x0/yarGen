@@ -30,13 +30,14 @@ from hashlib import sha256
 import signal as signal_module
 from lxml import etree
 import nltk
-from nltk.corpus import words
-from nltk.tokenize import word_tokenize
 
 # Ensure that necessary NLTK resources are available
 nltk.download('punkt')
 nltk.download('punkt_tab')
 nltk.download('words')
+
+from nltk.corpus import words
+from nltk.tokenize import word_tokenize
 
 # A simple filter function to consider only meaningful words (ignoring non-English or arbitrary symbols)
 def filter_meaningful_words(word_list):
