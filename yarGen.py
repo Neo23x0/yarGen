@@ -35,6 +35,7 @@ from nltk.tokenize import word_tokenize
 
 # Ensure that necessary NLTK resources are available
 nltk.download('punkt')
+nltk.download('punkt_tab')
 nltk.download('words')
 
 # A simple filter function to consider only meaningful words (ignoring non-English or arbitrary symbols)
