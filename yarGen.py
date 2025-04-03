@@ -1149,7 +1149,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 if re.search(r'^[0-9]', cleanedName):
                     cleanedName = "sig_" + cleanedName
                 # clean name from all characters that would cause errors
-                cleanedName = re.sub('[^\w]', r'_', cleanedName)
+                cleanedName = re.sub(r'[^\w]', '_', cleanedName)
                 # Check if already printed
                 if cleanedName in printed_rules:
                     printed_rules[cleanedName] += 1
@@ -1351,7 +1351,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 if re.search(r'^[0-9]', rule_name):
                     rule_name = "sig_" + rule_name
                 # clean name from all characters that would cause errors
-                rule_name = re.sub('[^\w]', r'_', rule_name)
+                rule_name = re.sub(r'[^\w]', '_', rule_name)
                 # Check if already printed
                 if rule_name in printed_rules:
                     printed_combi[rule_name] += 1
@@ -1491,7 +1491,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 if re.search(r'^[0-9]', cleanedName):
                     cleanedName = "sig_" + cleanedName
                 # clean name from all characters that would cause errors
-                cleanedName = re.sub('[^\w]', r'_', cleanedName)
+                cleanedName = re.sub(r'[^\w]', '_', cleanedName)
                 # Check if already printed
                 if cleanedName in printed_rules:
                     printed_rules[cleanedName] += 1
