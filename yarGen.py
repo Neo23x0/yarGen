@@ -2181,8 +2181,6 @@ Recommended command line:
 
     # Identifier
     sourcepath = args.m
-    if args.g:
-        sourcepath = args.g
     identifier = getIdentifier(args.b, sourcepath)
     print("[+] Using identifier '%s'" % identifier)
 
