@@ -7,7 +7,7 @@
 #
 # Florian Roth
 
-__version__ = "0.24.0"
+__version__ = "0.25.0"
 
 import os
 import sys
@@ -39,47 +39,20 @@ The provided rule is a YARA rule, encompassing a wide range of suspicious string
 ---
 """
 
-REPO_URLS = {
-    'good-opcodes-part1.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part1.db',
-    'good-opcodes-part2.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part2.db',
-    'good-opcodes-part3.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part3.db',
-    'good-opcodes-part4.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part4.db',
-    'good-opcodes-part5.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part5.db',
-    'good-opcodes-part6.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part6.db',
-    'good-opcodes-part7.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part7.db',
-    'good-opcodes-part8.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part8.db',
-    'good-opcodes-part9.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part9.db',
+RELEASE_TAG = "2020-1"
+BASE = f"https://github.com/Neo23x0/yarGen-dbs/releases/download/{RELEASE_TAG}/"
 
-    'good-strings-part1.db': 'https://www.bsk-consulting.de/yargen/good-strings-part1.db',
-    'good-strings-part2.db': 'https://www.bsk-consulting.de/yargen/good-strings-part2.db',
-    'good-strings-part3.db': 'https://www.bsk-consulting.de/yargen/good-strings-part3.db',
-    'good-strings-part4.db': 'https://www.bsk-consulting.de/yargen/good-strings-part4.db',
-    'good-strings-part5.db': 'https://www.bsk-consulting.de/yargen/good-strings-part5.db',
-    'good-strings-part6.db': 'https://www.bsk-consulting.de/yargen/good-strings-part6.db',
-    'good-strings-part7.db': 'https://www.bsk-consulting.de/yargen/good-strings-part7.db',
-    'good-strings-part8.db': 'https://www.bsk-consulting.de/yargen/good-strings-part8.db',
-    'good-strings-part9.db': 'https://www.bsk-consulting.de/yargen/good-strings-part9.db',
+def parts(prefix: str, n: int) -> list[str]:
+    return [f"{prefix}{i}.db" for i in range(1, n + 1)]
 
-    'good-exports-part1.db': 'https://www.bsk-consulting.de/yargen/good-exports-part1.db',
-    'good-exports-part2.db': 'https://www.bsk-consulting.de/yargen/good-exports-part2.db',
-    'good-exports-part3.db': 'https://www.bsk-consulting.de/yargen/good-exports-part3.db',
-    'good-exports-part4.db': 'https://www.bsk-consulting.de/yargen/good-exports-part4.db',
-    'good-exports-part5.db': 'https://www.bsk-consulting.de/yargen/good-exports-part5.db',
-    'good-exports-part6.db': 'https://www.bsk-consulting.de/yargen/good-exports-part6.db',
-    'good-exports-part7.db': 'https://www.bsk-consulting.de/yargen/good-exports-part7.db',
-    'good-exports-part8.db': 'https://www.bsk-consulting.de/yargen/good-exports-part8.db',
-    'good-exports-part9.db': 'https://www.bsk-consulting.de/yargen/good-exports-part9.db',
+FILES = (
+    parts("good-opcodes-part", 11)
+    + parts("good-strings-part", 11)
+    + parts("good-exports-part", 11)
+    + parts("good-imphashes-part", 11)
+)
 
-    'good-imphashes-part1.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part1.db',
-    'good-imphashes-part2.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part2.db',
-    'good-imphashes-part3.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part3.db',
-    'good-imphashes-part4.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part4.db',
-    'good-imphashes-part5.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part5.db',
-    'good-imphashes-part6.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part6.db',
-    'good-imphashes-part7.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part7.db',
-    'good-imphashes-part8.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part8.db',
-    'good-imphashes-part9.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part9.db',
-}
+REPO_URLS = {fname: f"{BASE}{fname}" for fname in FILES}
 
 PE_STRINGS_FILE = "./3rdparty/strings.xml"
 
