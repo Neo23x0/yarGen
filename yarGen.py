@@ -66,7 +66,7 @@ KNOWN_IMPHASHES = {'a04dd9f5ee88d7774203e0a0cfa1b941': 'PsExec',
 
 
 def get_abs_path(filename):
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
+    return os.path.join(os.getcwd(), filename)
 
 
 def get_files(folder, notRecursive):
