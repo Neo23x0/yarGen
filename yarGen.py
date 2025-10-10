@@ -7,7 +7,7 @@
 #
 # Florian Roth
 
-__version__ = "0.23.3"
+__version__ = "0.25.0"
 
 import os
 import sys
@@ -23,6 +23,7 @@ try:
 except ImportError:
     from scandir import walk
 import pefile
+import lief
 import json
 import gzip
 import urllib.request
@@ -38,47 +39,25 @@ RELEVANT_EXTENSIONS = [".asp", ".vbs", ".ps", ".ps1", ".tmp", ".bas", ".bat", ".
                        ".crt", ".dll", ".exe", ".msc", ".scr", ".sys", ".vb", ".vbe", ".vbs", ".wsc",
                        ".wsf", ".wsh", ".input", ".war", ".jsp", ".php", ".asp", ".aspx", ".psd1", ".psm1", ".py"]
 
-REPO_URLS = {
-    'good-opcodes-part1.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part1.db',
-    'good-opcodes-part2.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part2.db',
-    'good-opcodes-part3.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part3.db',
-    'good-opcodes-part4.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part4.db',
-    'good-opcodes-part5.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part5.db',
-    'good-opcodes-part6.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part6.db',
-    'good-opcodes-part7.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part7.db',
-    'good-opcodes-part8.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part8.db',
-    'good-opcodes-part9.db': 'https://www.bsk-consulting.de/yargen/good-opcodes-part9.db',
+AI_COMMENT = """
+The provided rule is a YARA rule, encompassing a wide range of suspicious strings. Kindly review the list and pinpoint the twenty strings that are most distinctive or appear most suited for a YARA rule focused on malware detection. Arrange them in descending order based on their level of suspicion. Then, swap out the current list of strings in the YARA rule with your chosen set and supply the revised rule.
+---
+"""
 
-    'good-strings-part1.db': 'https://www.bsk-consulting.de/yargen/good-strings-part1.db',
-    'good-strings-part2.db': 'https://www.bsk-consulting.de/yargen/good-strings-part2.db',
-    'good-strings-part3.db': 'https://www.bsk-consulting.de/yargen/good-strings-part3.db',
-    'good-strings-part4.db': 'https://www.bsk-consulting.de/yargen/good-strings-part4.db',
-    'good-strings-part5.db': 'https://www.bsk-consulting.de/yargen/good-strings-part5.db',
-    'good-strings-part6.db': 'https://www.bsk-consulting.de/yargen/good-strings-part6.db',
-    'good-strings-part7.db': 'https://www.bsk-consulting.de/yargen/good-strings-part7.db',
-    'good-strings-part8.db': 'https://www.bsk-consulting.de/yargen/good-strings-part8.db',
-    'good-strings-part9.db': 'https://www.bsk-consulting.de/yargen/good-strings-part9.db',
+RELEASE_TAG = "2020-1"
+BASE = f"https://github.com/Neo23x0/yarGen-dbs/releases/download/{RELEASE_TAG}/"
 
-    'good-exports-part1.db': 'https://www.bsk-consulting.de/yargen/good-exports-part1.db',
-    'good-exports-part2.db': 'https://www.bsk-consulting.de/yargen/good-exports-part2.db',
-    'good-exports-part3.db': 'https://www.bsk-consulting.de/yargen/good-exports-part3.db',
-    'good-exports-part4.db': 'https://www.bsk-consulting.de/yargen/good-exports-part4.db',
-    'good-exports-part5.db': 'https://www.bsk-consulting.de/yargen/good-exports-part5.db',
-    'good-exports-part6.db': 'https://www.bsk-consulting.de/yargen/good-exports-part6.db',
-    'good-exports-part7.db': 'https://www.bsk-consulting.de/yargen/good-exports-part7.db',
-    'good-exports-part8.db': 'https://www.bsk-consulting.de/yargen/good-exports-part8.db',
-    'good-exports-part9.db': 'https://www.bsk-consulting.de/yargen/good-exports-part9.db',
+def parts(prefix: str, n: int) -> list[str]:
+    return [f"{prefix}{i}.db" for i in range(1, n + 1)]
 
-    'good-imphashes-part1.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part1.db',
-    'good-imphashes-part2.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part2.db',
-    'good-imphashes-part3.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part3.db',
-    'good-imphashes-part4.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part4.db',
-    'good-imphashes-part5.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part5.db',
-    'good-imphashes-part6.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part6.db',
-    'good-imphashes-part7.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part7.db',
-    'good-imphashes-part8.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part8.db',
-    'good-imphashes-part9.db': 'https://www.bsk-consulting.de/yargen/good-imphashes-part9.db',
-}
+FILES = (
+    parts("good-opcodes-part", 11)
+    + parts("good-strings-part", 11)
+    + parts("good-exports-part", 11)
+    + parts("good-imphashes-part", 11)
+)
+
+REPO_URLS = {fname: f"{BASE}{fname}" for fname in FILES}
 
 PE_STRINGS_FILE = "./3rdparty/strings.xml"
 
@@ -90,19 +69,19 @@ def get_abs_path(filename):
     return os.path.join(os.path.dirname(os.path.abspath(__file__)), filename)
 
 
-def get_files(dir, notRecursive):
+def get_files(folder, notRecursive):
     # Not Recursive
     if notRecursive:
-        for filename in os.listdir(dir):
-            filePath = os.path.join(dir, filename)
+        for filename in os.listdir(folder):
+            filePath = os.path.join(folder, filename)
             if os.path.isdir(filePath):
                 continue
             yield filePath
     # Recursive
     else:
-        for root, directories, files in walk(dir, followlinks=False):
-            for filename in files:
-                filePath = os.path.join(root, filename)
+        for root, dirs, files in os.walk(folder, topdown = False):
+            for name in files:
+                filePath = os.path.join(root, name)
                 yield filePath
 
 
@@ -210,15 +189,15 @@ def parse_sample_dir(dir, notRecursive=False, generateInfo=False, onlyRelevantEx
                 if filePath not in string_stats[string]["files"]:
                     string_stats[string]["files"].append(filePath)
 
-            # Add opcods to statistics
+            # Add opcodes to statistics
             for opcode in opcodes:
-                # String is not already known
+                # Opcode is not already known
                 if opcode not in opcode_stats:
                     opcode_stats[opcode] = {}
                     opcode_stats[opcode]["count"] = 0
                     opcode_stats[opcode]["files"] = []
                     opcode_stats[opcode]["files_basename"] = {}
-                # opcode count
+                # Opcode count
                 opcode_stats[opcode]["count"] += 1
                 # Add file information
                 if fileName not in opcode_stats[opcode]["files_basename"]:
@@ -284,9 +263,9 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
 
         # Imphash and Exports
         (imphash, exports) = get_pe_info(fileData)
+        if imphash != "":
+            all_imphashes.update([imphash])
         all_exports.update(exports)
-        all_imphashes.update([imphash])
-
         if args.debug:
             print("[+] Processed %s - %d strings %d opcodes %d exports and imphash %s" % (filePath, len(strings),
                                                                                           len(opcodes), len(exports),
@@ -296,7 +275,7 @@ def parse_good_dir(dir, notRecursive=False, onlyRelevantExtensions=True):
     return all_strings, all_opcodes, all_imphashes, all_exports
 
 
-def extract_strings(fileData):
+def extract_strings(fileData) -> list[str]:
     # String list
     cleaned_strings = []
     # Read file data
@@ -338,36 +317,40 @@ def extract_strings(fileData):
     return cleaned_strings
 
 
-def extract_opcodes(fileData):
-    # String list
+def extract_opcodes(fileData) -> list[str]:
+    # Opcode list
     opcodes = []
 
-    # Read file data
     try:
-        pe = pefile.PE(data=fileData)
-        name = ""
-        ep = pe.OPTIONAL_HEADER.AddressOfEntryPoint
-        pos = 0
-        for sec in pe.sections:
-            if (ep >= sec.VirtualAddress) and \
-                    (ep < (sec.VirtualAddress + sec.Misc_VirtualSize)):
-                name = sec.Name.replace(b'\x00', b'')
-                break
-            else:
-                pos += 1
+        # Read file data
+        binary = lief.parse(fileData)
+        ep = binary.entrypoint
 
-        for section in pe.sections:
-            if section.Name.rstrip(b"\x00") == name:
-                text = section.get_data()
-                # Split text into subs
-                text_parts = re.split(b"[\x00]{3,}", text)
-                # Now truncate and encode opcodes
-                for text_part in text_parts:
-                    if text_part == '' or len(text_part) < 8:
-                        continue
-                    opcodes.append(binascii.hexlify(text_part[:16]))
-                    #print(binascii.hexlify(text_part[:16]))
-
+        # Locate .text section
+        text = None
+        if isinstance(binary, lief.PE.Binary):
+            for sec in binary.sections:
+                if sec.virtual_address + binary.imagebase <= ep < sec.virtual_address + binary.imagebase + sec.virtual_size:
+                    if args.debug:
+                        print(f'EP is located at {sec.name} section')
+                    text = sec.content.tobytes()
+                    break
+        elif isinstance(binary, lief.ELF.Binary):
+            for sec in binary.sections:
+                if sec.virtual_address <= ep < sec.virtual_address + sec.size:
+                    if args.debug:
+                        print(f'EP is located at {sec.name} section')
+                    text = sec.content.tobytes()
+                    break
+        
+        if text is not None:
+            # Split text into subs
+            text_parts = re.split(b"[\x00]{3,}", text)
+            # Now truncate and encode opcodes
+            for text_part in text_parts:
+                if text_part == '' or len(text_part) < 8:
+                    continue
+                opcodes.append(binascii.hexlify(text_part[:16]).decode(encoding='ascii'))
     except Exception as e:
         if args.debug:
             traceback.print_exc()
@@ -376,30 +359,32 @@ def extract_opcodes(fileData):
     return opcodes
 
 
-def get_pe_info(fileData):
+def get_pe_info(fileData: bytes) -> tuple[str, list[str]]:
     """
-    Get different PE attributes and hashes
+    Get different PE attributes and hashes by lief
     :param fileData:
     :return:
     """
     imphash = ""
     exports = []
     # Check for MZ header (speed improvement)
-    if fileData[:2] != "MZ":
+    if fileData[:2] != b"MZ":
         return imphash, exports
     try:
         if args.debug:
             print("Extracting PE information")
-        p = pefile.PE(data=fileData)
+        binary: lief.PE.Binary = lief.parse(fileData)
         # Imphash
-        imphash = p.get_imphash()
+        imphash = lief.PE.get_imphash(binary, lief.PE.IMPHASH_MODE.PEFILE)
         # Exports (names)
-        for exp in p.DIRECTORY_ENTRY_EXPORT.symbols:
-            exports.append(exp.name)
+        for exp in binary.get_export().entries:
+            exp: lief.PE.ExportEntry
+            exports.append(str(exp.name))
     except Exception as e:
-        #if args.debug:
-        #    traceback.print_exc()
+        if args.debug:
+            traceback.print_exc()
         pass
+
     return imphash, exports
 
 
@@ -423,7 +408,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                     # Append string
                     file_opcodes[filePath].append(opcode)
                 else:
-                    # Create list and than add the first string to the file
+                    # Create list and then add the first string to the file
                     file_opcodes[filePath] = []
                     file_opcodes[filePath].append(opcode)
 
@@ -440,7 +425,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                     # Append string
                     file_strings[filePath].append(string)
                 else:
-                    # Create list and than add the first string to the file
+                    # Create list and then add the first string to the file
                     file_strings[filePath] = []
                     file_strings[filePath].append(string)
 
@@ -459,7 +444,6 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
                             inverse_stats[fileName].append(string)
 
         # SUPER RULE GENERATION -----------------------------------------------
-
         if not nosuper and not args.inverse:
 
             # SUPER RULES GENERATOR	- preliminary work
@@ -524,7 +508,7 @@ def sample_string_evaluation(string_stats, opcode_stats, file_info):
     return (file_strings, file_opcodes, combinations, super_rules, inverse_stats)
 
 
-def filter_opcode_set(opcode_set):
+def filter_opcode_set(opcode_set: list[str]) -> list[str]:
     # Preferred Opcodes
     pref_opcodes = [' 34 ', 'ff ff ff ']
 
@@ -532,12 +516,12 @@ def filter_opcode_set(opcode_set):
     useful_set = []
     pref_set = []
 
-    for opcode_bytes in opcode_set:
-        # Get string from bytes object
-        opcode = opcode_bytes.decode('ascii')
+    for opcode in opcode_set:
+        opcode: str
         # Exclude all opcodes found in goodware
         if opcode in good_opcodes_db:
-            #print("skipping %s" % opcode)
+            if args.debug:
+                print("skipping %s" % opcode)
             continue
 
         # Format the opcode
@@ -1064,7 +1048,10 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
         general_info += "   License: {0}\n".format(args.l)
     general_info += "*/\n\n"
 
-    fh.write(general_info)
+    if args.ai: 
+        fh.write(AI_COMMENT)
+    else:
+        fh.write(general_info)
 
     # GLOBAL RULES ----------------------------------------------------
     if args.globalrule:
@@ -1103,18 +1090,12 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
             print("[-] Filtering string set for %s ..." % filePath)
 
             # Replace the original string set with the filtered one
-            string_set = file_strings[filePath]
-            file_strings[filePath] = []
-            file_strings[filePath] = filter_string_set(string_set)
+            file_strings[filePath] = filter_string_set(file_strings[filePath])
 
-            # Replace the original string set with the filtered one
-            if filePath not in file_opcodes:
-                file_opcodes[filePath] = []
-            else:
-                print("[-] Filtering opcode set for %s ..." % filePath)
-            opcode_set = file_opcodes[filePath]
-            file_opcodes[filePath] = []
-            file_opcodes[filePath] = filter_opcode_set(opcode_set)
+            print("[-] Filtering opcode set for %s ..." % filePath)
+
+            # Replace the original opcode set with the filtered one
+            file_opcodes[filePath] = filter_opcode_set(file_opcodes[filePath]) if filePath in file_opcodes else []
 
         # GENERATE SIMPLE RULES -------------------------------------------
         fh.write("/* Rule Set ----------------------------------------------------------------- */\n\n")
@@ -1146,7 +1127,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 if re.search(r'^[0-9]', cleanedName):
                     cleanedName = "sig_" + cleanedName
                 # clean name from all characters that would cause errors
-                cleanedName = re.sub('[^\w]', r'_', cleanedName)
+                cleanedName = re.sub(r'[^\w]', '_', cleanedName)
                 # Check if already printed
                 if cleanedName in printed_rules:
                     printed_rules[cleanedName] += 1
@@ -1187,7 +1168,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 condition_pe = []
                 condition_pe_part1 = []
                 condition_pe_part2 = []
-                if not args.noextras and file_info[filePath]["magic"] == "MZ":
+                if not args.noextras and file_info[filePath]["magic"] == binascii.hexlify(b"MZ").decode('ascii'):
                     # Add imphash - if certain conditions are met
                     if file_info[filePath]["imphash"] not in good_imphashes_db and file_info[filePath]["imphash"] != "":
                         # Comment to imphash
@@ -1330,7 +1311,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 # Imphash usable
                 if len(imphashes) == 1:
-                    unique_imphash = imphashes.items()[0][0]
+                    unique_imphash = list(imphashes.items())[0][0]
                     if unique_imphash in good_imphashes_db:
                         unique_imphash = ""
 
@@ -1348,7 +1329,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 if re.search(r'^[0-9]', rule_name):
                     rule_name = "sig_" + rule_name
                 # clean name from all characters that would cause errors
-                rule_name = re.sub('[^\w]', r'_', rule_name)
+                rule_name = re.sub(r'[^\w]', '_', rule_name)
                 # Check if already printed
                 if rule_name in printed_rules:
                     printed_combi[rule_name] += 1
@@ -1368,7 +1349,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
 
                 rule += "   strings:\n"
 
-                # Adding the strings
+                # Adding the opcodes
                 if file_opcodes.get(filePath) is None:
                     tmp_file_opcodes = {}
                 else:
@@ -1420,7 +1401,8 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                     cond_op = " and all of ($op*)"
 
                 condition2 = "( {0} ){1}".format(cond_combined, cond_op)
-                conditions.append(" and ".join([condition_strings, condition2]))
+                # condition_strings could be ""
+                conditions.append(" and ".join(filter(lambda x: x != "", [condition_strings, condition2])))
 
                 # 3nd condition
                 # In memory detection base condition (no magic, no filesize)
@@ -1488,7 +1470,7 @@ def generate_rules(file_strings, file_opcodes, super_rules, file_info, inverse_s
                 if re.search(r'^[0-9]', cleanedName):
                     cleanedName = "sig_" + cleanedName
                 # clean name from all characters that would cause errors
-                cleanedName = re.sub('[^\w]', r'_', cleanedName)
+                cleanedName = re.sub(r'[^\w]', '_', cleanedName)
                 # Check if already printed
                 if cleanedName in printed_rules:
                     printed_rules[cleanedName] += 1
@@ -1625,13 +1607,12 @@ def get_rule_strings(string_elements, opcode_elements):
 
         # If too many string definitions found - cut it at the
         # count defined via command line param -rc
-        if (i + 1) >= int(args.rc):
+        if (i + 1) >= strings_per_rule:
             break
 
         string_rule_count += 1
 
-    # If too few strings - add opcodes
-    # Adding the strings --------------------------------------
+    # Adding the opcodes --------------------------------------
     opcodes_included = False
     if len(opcode_elements) > 0:
         rule_strings += "\n"
@@ -2037,7 +2018,7 @@ def print_welcome():
     print("   / // / _ `/ __/ (_ / -_) _ \\     ")
     print("   \\_, /\\_,_/_/  \\___/\\__/_//_/     ")
     print("  /___/  Yara Rule Generator        ")
-    print("         Florian Roth, July 2020, Version %s" % __version__)
+    print("         Florian Roth, August 2023, Version %s" % __version__)
     print("   ")
     print("  Note: Rules have to be post-processed")
     print("  See this post for details: https://medium.com/@cyb3rops/121d29322282")
@@ -2062,7 +2043,7 @@ if __name__ == '__main__':
                                 metavar='high-scoring', default=30)
     group_creation.add_argument('-w', help='Minimum number of strings that overlap to create a super rule (default: 5)',
                                 metavar='superrule-overlap', default=5)
-    group_creation.add_argument('-s', help='Maximum length to consider (default=128)', metavar='max-size', default=128)
+    group_creation.add_argument('-s', help='Maximum length to consider (default=128)', metavar='max-size', default=128, type=int)
     group_creation.add_argument('-rc', help='Maximum number of strings per rule (default=20, intelligent filtering '
                                             'will be applied)', metavar='maxstrings', default=20)
     group_creation.add_argument('--excludegood', help='Force the exclude all goodware strings', action='store_true',
@@ -2111,7 +2092,7 @@ if __name__ == '__main__':
 
     group_general = parser.add_argument_group('General Options')
     group_general.add_argument('--dropzone', action='store_true', default=False,
-                               help='Dropzone mode - monitors a directory [-m] for new samples to process'
+                               help='Dropzone mode - monitors a directory [-m] for new samples to process. '
                                     'WARNING: Processed files will be deleted!')
     group_general.add_argument('--nr', action='store_true', default=False, help='Do not recursively scan directories')
     group_general.add_argument('--oe', action='store_true', default=False, help='Only scan executable extensions EXE, '
@@ -2120,6 +2101,7 @@ if __name__ == '__main__':
                                default=10)
     group_general.add_argument('--noextras', action='store_true', default=False,
                               help='Don\'t use extras like Imphash or PE header specifics')
+    group_general.add_argument('--ai', action='store_true', default=False, help='Create output to be used as ChatGPT4 input')
     group_general.add_argument('--debug', action='store_true', default=False, help='Debug output')
     group_general.add_argument('--trace', action='store_true', default=False, help='Trace output')
 
@@ -2143,9 +2125,13 @@ if __name__ == '__main__':
     if not args.update and not args.m and not args.g:
         parser.print_help()
         print("")
-        print("[E] You have to select --update to update yarGens database or -m for signature generation or -g for the "
-              "creation of goodware string collections "
-              "(see https://github.com/Neo23x0/yarGen#examples for more details)")
+        print("""
+[E] You have to select --update to update yarGens database or -m for signature generation or -g for the 
+creation of goodware string collections 
+(see https://github.com/Neo23x0/yarGen#examples for more details)
+
+Recommended command line:
+    python yarGen.py -a 'Your Name' --opcodes --dropzone -m ./dropzone""")
         sys.exit(1)
 
     # Update
@@ -2383,7 +2369,6 @@ if __name__ == '__main__':
         if len(good_exports_db) < 1 and len(good_imphashes_db) < 1:
             print("[E] Missing goodware imphash/export databases. "
                   "    Please run 'yarGen.py --update' to retrieve the newest database set.")
-            use_opcodes = False
 
         if len(good_strings_db) < 1 and not args.c:
             print("[E] Error - no goodware databases found. "
@@ -2396,6 +2381,11 @@ if __name__ == '__main__':
         # Deactivate super rule generation if there's only a single file in the folder
         if len(os.listdir(args.m)) < 2:
             nosuper = True
+
+        # AI input generation
+        strings_per_rule = int(args.rc)
+        if args.ai:
+            strings_per_rule = 200
 
         # Special strings
         base64strings = {}
