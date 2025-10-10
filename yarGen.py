@@ -22,7 +22,6 @@ try:
     from os import walk
 except ImportError:
     from scandir import walk
-import pefile
 import lief
 import json
 import gzip

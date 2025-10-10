@@ -1,4 +1,3 @@
 scandir ; python_version < "3.5"
-pefile
 lief
 lxml
