@@ -18,6 +18,11 @@ import traceback
 import operator
 import datetime
 import time
+try:
+    from os import walk
+except ImportError:
+    from scandir import walk
+import pefile
 import lief
 import json
 import gzip
