@@ -1,4 +1,6 @@
-[![Inactively Maintained](https://img.shields.io/badge/Maintenance%20Level-Inactively%20Maintained-yellowgreen.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
+[![Not Maintained](https://img.shields.io/badge/Maintenance%20Level-Not%20Maintained-yellow.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
+
+I created a new YARA rule generator named [yarGen-Go](https://github.com/Neo23x0/yarGen-Go) (Golang). 
 
 # yarGen
                        _____
@@ -271,4 +273,5 @@ However, there are several drawbacks:
 * Opcode lookup is not supported (yet)
 
 I plan to release a new project named `Valknut` which extracts overlapping byte sequences from samples and creates searchable databases. This project will be the new backend API for yarGen allowing all kinds of queries, opcodes and string values, ascii and wide formatted.
+
 
