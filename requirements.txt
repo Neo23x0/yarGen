@@ -1,3 +1,4 @@
 scandir ; python_version < "3.5"
 lief
 lxml
+nltk
